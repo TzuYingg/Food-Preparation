@@ -285,20 +285,32 @@
   .strow2 .roleseg b{font-size:12px; font-weight:800; padding:6px 11px; border-radius:9px; background:var(--tint); color:var(--ink2);}
   .strow2 .roleseg b.on{background:var(--accent); color:#fff;}
   /* 快照圖片（離畫面組裝用） */
-  #snapStage{position:fixed; left:-9999px; top:0; width:380px; background:#FBF7F0; padding:16px;}
-  .snapcard{background:#fff; border:1.5px solid #ECE5D8; border-radius:14px; padding:14px;}
-  .snapcard .sh{font-size:15px; font-weight:800; color:#4F4A43;}
-  .snapcard .sd{font-size:11px; font-weight:700; color:#ADA79C; padding:3px 0 11px; border-bottom:1px solid #ECE5D8; margin-bottom:9px;}
-  .snapcard .prow{display:flex; align-items:flex-start; gap:9px; padding:8px 0;}
-  .snapcard .prow+.prow{border-top:1px solid #ECE5D8;}
-  .snapcard .pn{font-size:14px; font-weight:800; min-width:72px; flex:none; display:flex; align-items:center; gap:7px; color:#4F4A43;}
-  .snapcard .pn img{width:24px; height:24px; object-fit:contain;}
-  .snapcard .chips{display:flex; flex-wrap:wrap; gap:6px;}
-  .snapcard .sc{display:inline-flex; align-items:center; gap:5px; background:#FBF8F2; border:1.5px solid #ECE5D8; border-radius:10px; padding:4px 10px; font-size:13px; font-weight:800; color:#4F4A43;}
-  .snapcard .sc .lk{font-size:8px; font-weight:800; color:#fff; background:#D7263D; border-radius:4px; padding:1px 4px;}
-  .snapcard .un .pn{color:#ADA79C;}
-  .snapcard .sf{margin-top:10px; padding-top:9px; border-top:1px solid #ECE5D8; font-size:11px; font-weight:700; color:#857F75; display:flex; align-items:center; gap:6px;}
-  .snapcard .sf img{width:18px;height:18px;object-fit:contain;}
+  #snapStage{position:fixed; left:-9999px; top:0; width:472px; background:#FBF7F0; padding:16px;}
+  .snapcard{width:440px; background:#fff; border:1.5px solid #ECE5D8; border-radius:16px; padding:16px 16px 13px; box-shadow:0 4px 16px rgba(79,74,67,.10);}
+  .snapcard .head{display:flex; align-items:center; gap:10px;}
+  .snapcard .logo{width:34px; height:34px; object-fit:contain; flex:none;}
+  .snapcard .sh{font-size:18px; font-weight:800; color:#4F4A43; letter-spacing:-.2px;}
+  .snapcard .sd{font-size:11.5px; font-weight:700; color:#ADA79C; margin-top:2px;}
+  .snapcard .sd b{color:#857F75;}
+  .snapcard .legend{display:flex; gap:12px; flex-wrap:wrap; padding:10px 2px 11px; margin-top:9px; border-top:1px solid #ECE5D8; border-bottom:1px solid #ECE5D8;}
+  .snapcard .legend span{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:800; color:#857F75;}
+  .snapcard .legend i{width:9px; height:9px; border-radius:2px; flex:none;}
+  .snapcard .prow{display:flex; gap:11px; align-items:flex-start; padding:11px 0;}
+  .snapcard .prow+.prow{border-top:1px solid #F1ECE3;}
+  .snapcard .who{width:48px; flex:none; display:flex; justify-content:center; border-right:1px solid #F1ECE3; padding-right:9px; padding-top:1px;}
+  .snapcard .who img{width:40px; height:40px; object-fit:contain;}
+  .snapcard .av-un{width:40px; height:40px; border-radius:50%; background:#EDE6D9; color:#ADA79C; display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:17px;}
+  .snapcard .tasks{flex:1; display:flex; flex-wrap:wrap; gap:7px; align-content:flex-start; min-height:40px;}
+  .snapcard .chip{display:inline-flex; align-items:center; gap:6px; background:#FBF8F2; border:1.5px solid #ECE5D8; border-radius:11px; padding:6px 10px; font-weight:800; font-size:14.5px; color:#4F4A43;}
+  .snapcard .chip .blk{width:5px; height:17px; border-radius:3px; flex:none;}
+  .snapcard .chip .nm{line-height:1;}
+  .snapcard .chip .cm{font-size:10px; color:#ADA79C; font-weight:700;}
+  .snapcard .lack{display:inline-flex; flex-direction:column; align-items:center; justify-content:center; font-size:9px; font-weight:800; color:#fff; background:#D7263D; border-radius:5px; padding:2px 4px; line-height:1; flex:none;}
+  .snapcard .pmeta-r{width:100%; display:flex; justify-content:flex-end; margin-top:3px;}
+  .snapcard .pcount{font-size:10.5px; color:#ADA79C; font-weight:800;}
+  .snapcard .sf{margin-top:11px; padding-top:10px; border-top:1px solid #ECE5D8; display:flex; align-items:center; gap:7px; font-size:10.5px; font-weight:700; color:#857F75;}
+  .snapcard .sf img{width:17px; height:17px; object-fit:contain;}
+  .snapcard .sf .r{margin-left:auto; color:#ADA79C;}
   #ef-std3{display:flex; gap:7px;}
   #ef-std3 .tcb{flex:1; text-align:center;}
   #ef-std3 .tcb .lb{font-size:11px; font-weight:800; color:var(--ink2); margin-bottom:5px;}
@@ -334,7 +346,7 @@
     <div class="attend" id="attend"></div>
     <div class="key">
       <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">盤點不足</div></span></div>
-      <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開班前</div><div class="kn">最急</div></span></div>
+      <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開店前</div><div class="kn">最急</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--am)"></span><span><div class="ku">早段</div><div class="kn">6:30–10:00</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--mid)"></span><span><div class="ku">午段</div><div class="kn">10:00–打烊</div></span></div>
     </div>
@@ -359,7 +371,7 @@
       <div class="segb" id="tB" onclick="setT('B')">時段</div>
     </div>
     <div class="page on" id="aI">
-      <button class="addbtn" style="margin:12px 14px 2px" onclick="addItem()">＋ 新增品項</button>
+      <button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addItem()">＋ 新增品項</button>
       <div class="card"><div class="card-h">編輯品項</div>
         <div class="field"><div class="flabel">品名</div><div class="finput" id="ef-name" onclick="editField('name')"></div></div>
         <div class="field"><div class="flabel">盤點分工（誰盤 · 可未分配）</div><div class="segc" id="ef-area"></div></div>
@@ -371,7 +383,7 @@
         <div class="field"><div class="flabel">標準量（依明日類別 · 平假日/假日留「同」＝沿用平日）</div><div class="tier3" id="ef-std3"></div></div>
         <div class="field"><div class="flabel">建議時段（選填）</div>
           <div class="segc" id="ef-band">
-            <b data-b="none">待排</b><b data-b="pre"><span class="dot" style="background:var(--pre)"></span>開班前</b>
+            <b data-b="none">待排</b><b data-b="pre"><span class="dot" style="background:var(--pre)"></span>開店前</b>
             <b data-b="am"><span class="dot" style="background:var(--am)"></span>早段</b><b data-b="mid"><span class="dot" style="background:var(--mid)"></span>午段</b>
           </div></div>
         <div class="field"><div class="tgwrap"><div class="flabel" style="margin:0">每日必備</div><div class="tg" id="ef-daily" onclick="toggleField('daily')"><i></i></div></div></div>
@@ -381,8 +393,8 @@
       <div class="hint">點下方品項載入編輯；變更即存</div>
       <div id="itemlist"></div>
     </div>
-    <div class="page" id="aS"><button class="addbtn" style="margin:12px 14px 2px" onclick="addStaff()">＋ 新增員工</button><div id="stafflist"></div></div>
-    <div class="page" id="aA"><button class="addbtn" style="margin:12px 14px 2px" onclick="addArea()">＋ 新增工作區</button><div id="arealist"></div></div>
+    <div class="page" id="aS"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addStaff()">＋ 新增員工</button><div id="stafflist"></div></div>
+    <div class="page" id="aA"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addArea()">＋ 新增工作區</button><div id="arealist"></div></div>
     <div class="page" id="aB"><div class="hint" style="text-align:left;padding:12px 18px 4px">名稱可改（點一下），顏色鎖定</div><div id="bandlist"></div></div>
     <div class="setup" id="setup"></div>
   </div>
@@ -422,10 +434,10 @@ var ICONS={
 var ANM={lion:'獅子',sheep:'綿羊',penguin:'企鵝',squirrel:'松鼠',koala:'無尾熊',frog:'青蛙',rabbit:'兔子'};
 var ANIMKEYS=['lion','sheep','penguin','squirrel','koala','frog','rabbit'];
 var BORDER=['none','pre','am','mid'];
-var BNAME={none:'待排',pre:'開班前',am:'早段',mid:'午段'};
+var BNAME={none:'待排',pre:'開店前',am:'早段',mid:'午段'};
 var DEFAULT={
   areas:[{name:'煎台',icon:'pan',color:'var(--grill)'},{name:'麵包',icon:'toast',color:'var(--bread)'},{name:'飲料',icon:'cup',color:'var(--drink)'}],
-  bands:{pre:{name:'開班前',time:'最急 · 開店前完成'},am:{name:'早段',time:'6:30–10:00'},mid:{name:'午段',time:'10:00–打烊'}},
+  bands:{pre:{name:'開店前',time:'最急 · 開店前完成'},am:{name:'早段',time:'6:30–10:00'},mid:{name:'午段',time:'10:00–打烊'}},
   staff:[{name:'Jen',animal:'lion',enabled:true,role:'老闆'},{name:'KaKa',animal:'sheep',enabled:true,role:'老闆娘'},{name:'Perry',animal:'penguin',enabled:true,role:'正職'},{name:'RX',animal:'squirrel',enabled:true,role:'正職'},{name:'于瑄',animal:'koala',enabled:true,role:'工讀'},{name:'小愛',animal:'frog',enabled:true,role:'工讀'},{name:'汝汝',animal:'rabbit',enabled:true,role:'工讀'}],
   items:[
     {name:'蛋沙拉',area:'煎台',unit:'盒',std:2,min:20,band:'pre',daily:false,enabled:true,cat:'餡料備品',days:[1,3,4,6]},
@@ -717,7 +729,7 @@ var sheetId=null;
 function openSheet(id){ sheetId=id; renderSheet(); document.getElementById('sheet').classList.add('on'); }
 function closeSheet(){ document.getElementById('sheet').classList.remove('on'); sheetId=null; }
 function renderSheet(){ var it=byId(sheetId); if(!it)return;
-  var bs=[{k:'none',n:'待排'},{k:'pre',n:'開班前'},{k:'am',n:'早段'},{k:'mid',n:'午段'}];
+  var bs=[{k:'none',n:'待排'},{k:'pre',n:'開店前'},{k:'am',n:'早段'},{k:'mid',n:'午段'}];
   var picks=bs.map(function(b){ var dot=b.k==='none'?'':'<span class="dot" style="background:'+bvar(b.k)+'"></span>'; return '<b class="'+(it.band===b.k?'on':'')+'" onclick="setBand(\''+b.k+'\')">'+dot+b.n+'</b>'; }).join('');
   document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+it.name+'</div><div class="sheet-label">時段</div><div class="bandpick">'+picks+'</div><div class="sheet-row"><span>急缺（盤點不足・必補）</span><div class="tg danger'+(it.stock==='out'?' on':'')+'" onclick="toggleLack()"><i></i></div></div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">關閉</button><button class="b-done" onclick="sheetDone()">'+(it.done?'取消完成':'標完成')+'</button></div></div>';
 }
@@ -760,17 +772,31 @@ function doSave(name){ var d=new Date(); var hh=('0'+d.getHours()).slice(-2), mm
 
 /* ===== 複製快照（以人為主・圖片） ===== */
 function buildSnapEl(){
-  var D=day(), di=dInfo(DB.cur);
-  var people=DB.staff.map(function(s){return s.name;}).filter(isWorking);
+  var D=day(), di=dInfo(datePlus(DB.cur,1));                 /* 明日 */
+  var SCARE=(document.querySelector('.hdr-logo')||{}).src||'';
+  var BO=['pre','am','mid','none'];
+  function chipsFor(ts){ return ts.slice().sort(function(a,c){return BO.indexOf(a.band)-BO.indexOf(c.band);}).map(function(it){
+      var lk=it.stock==='out'?'<span class="lack"><span>急</span><span>缺</span></span>':'';
+      var blk=it.band==='none'?'':'<span class="blk" style="background:'+bvar(it.band)+'"></span>';
+      return '<div class="chip">'+lk+blk+'<span class="nm">'+it.name+'</span><span class="cm">'+it.min+'分</span></div>';
+    }).join(''); }
+  function row(av,ts,un){ return '<div class="prow'+(un?' un':'')+'"><div class="who">'+(av?'<img src="'+av+'">':'<span class="av-un">?</span>')+'</div><div class="tasks">'+chipsFor(ts)+'<div class="pmeta-r"><span class="pcount">'+ts.length+'項</span></div></div></div>'; }
   var rows='';
-  people.forEach(function(pn){ var ts=D.tasks.filter(function(t){return t.owner===pn;}); if(!ts.length)return;
-    var chips=ts.map(function(t){return '<span class="sc">'+(t.stock==='out'?'<span class="lk">急</span>':'')+t.name+'</span>';}).join('');
-    rows+='<div class="prow"><span class="pn"><img src="'+AV[animalOf(pn)]+'">'+pn+'</span><div class="chips">'+chips+'</div></div>';
+  DB.staff.map(function(s){return s.name;}).filter(isWorking).forEach(function(pn){
+    var ts=D.tasks.filter(function(t){return t.owner===pn;}); if(!ts.length)return;
+    rows+=row(AV[animalOf(pn)],ts,false);
   });
   var un=D.tasks.filter(function(t){return !isWorking(t.owner);});
-  if(un.length){ rows+='<div class="prow un"><span class="pn">未指派</span><div class="chips">'+un.map(function(t){return '<span class="sc">'+(t.stock==='out'?'<span class="lk">急</span>':'')+t.name+'</span>';}).join('')+'</div></div>'; }
-  var s=D.savedBy; var foot = (s&&s.name)?'<div class="sf"><img src="'+AV[animalOf(s.name)]+'">由 '+s.name+' 於 '+s.time+' 儲存</div>':'';
-  return '<div class="snapcard"><div class="sh">庄腳・收班工作分配</div><div class="sd">'+di.m+'/'+di.dd+'（週'+di.wd+'）· 以人為主</div>'+(rows||'<div style="padding:10px;color:#ADA79C;font-size:13px">尚無任務</div>')+foot+'</div>';
+  if(un.length) rows+=row(null,un,true);
+  if(!rows) rows='<div style="padding:14px 4px;color:#ADA79C;font-size:13px">尚無任務</div>';
+  var bt=function(k){ return (DB.bands&&DB.bands[k]&&DB.bands[k].time)?(' '+DB.bands[k].time):''; };
+  var legend='<div class="legend">'
+    +'<span><i style="background:'+bvar('pre')+'"></i>'+BNAME.pre+'</span>'
+    +'<span><i style="background:'+bvar('am')+'"></i>'+BNAME.am+bt('am')+'</span>'
+    +'<span><i style="background:'+bvar('mid')+'"></i>'+BNAME.mid+bt('mid')+'</span>'
+    +'</div>';
+  var s=D.savedBy; var foot='<div class="sf"><img src="'+SCARE+'">明日備料<span class="r">'+((s&&s.time)?'儲存於 '+s.time:'')+'</span></div>';
+  return '<div class="snapcard"><div class="head"><img class="logo" src="'+SCARE+'"><div><div class="sh">明日工作分配</div><div class="sd">'+di.m+'/'+di.dd+'（<b>週'+di.wd+'</b>）· 備料工作</div></div></div>'+legend+rows+foot+'</div>';
 }
 function copySnapshot(){
   if(typeof html2canvas==='undefined'){ alert('圖片元件還在載入，請稍候再試一次'); return; }
@@ -908,10 +934,13 @@ function renderSetup(){ document.getElementById('setup').innerHTML = useFB ? '�
 
 /* ====== nav ====== */
 function go(p){ ['count','board','admin'].forEach(function(x){ document.getElementById('page-'+x).classList.toggle('on',x===p); var b=document.getElementById('n'+x.charAt(0).toUpperCase()+x.slice(1)); if(b)b.classList.toggle('on',x===p); });
+  var ht=document.getElementById('hTitle'), hs=document.getElementById('hSub');
+  if(p==='count'){ ht.textContent='今日備料檢查'; var dc=dInfo(DB.cur); hs.textContent='今日 '+dc.m+'/'+dc.dd+'（週'+dc.wd+'）'; }
+  else if(p==='board'){ ht.textContent='明日工作分配'; var db=dInfo(datePlus(DB.cur,1)); hs.textContent='明日 '+db.m+'/'+db.dd+'（週'+db.wd+'）'; }
+  else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定'; }
   if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItems(); renderStaff(); renderAreas(); renderBands(); loadItem(sel); renderSetup(); } }
 
 function init(){
-  document.getElementById('hSub').textContent = todayStr().slice(5).replace('-','/') + '（收班盤點 → 明日備料）';
   bindDrag(); setV('time'); setT('I'); go('count');
 }
 load(init);
