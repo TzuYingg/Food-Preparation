@@ -223,6 +223,28 @@
   .tgm.off{background:var(--line);} .tgm.off i{left:3px;}
   .addrow{display:flex; align-items:center; justify-content:center; gap:6px; border:1.5px dashed var(--line); border-radius:12px; padding:11px; font-size:13px; font-weight:800; color:var(--ink2); background:rgba(255,255,255,.4); margin-bottom:8px;}
   .cols.editing{grid-template-columns:1fr;}
+  .whoseg{display:flex; gap:5px; background:#EEE7DC; padding:3px; border-radius:10px; margin-top:10px;}
+  .whoseg b{flex:1; text-align:center; font-size:12px; font-weight:800; color:var(--ink2); padding:7px 4px; border-radius:7px;}
+  .whoseg b.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(79,74,67,.12);}
+  .whoseg b.unb.on{color:var(--accent);}
+  .band-ah.un .ic{background:rgba(191,91,61,.12); color:var(--accent);}
+  .band-ah.un .ct{color:var(--accent);}
+  .ah .catdot2{width:9px; height:9px; border-radius:3px; flex:none;}
+  .it .nm{flex:1; min-width:0;}
+  .it .meta{margin-left:8px;}
+  .it .whoTag{font-size:11px; font-weight:800; border-radius:7px; padding:3px 9px; flex:none;}
+  .it .whoTag.un{background:var(--tint); color:var(--ink3);}
+  .tierTag{font-size:10px; font-weight:800; color:var(--accent); background:rgba(191,91,61,.12); border-radius:6px; padding:2px 7px; margin-left:4px;}
+  #ef-std3{display:flex; gap:7px;}
+  #ef-std3 .tcb{flex:1; text-align:center;}
+  #ef-std3 .tcb .lb{font-size:11px; font-weight:800; color:var(--ink2); margin-bottom:5px;}
+  #ef-std3 .tdot{width:8px; height:8px; border-radius:3px; display:inline-block; margin-right:4px; vertical-align:1px;}
+  #ef-std3 .d-wk{background:var(--ink3);} #ef-std3 .d-ph{background:var(--am);} #ef-std3 .d-hol{background:var(--accent);}
+  #ef-std3 .stepm{display:flex; align-items:center; border:1.5px solid var(--line); border-radius:10px; background:#fff; overflow:hidden;}
+  #ef-std3 .stepm button{border:none; background:none; width:26px; height:34px; font-size:16px; color:var(--ink2); font-weight:800; flex:none;}
+  #ef-std3 .stepm .v{flex:1; text-align:center; font-family:"DM Mono",monospace; font-size:15px; font-weight:500; color:var(--ink);}
+  #ef-std3 .tcb.same .stepm .v{color:var(--ink3); font-size:12px; font-weight:700; font-family:-apple-system,"PingFang TC",sans-serif;}
+  #ef-std3 .tcb.hol .stepm{border-color:rgba(191,91,61,.35);}
 
   /* 後台 刪除品項 */
   .delitem{margin:2px 0 0; width:100%; border:1.5px solid var(--danger-line); background:var(--danger-bg); color:var(--danger); border-radius:11px; padding:11px; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:7px;}
@@ -271,13 +293,13 @@
       <button class="addbtn" style="margin:12px 14px 2px" onclick="addItem()">＋ 新增品項</button>
       <div class="card"><div class="card-h">編輯品項</div>
         <div class="field"><div class="flabel">品名</div><div class="finput" id="ef-name" onclick="editField('name')"></div></div>
-        <div class="field"><div class="flabel">工作區</div><div class="segc" id="ef-area"></div></div>
+        <div class="field"><div class="flabel">盤點分工（誰盤 · 可未分配）</div><div class="segc" id="ef-area"></div></div>
         <div class="field"><div class="flabel">種類</div><div class="segc" id="ef-cat"></div></div>
         <div class="row2">
           <div class="field"><div class="flabel">單位</div><div class="finput" id="ef-unit" onclick="editField('unit')"></div></div>
-          <div class="field"><div class="flabel">標準量</div><div class="finput" id="ef-std" onclick="editField('std')"></div></div>
-          <div class="field"><div class="flabel">預估</div><div class="finput" id="ef-min" onclick="editField('min')"></div></div>
+          <div class="field"><div class="flabel">預估分</div><div class="finput" id="ef-min" onclick="editField('min')"></div></div>
         </div>
+        <div class="field"><div class="flabel">標準量（依明日類別 · 平假日/假日留「同」＝沿用平日）</div><div class="tier3" id="ef-std3"></div></div>
         <div class="field"><div class="flabel">建議時段（選填）</div>
           <div class="segc" id="ef-band">
             <b data-b="none">待排</b><b data-b="pre"><span class="dot" style="background:var(--pre)"></span>開班前</b>
@@ -285,7 +307,6 @@
           </div></div>
         <div class="field"><div class="tgwrap"><div class="flabel" style="margin:0">每日必備</div><div class="tg" id="ef-daily" onclick="toggleField('daily')"><i></i></div></div></div>
         <div class="field"><div class="flabel">排定週幾（每日必備可不設）</div><div class="wkrow" id="ef-days"></div></div>
-        <div class="field"><div class="tgwrap"><div class="flabel" style="margin:0">啟用</div><div class="tg" id="ef-on" onclick="toggleField('enabled')"><i></i></div></div></div>
         <button class="delitem" onclick="delItem()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>刪除這個品項</button>
       </div>
       <div class="hint">點下方品項載入編輯；變更即存</div>
@@ -369,7 +390,8 @@ function applyData(v){
   // 舊資料相容：補上種類(cat)與排定週幾(days)
   (DB.items||[]).forEach(function(it){ var d=DEFAULT.items.filter(function(x){return x.name===it.name;})[0];
     if(it.cat===undefined||it.cat===null) it.cat = d?d.cat:'';
-    if(!Array.isArray(it.days)) it.days = d?clone(d.days):[]; });
+    if(!Array.isArray(it.days)) it.days = d?clone(d.days):[];
+    if(it.enabled===false){ it.area=''; it.enabled=true; } });
   var t=todayStr();
   if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tasks:[]};
   if(!DB.dayType) DB.dayType={};
@@ -397,10 +419,13 @@ function isWorking(n){ return day().working.indexOf(n)>=0; }
 function lackTag(it){ return it.stock==='out'?'<span class="lack"><span>急</span><span>缺</span></span>':''; }
 
 /* ====== 盤點 ====== */
-function curOf(name){ var c=day().counts; var it=itemBy(name); return (c[name]!=null)?c[name]:(it?it.std:0); }
+function resolveStd(it,t){ if(!it)return 0; if(t==='ph')return (it.stdPH!=null?it.stdPH:it.std); if(t==='hol')return (it.stdHol!=null?it.stdHol:it.std); return it.std; }
+function tomorrowTier(){ return dayTypeOf(datePlus(DB.cur,1)); }
+function effStd(it){ return resolveStd(it, tomorrowTier())||0; }
+function curOf(name){ var c=day().counts; var it=itemBy(name); return (c[name]!=null)?c[name]:(it?effStd(it):0); }
 function itemBy(name){ for(var i=0;i<DB.items.length;i++){ if(DB.items[i].name===name) return DB.items[i]; } return null; }
-function cToggle(name){ var it=itemBy(name); var low=curOf(name)<it.std; day().counts[name]= low? it.std : 0; save(); renderCount(); }
-function cBump(name,d){ var it=itemBy(name); var v=(day().counts[name]!=null?day().counts[name]:it.std); day().counts[name]=Math.max(0,Math.round((v+d)*2)/2); save(); renderCount(); }
+function cToggle(name){ var it=itemBy(name); var s=effStd(it); var low=curOf(name)<s; day().counts[name]= low? s : 0; save(); renderCount(); }
+function cBump(name,d){ var it=itemBy(name); var v=(day().counts[name]!=null?day().counts[name]:effStd(it)); day().counts[name]=Math.max(0,Math.round((v+d)*2)/2); save(); renderCount(); }
 /* ====== 日期 / 明日類別（沿用煮茶對照：日六=假日、一=平假日、二~五=平日） ====== */
 var TIERMAP={0:'hol',1:'ph',2:'wk',3:'wk',4:'wk',5:'wk',6:'hol'};
 var TIERNAME={wk:'平日',ph:'平假日',hol:'假日'};
@@ -450,12 +475,15 @@ function eRename(i){ var it=DB.items[i], old=it.name; var n=prompt('修改品名
     if(D.counts&&D.counts[old]!=null){ D.counts[n]=D.counts[old]; delete D.counts[old]; }
     if(D.tasks) D.tasks.forEach(function(t){ if(t.name===old) t.name=n; }); });
   save(); renderCount(); }
-function eStd(i,d){ var it=DB.items[i]; it.std=Math.max(0,Math.round(((+it.std||0)+d)*2)/2); save(); renderCount(); }
+function eStd(i,d){ var it=DB.items[i]; var t=tomorrowTier(); var nv=Math.max(0,Math.round((resolveStd(it,t)+d)*2)/2);
+  if(t==='ph'){ it.stdPH=(nv===it.std?null:nv); } else if(t==='hol'){ it.stdHol=(nv===it.std?null:nv); } else { it.std=nv; } save(); renderCount(); }
 function eUnit(i){ var it=DB.items[i]; var v=prompt('修改單位', it.unit); if(v===null)return; v=(''+v).trim(); if(v) it.unit=v; save(); renderCount(); }
 function eDaily(i){ DB.items[i].daily=!DB.items[i].daily; save(); renderCount(); }
-function eEnabled(i){ DB.items[i].enabled = DB.items[i].enabled===false; save(); renderCount(); }
+function isStation(n){ return !!n && DB.areas.some(function(a){return a.name===n;}); }
+function assigned(it){ return !!(it && isStation(it.area)); }
+function eWho(i,n){ DB.items[i].area=n; save(); renderCount(); }
 function eDel(i){ var it=DB.items[i]; if(!confirm('刪除「'+it.name+'」？此動作無法復原。')) return; DB.items.splice(i,1); save(); renderCount(); }
-function eAdd(area){ var n=prompt('新增品項到「'+area+'區」\n品名'); if(n===null)return; n=(''+n).trim(); if(!n)return;
+function eAdd(area){ var label=area?('「'+area+'」'):'未分配'; var n=prompt('新增品項（'+label+'）\n品名'); if(n===null)return; n=(''+n).trim(); if(!n)return;
   if(DB.items.some(function(x){return x.name===n;})){ alert('已有同名品項'); return; }
   DB.items.push({name:n,area:area,unit:'份',std:1,min:10,band:'none',daily:false,enabled:true,cat:'',days:[]}); save(); renderCount(); }
 
@@ -464,40 +492,45 @@ function renderCount(){
   var cols=document.getElementById('countCols'); cols.classList.toggle('editing', editMode);
   var html='';
   if(editMode){
-    DB.areas.forEach(function(a){
-      var idxs=[]; DB.items.forEach(function(it,i){ if(it.area===a.name) idxs.push(i); });
-      html+='<div class="col"><div class="band-ah"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'區<span class="ct">'+idxs.length+'項</span></div>';
+    var groups=DB.areas.map(function(a){ return {key:a.name, name:a.name+' 盤', color:a.color, icon:a.icon, un:false}; });
+    groups.push({key:'', name:'未分配（不盤）', color:'var(--accent)', icon:'dot', un:true});
+    groups.forEach(function(g){
+      var idxs=[]; DB.items.forEach(function(it,i){ var here = g.un ? !assigned(it) : (it.area===g.key); if(here) idxs.push(i); });
+      html+='<div class="col"><div class="band-ah'+(g.un?' un':'')+'"><span class="ic" style="color:'+g.color+'">'+ICONS[g.icon||'dot']+'</span>'+g.name+'<span class="ct">'+idxs.length+'項</span></div>';
       idxs.forEach(function(i){ var it=DB.items[i];
+        var seg=DB.areas.map(function(a){ return '<b class="'+(it.area===a.name?'on':'')+'" onclick="eWho('+i+',\''+a.name+'\')">'+a.name+'</b>'; }).join('')
+              +'<b class="unb'+(!assigned(it)?' on':'')+'" onclick="eWho('+i+',\'\')">未分配</b>';
         html+='<div class="ccard ed">'
-          +'<div class="edhead"><span class="drag"><button onclick="eMove('+i+',-1)">▲</button><button onclick="eMove('+i+',1)">▼</button></span>'
-          +'<b class="ednm" onclick="eRename('+i+')">'+it.name+PEN+'</b>'
+          +'<div class="edhead"><b class="ednm" onclick="eRename('+i+')">'+it.name+PEN+'</b>'
+          +'<span class="cattag" style="font-size:10px;font-weight:800;color:var(--ink3);background:var(--tint);border-radius:6px;padding:2px 7px;">'+(it.cat||'未分類')+'</span>'
           +'<button class="delb" onclick="eDel('+i+')">'+TRASH+'</button></div>'
+          +'<div class="whoseg">'+seg+'</div>'
           +'<div class="edrow">'
-            +'<span class="efield"><span class="fl">標準</span><span class="stepm"><button onclick="eStd('+i+',-0.5)">−</button><span class="v">'+it.std+'</span><button onclick="eStd('+i+',0.5)">＋</button></span><span class="fu">'+it.unit+'</span></span>'
+            +'<span class="efield"><span class="fl">標準'+(tomorrowTier()!=='wk'?'·'+TIERNAME[tomorrowTier()]:'')+'</span><span class="stepm"><button onclick="eStd('+i+',-0.5)">−</button><span class="v">'+effStd(it)+'</span><button onclick="eStd('+i+',0.5)">＋</button></span><span class="fu">'+it.unit+'</span></span>'
             +'<span class="efield" onclick="eUnit('+i+')"><span class="fl">單位</span><span class="fv">'+it.unit+'</span></span>'
             +'<span class="efield"><span class="fl">每日</span><span class="tgm'+(it.daily?'':' off')+'" onclick="eDaily('+i+')"><i></i></span></span>'
-            +'<span class="efield"><span class="fl">啟用</span><span class="tgm'+(it.enabled!==false?'':' off')+'" onclick="eEnabled('+i+')"><i></i></span></span>'
           +'</div></div>';
       });
-      html+='<div class="addrow" onclick="eAdd(\''+a.name+'\')">＋ 新增品項到 '+a.name+'區</div></div>';
+      html+='<div class="addrow" onclick="eAdd(\''+g.key+'\')">＋ 新增品項'+(g.un?'（未分配）':'到 '+g.key)+'</div></div>';
     });
-    cols.innerHTML = html || '<div class="hint">尚無工作區，請先到後台新增</div>';
+    cols.innerHTML = html;
     return;
   }
   DB.areas.forEach(function(a){
-    var its=DB.items.filter(function(it){return it.enabled && it.area===a.name;});
+    var its=DB.items.filter(function(it){return it.area===a.name;});
     if(!its.length) return;
-    var lowN=its.filter(function(it){return curOf(it.name)<it.std;}).length;
-    html+='<div class="col"><div class="band-ah"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'區<span class="ct">'+its.length+'項'+(lowN?' · 缺'+lowN:'')+'</span></div>';
+    var lowN=its.filter(function(it){return curOf(it.name)<effStd(it);}).length;
+    html+='<div class="col"><div class="band-ah"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+' 盤<span class="ct">'+its.length+'項'+(lowN?' · 缺'+lowN:'')+'</span></div>';
     its.forEach(function(it){
-      var cur=curOf(it.name), low=cur<it.std;
+      var s=effStd(it), cur=curOf(it.name), low=cur<s;
+      var tt=tomorrowTier(), tierTag=(tt!=='wk')?'<span class="tierTag">'+TIERNAME[tt]+'</span>':'';
       var tags=(it.daily?'<span class="t-day">每日</span>':'')+((low&&cur<=0)?'<span class="t-urg">急缺</span>':'');
       var tagrow = tags ? ('<div class="ctags">'+tags+'</div>') : '';
       var sw='<div class="sw'+(low?' off':'')+'" onclick="cToggle(\''+it.name+'\')"><div class="kn"></div></div>';
       var curEl = low ? ('<div class="step"><button onclick="cBump(\''+it.name+'\',-0.5)">−</button><span class="vl">'+cur+'</span><button onclick="cBump(\''+it.name+'\',0.5)">＋</button><span class="u">'+it.unit+'</span></div>')
                       : ('<span class="mnum">'+cur+'<span class="u">'+it.unit+'</span></span>');
       html+='<div class="ccard'+(low?' low':'')+'"><div class="crow"><b class="cname">'+it.name+'</b>'+sw+'</div>'+tagrow
-        +'<div class="cmeta"><span class="mlab">目前</span>'+curEl+'<span class="msep"></span><span class="mlab">標準</span><span class="mnum">'+it.std+'<span class="u">'+it.unit+'</span></span></div></div>';
+        +'<div class="cmeta"><span class="mlab">目前</span>'+curEl+'<span class="msep"></span><span class="mlab">標準</span><span class="mnum">'+s+'<span class="u">'+it.unit+'</span></span>'+tierTag+'</div></div>';
     });
     html+='</div>';
   });
@@ -506,8 +539,8 @@ function renderCount(){
 function genTasks(){
   var D=day(), added=0;
   DB.items.forEach(function(it){
-    if(!it.enabled) return;
-    var cur=curOf(it.name), low=cur<it.std;
+    if(!assigned(it)) return;
+    var cur=curOf(it.name), low=cur<effStd(it);
     if(!(low||dueToday(it))) return;
     if(D.tasks.some(function(t){return t.name===it.name;})) return;
     var out=(cur<=0);
@@ -636,31 +669,57 @@ function toggleDay(d){ var it=DB.items[sel]; if(!Array.isArray(it.days))it.days=
 function setT(t){ T=t; ['I','S','A','B'].forEach(function(x){document.getElementById('t'+x).classList.toggle('on',x===t); document.getElementById('a'+x).classList.toggle('on',x===t);}); }
 function daysLabel(it){ if(it.daily) return '每日'; if(!it.days||!it.days.length) return '未排'; var map={0:'日',1:'一',2:'二',3:'三',4:'四',5:'五',6:'六'}; return '週'+[1,2,3,4,5,6,0].filter(function(d){return it.days.indexOf(d)>=0;}).map(function(d){return map[d];}).join(''); }
 function renderItems(){ var html='';
-  DB.areas.forEach(function(a){ var idxs=[]; DB.items.forEach(function(it,i){ if(it.area===a.name) idxs.push(i); }); if(!idxs.length)return;
-    html+='<div class="ah"><span class="aic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span> '+a.name+'區</div>';
+  var cats=[]; DB.items.forEach(function(it){ var c=it.cat||'未分類'; if(cats.indexOf(c)<0) cats.push(c); });
+  cats.forEach(function(c){
+    var idxs=[]; DB.items.forEach(function(it,i){ if((it.cat||'未分類')===c) idxs.push(i); });
+    html+='<div class="ah"><span class="catdot2" style="background:'+catColor(c==='未分類'?'':c)+'"></span> '+c+'</div>';
     idxs.forEach(function(i){ var it=DB.items[i];
-      html+='<div class="it'+(i===sel?' sel':'')+'" onclick="loadItem('+i+')"><span class="blk" style="background:'+bvar(it.band)+'"></span><span class="nm">'+it.name+'</span><span class="catdot" style="background:'+catColor(it.cat)+'"></span><span class="meta">'+it.std+it.unit+' · '+it.min+'分 · '+daysLabel(it)+(it.enabled?'':' <span class="off">停用</span>')+'</span></div>';
+      var who = assigned(it) ? ('<span class="whoTag" style="background:'+areaBy(it.area).color+';color:#fff">'+it.area+'</span>') : '<span class="whoTag un">未分配</span>';
+      html+='<div class="it'+(i===sel?' sel':'')+'" onclick="loadItem('+i+')"><span class="nm">'+it.name+'</span><span class="meta">'+it.std+it.unit+' · '+daysLabel(it)+'</span>'+who+'</div>';
     });
   });
-  document.getElementById('itemlist').innerHTML=html;
+  document.getElementById('itemlist').innerHTML=html || '<div class="hint">尚無品項</div>';
 }
-function fillAreaSeg(selName){ document.getElementById('ef-area').innerHTML=DB.areas.map(function(a){ return '<b data-a="'+a.name+'" onclick="setItemArea(\''+a.name+'\')" class="'+(a.name===selName?'on':'')+'"><span class="aic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'</b>'; }).join(''); }
+function fillAreaSeg(selName){ var html=DB.areas.map(function(a){ return '<b data-a="'+a.name+'" onclick="setItemArea(\''+a.name+'\')" class="'+(a.name===selName?'on':'')+'"><span class="aic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'</b>'; }).join('');
+  html+='<b onclick="setItemArea(\'\')" class="'+(!isStation(selName)?'on':'')+'">未分配</b>';
+  document.getElementById('ef-area').innerHTML=html; }
 function loadItem(i){ sel=i; var it=DB.items[i];
   document.getElementById('ef-name').textContent=it.name; document.getElementById('ef-unit').textContent=it.unit;
-  document.getElementById('ef-std').textContent=it.std; document.getElementById('ef-min').innerHTML=it.min+'<span class="suffix">分</span>';
+  document.getElementById('ef-min').innerHTML=it.min+'<span class="suffix">分</span>'; fillStd3();
   fillAreaSeg(it.area);
   fillCatSeg(it.cat||'');
   fillDays(it);
   document.querySelectorAll('#ef-band b').forEach(function(b){b.classList.toggle('on',b.dataset.b===it.band);});
   document.getElementById('ef-daily').classList.toggle('on',!!it.daily);
-  document.getElementById('ef-on').classList.toggle('on',it.enabled!==false);
   renderItems();
 }
 function setItemArea(n){ DB.items[sel].area=n; save(); loadItem(sel); }
+function fillStd3(){ var it=DB.items[sel]; if(!it)return;
+  var cells=[{t:'wk',lb:'平日',dot:'d-wk'},{t:'ph',lb:'平假日',dot:'d-ph'},{t:'hol',lb:'假日',dot:'d-hol'}];
+  document.getElementById('ef-std3').innerHTML = cells.map(function(c){
+    var inh=(c.t==='ph'&&it.stdPH==null)||(c.t==='hol'&&it.stdHol==null);
+    var val=resolveStd(it,c.t);
+    var disp = inh ? '同' : (''+val);
+    return '<div class="tcb'+(inh?' same':'')+(c.t==='hol'?' hol':'')+'"><div class="lb"><span class="tdot '+c.dot+'"></span>'+c.lb+'</div>'
+      +'<div class="stepm"><button onclick="bumpStd(\''+c.t+'\',-0.5)">−</button>'
+      +'<span class="v" onclick="typeStd(\''+c.t+'\')">'+disp+'</span>'
+      +'<button onclick="bumpStd(\''+c.t+'\',0.5)">＋</button></div></div>';
+  }).join('');
+}
+function bumpStd(t,d){ var it=DB.items[sel]; var nv=Math.max(0,Math.round((resolveStd(it,t)+d)*2)/2);
+  if(t==='ph'){ it.stdPH=(nv===it.std?null:nv); } else if(t==='hol'){ it.stdHol=(nv===it.std?null:nv); } else { it.std=nv; }
+  save(); fillStd3(); }
+function typeStd(t){ var it=DB.items[sel]; var inh=(t==='ph'&&it.stdPH==null)||(t==='hol'&&it.stdHol==null);
+  var v=prompt(t==='wk'?'平日標準量':(t==='ph'?'平假日標準量（留空＝同平日）':'假日標準量（留空＝同平日）'), inh?'':resolveStd(it,t));
+  if(v===null)return; v=(''+v).trim();
+  if(t!=='wk' && v===''){ if(t==='ph')it.stdPH=null; else it.stdHol=null; save(); fillStd3(); return; }
+  var n=parseFloat(v); if(isNaN(n))return; n=Math.max(0,n);
+  if(t==='ph'){ it.stdPH=(n===it.std?null:n); } else if(t==='hol'){ it.stdHol=(n===it.std?null:n); } else { it.std=n; }
+  save(); fillStd3(); }
 function setItemBand(b){ DB.items[sel].band=b; save(); loadItem(sel); }
 function editField(f){ var it=DB.items[sel]; var v=prompt('修改 '+f, it[f]); if(v===null)return; if(f==='std'||f==='min'){ v=parseFloat(v); if(isNaN(v))return; } it[f]=v; save(); loadItem(sel); }
 function toggleField(f){ var it=DB.items[sel]; it[f]=!it[f]; save(); loadItem(sel); }
-function addItem(){ var n=prompt('新品項名稱'); if(!n)return; DB.items.push({name:n,area:DB.areas[0].name,unit:'份',std:1,min:10,band:'none',daily:false,enabled:true,cat:'',days:[]}); sel=DB.items.length-1; save(); loadItem(sel); }
+function addItem(){ var n=prompt('新品項名稱'); if(!n)return; DB.items.push({name:n,area:'',unit:'份',std:1,min:10,band:'none',daily:false,enabled:true,cat:'',days:[]}); sel=DB.items.length-1; save(); loadItem(sel); }
 function delItem(){ if(!DB.items.length)return; var it=DB.items[sel]; if(!it)return;
   if(!confirm('刪除「'+it.name+'」？此動作無法復原。')) return;
   DB.items.splice(sel,1); if(sel>=DB.items.length) sel=Math.max(0,DB.items.length-1);
