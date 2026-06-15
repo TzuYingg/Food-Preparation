@@ -235,6 +235,55 @@
   .it .whoTag{font-size:11px; font-weight:800; border-radius:7px; padding:3px 9px; flex:none;}
   .it .whoTag.un{background:var(--tint); color:var(--ink3);}
   .tierTag{font-size:10px; font-weight:800; color:var(--accent); background:rgba(191,91,61,.12); border-radius:6px; padding:2px 7px; margin-left:4px;}
+  .curedit{font-family:"DM Mono",monospace; font-weight:500; font-size:14px; color:var(--danger); border:1.5px solid var(--danger-line); background:#fff; border-radius:9px; padding:5px 12px; cursor:pointer;}
+  .curedit .u{font-family:-apple-system,"PingFang TC",sans-serif; color:var(--ink3); font-size:11px; margin-left:1px; font-weight:700;}
+  .step .cdone{width:auto !important; padding:0 10px; color:var(--ok); font-weight:800; font-size:15px; border-left:1.5px solid var(--line);}
+
+  /* 站別負責人鈕 */
+  .ownbtn{margin-left:auto; display:inline-flex; align-items:center; gap:6px; border:1.5px solid var(--line); background:#fff; border-radius:20px; padding:3px 11px 3px 4px; font-size:12px; font-weight:800; color:var(--ink);}
+  .ownbtn.unset{border-style:dashed; color:var(--ink3); padding:6px 12px;}
+  .ownbtn .ava{width:24px; height:24px; object-fit:contain;}
+  .ar .okmk{margin-left:auto; color:var(--ok); font-weight:800; font-size:16px;}
+  /* 工作分配 簽核 / 儲存 / 複製 */
+  .signed{display:flex; align-items:center; gap:7px; background:#EEF5EF; border:1.5px solid #CFE6D5; border-radius:12px; padding:9px 12px; margin-bottom:10px; font-size:12px; font-weight:800; color:#3f6d4c;}
+  .signed img{width:22px; height:22px; object-fit:contain;}
+  .frow{display:flex; gap:8px;}
+  .savebtn{flex:1; background:var(--ink); color:#fff; border:none; border-radius:13px; padding:14px; font-size:14px; font-weight:800;}
+  .copybtn{flex:1; background:#fff; color:var(--ink); border:1.5px solid var(--line); border-radius:13px; padding:14px; font-size:14px; font-weight:800;}
+  /* 新增任務挑選清單 */
+  .picklist{max-height:52vh; overflow:auto; margin-top:4px;}
+  .pick-custom{display:flex; align-items:center; justify-content:center; gap:7px; border:1.5px dashed var(--accent); color:var(--accent); background:rgba(191,91,61,.05); border-radius:12px; padding:12px; font-size:13px; font-weight:800; margin-bottom:11px;}
+  .pick-cat{font-size:11px; font-weight:800; color:var(--ink2); display:flex; align-items:center; gap:7px; padding:6px 4px 7px;}
+  .pick-cat .dot{width:8px; height:8px; border-radius:3px;}
+  .pick-item{display:flex; align-items:center; gap:9px; padding:11px 12px; border:1.5px solid var(--line); border-radius:12px; margin-bottom:7px; background:#fff;}
+  .pick-item .nm{font-size:15px; font-weight:800; flex:1;}
+  .pick-item .ptag{font-size:11px; font-weight:800; border-radius:7px; padding:3px 9px;}
+  .pick-item .ptag.un{background:var(--tint); color:var(--ink3);}
+  .pick-item .plus{width:28px; height:28px; border-radius:8px; background:var(--ink); color:#fff; font-size:17px; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none;}
+  /* 後台員工 職稱 */
+  .strow2{background:#fff; border:1.5px solid var(--line); border-radius:13px; padding:11px 12px; margin:0 14px 8px;}
+  .strow2-top{display:flex; align-items:center; gap:10px;}
+  .strow2-top img{width:34px; height:34px; object-fit:contain;}
+  .strow2-top .nm{font-size:15px; font-weight:800;}
+  .strow2-top .sp{margin-left:auto; display:flex; align-items:center; gap:6px;}
+  .strow2 .roleseg{display:flex; gap:5px; margin-top:10px; flex-wrap:wrap;}
+  .strow2 .roleseg b{font-size:12px; font-weight:800; padding:6px 11px; border-radius:9px; background:var(--tint); color:var(--ink2);}
+  .strow2 .roleseg b.on{background:var(--accent); color:#fff;}
+  /* 快照圖片（離畫面組裝用） */
+  #snapStage{position:fixed; left:-9999px; top:0; width:380px; background:#FBF7F0; padding:16px;}
+  .snapcard{background:#fff; border:1.5px solid #ECE5D8; border-radius:14px; padding:14px;}
+  .snapcard .sh{font-size:15px; font-weight:800; color:#4F4A43;}
+  .snapcard .sd{font-size:11px; font-weight:700; color:#ADA79C; padding:3px 0 11px; border-bottom:1px solid #ECE5D8; margin-bottom:9px;}
+  .snapcard .prow{display:flex; align-items:flex-start; gap:9px; padding:8px 0;}
+  .snapcard .prow+.prow{border-top:1px solid #ECE5D8;}
+  .snapcard .pn{font-size:14px; font-weight:800; min-width:72px; flex:none; display:flex; align-items:center; gap:7px; color:#4F4A43;}
+  .snapcard .pn img{width:24px; height:24px; object-fit:contain;}
+  .snapcard .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .snapcard .sc{display:inline-flex; align-items:center; gap:5px; background:#FBF8F2; border:1.5px solid #ECE5D8; border-radius:10px; padding:4px 10px; font-size:13px; font-weight:800; color:#4F4A43;}
+  .snapcard .sc .lk{font-size:8px; font-weight:800; color:#fff; background:#D7263D; border-radius:4px; padding:1px 4px;}
+  .snapcard .un .pn{color:#ADA79C;}
+  .snapcard .sf{margin-top:10px; padding-top:9px; border-top:1px solid #ECE5D8; font-size:11px; font-weight:700; color:#857F75; display:flex; align-items:center; gap:6px;}
+  .snapcard .sf img{width:18px;height:18px;object-fit:contain;}
   #ef-std3{display:flex; gap:7px;}
   #ef-std3 .tcb{flex:1; text-align:center;}
   #ef-std3 .tcb .lb{font-size:11px; font-weight:800; color:var(--ink2); margin-bottom:5px;}
@@ -268,7 +317,7 @@
     <div class="seg"><div class="segb" id="segT" onclick="setV('time')">依時段</div><div class="segb" id="segP" onclick="setV('people')">依人</div><div class="segb" id="segC" onclick="setV('cat')">依分類</div></div>
     <div class="attend" id="attend"></div>
     <div class="key">
-      <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">無庫存</div></span></div>
+      <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">盤點不足</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開班前</div><div class="kn">最急</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--am)"></span><span><div class="ku">早段</div><div class="kn">6:30–10:00</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--mid)"></span><span><div class="ku">午段</div><div class="kn">10:00–打烊</div></span></div>
@@ -276,8 +325,12 @@
     <div class="hint" id="boardTip"></div>
     <div id="stage"></div>
     <div class="footwrap">
+      <div id="signbar"></div>
       <button class="addbtn" onclick="addTask()">＋ 新增任務</button>
-      <button class="linebtn" onclick="sendLine()">傳送至 LINE<span class="s">推送到煮茶群</span></button>
+      <div class="frow">
+        <button class="savebtn" onclick="pickSaver()">儲存（簽核）</button>
+        <button class="copybtn" onclick="copySnapshot()">🖼 複製快照</button>
+      </div>
     </div>
   </div>
 
@@ -325,6 +378,8 @@
   <button id="nAdmin" onclick="go('admin')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 H20"/><path d="M4 12 H20"/><path d="M4 16.5 H20"/><circle cx="9" cy="7.5" r="2.3" fill="#fff"/><circle cx="15" cy="12" r="2.3" fill="#fff"/><circle cx="8" cy="16.5" r="2.3" fill="#fff"/></svg></span><span class="lab">後台</span></button>
 </div>
 <div id="sheet"></div>
+<div id="snapStage"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -355,7 +410,7 @@ var BNAME={none:'待排',pre:'開班前',am:'早段',mid:'午段'};
 var DEFAULT={
   areas:[{name:'煎台',icon:'pan',color:'var(--grill)'},{name:'麵包',icon:'toast',color:'var(--bread)'},{name:'飲料',icon:'cup',color:'var(--drink)'}],
   bands:{pre:{name:'開班前',time:'最急 · 開店前完成'},am:{name:'早段',time:'6:30–10:00'},mid:{name:'午段',time:'10:00–打烊'}},
-  staff:[{name:'Jen',animal:'lion',enabled:true},{name:'KaKa',animal:'sheep',enabled:true},{name:'Perry',animal:'penguin',enabled:true},{name:'RX',animal:'squirrel',enabled:true},{name:'于瑄',animal:'koala',enabled:true},{name:'小愛',animal:'frog',enabled:true},{name:'汝汝',animal:'rabbit',enabled:true}],
+  staff:[{name:'Jen',animal:'lion',enabled:true,role:'老闆'},{name:'KaKa',animal:'sheep',enabled:true,role:'老闆娘'},{name:'Perry',animal:'penguin',enabled:true,role:'正職'},{name:'RX',animal:'squirrel',enabled:true,role:'正職'},{name:'于瑄',animal:'koala',enabled:true,role:'工讀'},{name:'小愛',animal:'frog',enabled:true,role:'工讀'},{name:'汝汝',animal:'rabbit',enabled:true,role:'工讀'}],
   items:[
     {name:'蛋沙拉',area:'煎台',unit:'盒',std:2,min:20,band:'pre',daily:false,enabled:true,cat:'餡料備品',days:[1,3,4,6]},
     {name:'法式吐司',area:'煎台',unit:'份',std:10,min:12,band:'am',daily:false,enabled:true,cat:'餡料備品',days:[]},
@@ -395,6 +450,8 @@ function applyData(v){
   var t=todayStr();
   if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tasks:[]};
   if(!DB.dayType) DB.dayType={};
+  (DB.staff||[]).forEach(function(s){ if(!s.role){ s.role = s.animal==='lion'?'老闆':s.animal==='sheep'?'老闆娘':(s.animal==='penguin'||s.animal==='squirrel')?'正職':'工讀'; } });
+  if(!DB.days[t].stationOwner) DB.days[t].stationOwner={};
   DB.cur=t;
 }
 function day(){ return DB.days[DB.cur]; }
@@ -412,6 +469,18 @@ function load(cb){
 
 /* ====== helpers ====== */
 function animalOf(n){ for(var i=0;i<DB.staff.length;i++){ if(DB.staff[i].name===n) return DB.staff[i].animal; } return null; }
+var ELIGIBLE_ROLES=['老闆','老闆娘','正職'];
+function roleOf(n){ for(var i=0;i<DB.staff.length;i++){ if(DB.staff[i].name===n) return DB.staff[i].role||'工讀'; } return '工讀'; }
+function eligibleStaff(){ return DB.staff.filter(function(s){ return isWorking(s.name) && ELIGIBLE_ROLES.indexOf(s.role||'工讀')>=0; }); }
+function stationOwner(area){ var so=day().stationOwner||{}; var n=so[area]; return (n&&isWorking(n))?n:''; }
+function pickOwner(e,area){ if(e&&e.stopPropagation)e.stopPropagation(); var elig=eligibleStaff();
+  var cur=stationOwner(area);
+  var rows = elig.length ? elig.map(function(s){ var on=(cur===s.name); return '<div class="ar" onclick="setOwner(\''+area+'\',\''+s.name+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span>'+(on?'<span class="okmk">✓</span>':'')+'</div>'; }).join('') : '<div class="hint" style="padding:14px">今天沒有可指定的負責人（需上班且職稱為老闆/老闆娘/正職）</div>';
+  var clearBtn = cur ? '<button class="b-close" onclick="setOwner(\''+area+'\',\'\')">清除</button>' : '';
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+area+'確認 · 誰負責</div><div class="sheet-label">今天上班可負責的人</div><div class="arlist">'+rows+'</div><div class="sheet-actions">'+clearBtn+'<button class="b-done" onclick="closeSheet()">完成</button></div></div>';
+}
+function setOwner(area,name){ var D=day(); if(!D.stationOwner)D.stationOwner={}; if(name) D.stationOwner[area]=name; else delete D.stationOwner[area]; save(); closeSheet(); renderCount(); }
 function avImg(n,cls){ var a=animalOf(n); return a&&AV[a] ? '<img class="'+cls+'" src="'+AV[a]+'">' : '<span class="av-un">?</span>'; }
 function bvar(b){ return b==='none'?'var(--none)':b==='pre'?'var(--pre)':b==='am'?'var(--am)':'var(--mid)'; }
 function areaBy(n){ for(var i=0;i<DB.areas.length;i++){ if(DB.areas[i].name===n) return DB.areas[i]; } return {name:n,icon:'dot',color:'var(--ink3)'}; }
@@ -424,7 +493,10 @@ function tomorrowTier(){ return dayTypeOf(datePlus(DB.cur,1)); }
 function effStd(it){ return resolveStd(it, tomorrowTier())||0; }
 function curOf(name){ var c=day().counts; var it=itemBy(name); return (c[name]!=null)?c[name]:(it?effStd(it):0); }
 function itemBy(name){ for(var i=0;i<DB.items.length;i++){ if(DB.items[i].name===name) return DB.items[i]; } return null; }
-function cToggle(name){ var it=itemBy(name); var s=effStd(it); var low=curOf(name)<s; day().counts[name]= low? s : 0; save(); renderCount(); }
+var editCount=null;
+function openCount(name){ editCount=name; renderCount(); }
+function closeCount(e){ if(e&&e.stopPropagation)e.stopPropagation(); editCount=null; renderCount(); }
+function cToggle(name){ var it=itemBy(name); var s=effStd(it); var wasLow=curOf(name)<s; day().counts[name]= wasLow? s : 0; editCount = (day().counts[name]<s)? name : null; save(); renderCount(); }
 function cBump(name,d){ var it=itemBy(name); var v=(day().counts[name]!=null?day().counts[name]:effStd(it)); day().counts[name]=Math.max(0,Math.round((v+d)*2)/2); save(); renderCount(); }
 /* ====== 日期 / 明日類別（沿用煮茶對照：日六=假日、一=平假日、二~五=平日） ====== */
 var TIERMAP={0:'hol',1:'ph',2:'wk',3:'wk',4:'wk',5:'wk',6:'hol'};
@@ -492,7 +564,7 @@ function renderCount(){
   var cols=document.getElementById('countCols'); cols.classList.toggle('editing', editMode);
   var html='';
   if(editMode){
-    var groups=DB.areas.map(function(a){ return {key:a.name, name:a.name+' 盤', color:a.color, icon:a.icon, un:false}; });
+    var groups=DB.areas.map(function(a){ return {key:a.name, name:a.name+' 確認', color:a.color, icon:a.icon, un:false}; });
     groups.push({key:'', name:'未分配（不盤）', color:'var(--accent)', icon:'dot', un:true});
     groups.forEach(function(g){
       var idxs=[]; DB.items.forEach(function(it,i){ var here = g.un ? !assigned(it) : (it.area===g.key); if(here) idxs.push(i); });
@@ -520,15 +592,24 @@ function renderCount(){
     var its=DB.items.filter(function(it){return it.area===a.name;});
     if(!its.length) return;
     var lowN=its.filter(function(it){return curOf(it.name)<effStd(it);}).length;
-    html+='<div class="col"><div class="band-ah"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+' 盤<span class="ct">'+its.length+'項'+(lowN?' · 缺'+lowN:'')+'</span></div>';
+    var owner=stationOwner(a.name);
+    var ownBtn = owner ? '<button class="ownbtn" onclick="pickOwner(event,\''+a.name+'\')"><img class="ava" src="'+AV[animalOf(owner)]+'">'+owner+'</button>'
+                       : '<button class="ownbtn unset" onclick="pickOwner(event,\''+a.name+'\')">＋ 指定負責人</button>';
+    html+='<div class="col"><div class="band-ah"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'確認<span class="ct" style="margin-left:8px">'+its.length+'項'+(lowN?' · 缺'+lowN:'')+'</span>'+ownBtn+'</div>';
     its.forEach(function(it){
       var s=effStd(it), cur=curOf(it.name), low=cur<s;
       var tt=tomorrowTier(), tierTag=(tt!=='wk')?'<span class="tierTag">'+TIERNAME[tt]+'</span>':'';
       var tags=(it.daily?'<span class="t-day">每日</span>':'')+((low&&cur<=0)?'<span class="t-urg">急缺</span>':'');
       var tagrow = tags ? ('<div class="ctags">'+tags+'</div>') : '';
       var sw='<div class="sw'+(low?' off':'')+'" onclick="cToggle(\''+it.name+'\')"><div class="kn"></div></div>';
-      var curEl = low ? ('<div class="step"><button onclick="cBump(\''+it.name+'\',-0.5)">−</button><span class="vl">'+cur+'</span><button onclick="cBump(\''+it.name+'\',0.5)">＋</button><span class="u">'+it.unit+'</span></div>')
-                      : ('<span class="mnum">'+cur+'<span class="u">'+it.unit+'</span></span>');
+      var curEl;
+      if(low){
+        curEl = (editCount===it.name)
+          ? ('<div class="step"><button onclick="cBump(\''+it.name+'\',-0.5)">−</button><span class="vl">'+cur+'</span><button onclick="cBump(\''+it.name+'\',0.5)">＋</button><span class="u">'+it.unit+'</span><button class="cdone" onclick="closeCount(event)">✓</button></div>')
+          : ('<button class="curedit" onclick="openCount(\''+it.name+'\')">'+cur+'<span class="u">'+it.unit+'</span></button>');
+      } else {
+        curEl = '<span class="mnum">'+cur+'<span class="u">'+it.unit+'</span></span>';
+      }
       html+='<div class="ccard'+(low?' low':'')+'"><div class="crow"><b class="cname">'+it.name+'</b>'+sw+'</div>'+tagrow
         +'<div class="cmeta"><span class="mlab">目前</span>'+curEl+'<span class="msep"></span><span class="mlab">標準</span><span class="mnum">'+s+'<span class="u">'+it.unit+'</span></span>'+tierTag+'</div></div>';
     });
@@ -543,8 +624,7 @@ function genTasks(){
     var cur=curOf(it.name), low=cur<effStd(it);
     if(!(low||dueToday(it))) return;
     if(D.tasks.some(function(t){return t.name===it.name;})) return;
-    var out=(cur<=0);
-    D.tasks.push({id:'t'+Date.now()+'_'+(added),name:it.name,owner:'未指派',band:out?'pre':(it.band||'none'),min:it.min,stock:out?'out':'ok',done:false,cat:it.cat||''});
+    D.tasks.push({id:'t'+Date.now()+'_'+(added),name:it.name,owner:'未指派',band:low?'pre':(it.band||'none'),min:it.min,stock:low?'out':'ok',done:false,cat:it.cat||''});
     added++;
   });
   save(); 
@@ -583,7 +663,7 @@ function renderPeople(){
   if(un.length) out+=rowFromTasks('未指派',un,true);
   return out;
 }
-function renderBoard(){ document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); }
+function renderBoard(){ document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); renderSign(); }
 function catChip(it){ var s=taskSrc(it); var stag=s==='short'?'<span class="stag short">臨時</span>':'<span class="stag plan">排定</span>';
   return '<div class="chip'+(it.done?' done':'')+'" data-id="'+it.id+'">'+lackTag(it)+stag+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+it.name+'<span class="cm">'+it.min+'分</span></div>'; }
 function renderCat(){
@@ -622,17 +702,82 @@ function closeSheet(){ document.getElementById('sheet').classList.remove('on'); 
 function renderSheet(){ var it=byId(sheetId); if(!it)return;
   var bs=[{k:'none',n:'待排'},{k:'pre',n:'開班前'},{k:'am',n:'早段'},{k:'mid',n:'午段'}];
   var picks=bs.map(function(b){ var dot=b.k==='none'?'':'<span class="dot" style="background:'+bvar(b.k)+'"></span>'; return '<b class="'+(it.band===b.k?'on':'')+'" onclick="setBand(\''+b.k+'\')">'+dot+b.n+'</b>'; }).join('');
-  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+it.name+'</div><div class="sheet-label">時段</div><div class="bandpick">'+picks+'</div><div class="sheet-row"><span>急缺（無庫存・必補）</span><div class="tg danger'+(it.stock==='out'?' on':'')+'" onclick="toggleLack()"><i></i></div></div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">關閉</button><button class="b-done" onclick="sheetDone()">'+(it.done?'取消完成':'標完成')+'</button></div></div>';
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+it.name+'</div><div class="sheet-label">時段</div><div class="bandpick">'+picks+'</div><div class="sheet-row"><span>急缺（盤點不足・必補）</span><div class="tg danger'+(it.stock==='out'?' on':'')+'" onclick="toggleLack()"><i></i></div></div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">關閉</button><button class="b-done" onclick="sheetDone()">'+(it.done?'取消完成':'標完成')+'</button></div></div>';
 }
 function setBand(b){ var it=byId(sheetId); it.band=b; save(); renderBoard(); renderSheet(); }
 function toggleLack(){ var it=byId(sheetId); if(it.stock==='out'){it.stock='ok';}else{it.stock='out'; it.band='pre';} save(); renderBoard(); renderSheet(); }
 function sheetDone(){ var it=byId(sheetId); it.done=!it.done; save(); renderBoard(); closeSheet(); }
 
 /* add task / send line */
-function addTask(){ var n=prompt('新增任務名稱'); if(!n)return; var m=parseInt(prompt('預估幾分鐘？','10'),10); day().tasks.push({id:'t'+Date.now(),name:n,owner:'未指派',band:'none',min:isNaN(m)?10:m,stock:'ok',done:false}); save(); renderBoard(); }
-function sendLine(){ if(!confirm('將目前分工以「以人為主」圖卡推送到煮茶群？\n（可先調整內容再送）')) return;
-  if(GAS_ENDPOINT){ try{ fetch(GAS_ENDPOINT,{method:'POST',body:JSON.stringify({type:'assign',date:DB.cur,tasks:day().tasks,staff:DB.staff,working:day().working,secret:'jenka-tea-push'})}); alert('已送出到煮茶群'); }catch(e){ alert('送出失敗：'+e); } }
-  else { alert('已送出到煮茶群（示意；填入 GAS_ENDPOINT 後實際推送）'); }
+/* ===== 新增任務：挑選清單（不在板上的品項，按種類）＋自訂一次性 ===== */
+function addTask(){
+  var onBoard=day().tasks.map(function(t){return t.name;});
+  var cats=[]; DB.items.forEach(function(it){ if(onBoard.indexOf(it.name)<0){ var c=it.cat||'未分類'; if(cats.indexOf(c)<0)cats.push(c); } });
+  var body='<div class="pick-custom" onclick="addCustomTask()">＋ 自訂任務（僅這次，不存進品項庫）</div>';
+  cats.forEach(function(c){
+    var its=DB.items.filter(function(it){ return (it.cat||'未分類')===c && onBoard.indexOf(it.name)<0; });
+    body+='<div class="pick-cat"><span class="dot" style="background:'+catColor(c==='未分類'?'':c)+'"></span>'+c+'</div>';
+    its.forEach(function(it){
+      var who=assigned(it)?('<span class="ptag" style="background:'+areaBy(it.area).color+';color:#fff">'+it.area+'</span>'):'<span class="ptag un">未分配</span>';
+      body+='<div class="pick-item" onclick="addItemTask(\''+it.name.replace(/'/g,"\\'")+'\')"><span class="nm">'+it.name+'</span>'+who+'<span class="plus">＋</span></div>';
+    });
+  });
+  if(!cats.length) body+='<div class="hint" style="padding:16px">所有品項都已在板上了</div>';
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">新增任務</div><div class="sheet-label">點品項加入板（先進待排）；或自訂一次性任務</div><div class="picklist">'+body+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div></div>';
+}
+function addItemTask(name){ var it=itemBy(name); if(!it)return; if(day().tasks.some(function(t){return t.name===name;}))return;
+  day().tasks.push({id:'t'+Date.now(),name:name,owner:'未指派',band:'none',min:it.min||10,stock:'ok',done:false,cat:it.cat||''}); save(); renderBoard(); addTask(); }
+function addCustomTask(){ var n=prompt('自訂任務名稱（僅這次，不存進品項庫）'); if(!n)return; n=(''+n).trim(); if(!n)return; var m=parseInt(prompt('預估幾分鐘？','10'),10);
+  day().tasks.push({id:'t'+Date.now(),name:n,owner:'未指派',band:'none',min:isNaN(m)?10:m,stock:'ok',done:false,cat:''}); save(); closeSheet(); renderBoard(); }
+
+/* ===== 儲存（簽核） ===== */
+function renderSign(){ var sb=document.getElementById('signbar'); if(!sb)return; var s=day().savedBy;
+  sb.innerHTML = (s&&s.name) ? '<div class="signed"><img src="'+AV[animalOf(s.name)]+'">✓ 由 '+s.name+' 於 '+s.time+' 儲存</div>' : ''; }
+function pickSaver(){ var elig=eligibleStaff();
+  var rows = elig.length ? elig.map(function(s){ return '<div class="ar" onclick="doSave(\''+s.name+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span></div>'; }).join('') : '<div class="hint" style="padding:14px">今天沒有可簽核的人（需上班且職稱為老闆/老闆娘/正職）</div>';
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">儲存（簽核）· 誰儲存</div><div class="sheet-label">記錄是誰、什麼時候定的這份分配</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">取消</button></div></div>';
+}
+function doSave(name){ var d=new Date(); var hh=('0'+d.getHours()).slice(-2), mm=('0'+d.getMinutes()).slice(-2); day().savedBy={name:name,time:hh+':'+mm}; save(); closeSheet(); renderBoard(); }
+
+/* ===== 複製快照（以人為主・圖片） ===== */
+function buildSnapEl(){
+  var D=day(), di=dInfo(DB.cur);
+  var people=DB.staff.map(function(s){return s.name;}).filter(isWorking);
+  var rows='';
+  people.forEach(function(pn){ var ts=D.tasks.filter(function(t){return t.owner===pn;}); if(!ts.length)return;
+    var chips=ts.map(function(t){return '<span class="sc">'+(t.stock==='out'?'<span class="lk">急</span>':'')+t.name+'</span>';}).join('');
+    rows+='<div class="prow"><span class="pn"><img src="'+AV[animalOf(pn)]+'">'+pn+'</span><div class="chips">'+chips+'</div></div>';
+  });
+  var un=D.tasks.filter(function(t){return !isWorking(t.owner);});
+  if(un.length){ rows+='<div class="prow un"><span class="pn">未指派</span><div class="chips">'+un.map(function(t){return '<span class="sc">'+(t.stock==='out'?'<span class="lk">急</span>':'')+t.name+'</span>';}).join('')+'</div></div>'; }
+  var s=D.savedBy; var foot = (s&&s.name)?'<div class="sf"><img src="'+AV[animalOf(s.name)]+'">由 '+s.name+' 於 '+s.time+' 儲存</div>':'';
+  return '<div class="snapcard"><div class="sh">庄腳・收班工作分配</div><div class="sd">'+di.m+'/'+di.dd+'（週'+di.wd+'）· 以人為主</div>'+(rows||'<div style="padding:10px;color:#ADA79C;font-size:13px">尚無任務</div>')+foot+'</div>';
+}
+function copySnapshot(){
+  if(typeof html2canvas==='undefined'){ alert('圖片元件還在載入，請稍候再試一次'); return; }
+  var stage=document.getElementById('snapStage'); stage.innerHTML=buildSnapEl();
+  html2canvas(stage.firstChild,{backgroundColor:'#FBF7F0',scale:2}).then(function(canvas){
+    canvas.toBlob(function(blob){
+      if(!blob){ alert('產生圖片失敗'); stage.innerHTML=''; return; }
+      var file=new File([blob],'工作分配.png',{type:'image/png'});
+      var done=function(){ stage.innerHTML=''; };
+      if(navigator.clipboard && window.ClipboardItem){
+        navigator.clipboard.write([new ClipboardItem({'image/png':blob})])
+          .then(function(){ alert('已複製圖片，貼到 LINE 群即可'); done(); })
+          .catch(function(){ shareOrDownload(file,done); });
+      } else { shareOrDownload(file,done); }
+    },'image/png');
+  }).catch(function(e){ alert('產生圖片失敗：'+e); stage.innerHTML=''; });
+}
+function shareOrDownload(file,done){
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file],title:'工作分配'}).then(done).catch(done);
+  } else {
+    var url=URL.createObjectURL(file); var a=document.createElement('a'); a.href=url; a.download='工作分配.png'; a.click(); URL.revokeObjectURL(url);
+    alert('已下載圖片，可從相簿貼到 LINE'); done();
+  }
 }
 
 /* drag */
@@ -724,12 +869,15 @@ function delItem(){ if(!DB.items.length)return; var it=DB.items[sel]; if(!it)ret
   if(!confirm('刪除「'+it.name+'」？此動作無法復原。')) return;
   DB.items.splice(sel,1); if(sel>=DB.items.length) sel=Math.max(0,DB.items.length-1);
   save(); renderItems(); if(DB.items.length){ loadItem(sel); } else { document.getElementById('ef-name').textContent='（尚無品項）'; } }
-function renderStaff(){ document.getElementById('stafflist').innerHTML=DB.staff.map(function(s,i){
-  return '<div class="strow"><img src="'+AV[s.animal]+'"><div><div class="nm">'+s.name+'</div><div class="an">'+ANM[s.animal]+'</div></div><div class="sp"><button class="ord" onclick="moveStaff('+i+',-1)">▲</button><button class="ord" onclick="moveStaff('+i+',1)">▼</button><div class="tg'+(s.enabled?' on':'')+'" onclick="toggleStaff('+i+')"><i></i></div></div></div>';
-}).join(''); }
+function renderStaff(){ var roles=['老闆','老闆娘','正職','工讀'];
+  document.getElementById('stafflist').innerHTML=DB.staff.map(function(s,i){
+    var seg=roles.map(function(r){ return '<b class="'+((s.role||'工讀')===r?'on':'')+'" onclick="setStaffRole('+i+',\''+r+'\')">'+r+'</b>'; }).join('');
+    return '<div class="strow2"><div class="strow2-top"><img src="'+AV[s.animal]+'"><div class="nm">'+s.name+'</div><div class="sp"><button class="ord" onclick="moveStaff('+i+',-1)">▲</button><button class="ord" onclick="moveStaff('+i+',1)">▼</button><div class="tg'+(s.enabled?' on':'')+'" onclick="toggleStaff('+i+')"><i></i></div></div></div><div class="roleseg">'+seg+'</div></div>';
+  }).join(''); }
+function setStaffRole(i,r){ DB.staff[i].role=r; save(); renderStaff(); }
 function moveStaff(i,d){ var j=i+d; if(j<0||j>=DB.staff.length)return; var t=DB.staff[i]; DB.staff[i]=DB.staff[j]; DB.staff[j]=t; save(); renderStaff(); }
 function toggleStaff(i){ DB.staff[i].enabled=!DB.staff[i].enabled; save(); renderStaff(); }
-function addStaff(){ var n=prompt('員工姓名'); if(!n)return; var used=DB.staff.map(function(s){return s.animal;}); var free=ANIMKEYS.filter(function(a){return used.indexOf(a)<0;}); var an=free.length?free[0]:'rabbit'; DB.staff.push({name:n,animal:an,enabled:true}); save(); renderStaff(); }
+function addStaff(){ var n=prompt('員工姓名'); if(!n)return; var used=DB.staff.map(function(s){return s.animal;}); var free=ANIMKEYS.filter(function(a){return used.indexOf(a)<0;}); var an=free.length?free[0]:'rabbit'; DB.staff.push({name:n,animal:an,enabled:true,role:'工讀'}); save(); renderStaff(); }
 function renderAreas(){ document.getElementById('arealist').innerHTML=DB.areas.map(function(a,i){ var cnt=DB.items.filter(function(it){return it.area===a.name;}).length;
   return '<div class="strow"><span class="aicChip" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><div><div class="nm">'+a.name+'區</div><div class="an">'+cnt+' 個品項</div></div><div class="sp"><button class="ord" onclick="moveArea('+i+',-1)">▲</button><button class="ord" onclick="moveArea('+i+',1)">▼</button></div></div>'; }).join(''); }
 function moveArea(i,d){ var j=i+d; if(j<0||j>=DB.areas.length)return; var t=DB.areas[i]; DB.areas[i]=DB.areas[j]; DB.areas[j]=t; save(); renderAreas(); renderCount(); }
