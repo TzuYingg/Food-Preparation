@@ -449,11 +449,13 @@
       <div class="segb" id="tI" onclick="setT('I')">品項</div>
       <div class="segb" id="tS" onclick="setT('S')">員工</div>
       <div class="segb" id="tA" onclick="setT('A')">工作區</div>
+      <div class="segb" id="tC" onclick="setT('C')">種類</div>
       <div class="segb" id="tB" onclick="setT('B')">時段</div>
     </div>
     <div class="page on" id="aI"><div id="itemsAdmin"></div></div>
     <div class="page" id="aS"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addStaff()">＋ 新增員工</button><div id="stafflist"></div></div>
     <div class="page" id="aA"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addArea()">＋ 新增工作區</button><div id="arealist"></div></div>
+    <div class="page" id="aC"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addCat()">＋ 新增種類</button><div id="catlist"></div></div>
     <div class="page" id="aB"><div class="hint" style="text-align:left;padding:12px 18px 4px">名稱可改（點一下），顏色鎖定</div><div id="bandlist"></div></div>
     <div class="setup" id="setup"></div>
   </div>
@@ -549,6 +551,37 @@
 .idWk.muted{opacity:.4;pointer-events:none;}
 .idDel{width:100%;margin-top:4px;background:var(--brick-bg);color:var(--brick);border:1px solid var(--brick-line);border-radius:11px;padding:12px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:7px;}
 .idDel svg{width:16px;height:16px;}
+
+/* 退冰：編輯品項開關提示 */
+.idTgRow .fl2 .tbHint{display:block;font-size:11px;font-weight:400;color:var(--ink3);margin-top:3px;}
+/* 退冰：後台清單顯著標示 */
+.iaRow.tb{border-left:3px solid var(--accent);background:#FBF1EC;}
+.tbTag{display:inline-flex;align-items:center;gap:3px;background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;padding:2px 7px 2px 5px;border-radius:7px;margin-left:7px;}
+.tbTag .tbico{width:10px;height:10px;}
+/* 退冰：盤點頁打勾清單 */
+.tbsec{border-top:1px solid var(--line);background:#FCFAF6;margin-top:2px;}
+.tbsec-h{display:flex;align-items:center;gap:7px;padding:11px 14px 4px;color:var(--ink2);}
+.tbsec-h .tbico{width:15px;height:15px;}
+.tbsec-t{font-size:12px;font-weight:700;letter-spacing:1px;}
+.tbsec-c{font-size:11px;color:var(--ink3);margin-left:auto;}
+.tbrow{display:flex;align-items:center;gap:13px;padding:12px 14px;border-top:1px solid #F4EFE6;cursor:pointer;}
+.tbrow:first-of-type{border-top:none;}
+.tbchk{width:22px;height:22px;border:1.5px solid #CFC8BA;border-radius:6px;flex:none;position:relative;}
+.tbchk.on{background:var(--btn-ink);border-color:var(--btn-ink);}
+.tbchk.on::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.tbnm{flex:1;min-width:0;font-size:15.5px;font-weight:500;color:var(--ink);}
+.tbqty{flex:none;font-size:13px;color:var(--ink2);}
+.tbqty .tbq-l{font-size:11.5px;color:var(--ink3);margin-right:2px;}
+.tbrow.done .tbnm,.tbrow.done .tbqty,.tbrow.done .tbq-l{color:var(--ink3);}
+/* 種類管理 */
+.catrow{cursor:pointer;}
+.catDot{width:13px;height:13px;border-radius:50%;flex:none;}
+.catrow .catTx{flex:1;min-width:0;}
+.catChev{color:#CFC8BA;font-size:18px;margin-left:2px;}
+.catSwWrap{display:flex;gap:9px;flex-wrap:wrap;}
+.catSw{width:38px;height:38px;border-radius:10px;cursor:pointer;}
+.catSw.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);}
+.catNote{font-size:12px;color:var(--ink3);background:var(--tint);border-radius:9px;padding:10px 12px;margin:6px 0 14px;line-height:1.5;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -581,6 +614,7 @@ var BNAME={none:'待排',pre:'開店前',am:'早段',mid:'午段'};
 var DEFAULT={
   areas:[{name:'煎台',icon:'pan',color:'var(--grill)'},{name:'麵包',icon:'toast',color:'var(--bread)'}],
   bands:{pre:{name:'開店前',time:'最急 · 開店前完成'},am:{name:'早段',time:'6:30–10:00'},mid:{name:'午段',time:'10:00–打烊'}},
+  cats:[{name:'蔬菜備料',color:'#7FBF8E'},{name:'餡料備品',color:'#F2A766'},{name:'肉類醃製',color:'#EF8A6B'},{name:'醬料',color:'#F3C24B'},{name:'點貨',color:'#6FB3D6'}],
   staff:[{name:'Jen',animal:'lion',enabled:true,role:'老闆'},{name:'KaKa',animal:'sheep',enabled:true,role:'老闆娘'},{name:'Perry',animal:'penguin',enabled:true,role:'正職'},{name:'RX',animal:'squirrel',enabled:true,role:'正職'},{name:'于瑄',animal:'koala',enabled:true,role:'工讀'},{name:'小愛',animal:'frog',enabled:true,role:'工讀'},{name:'汝汝',animal:'rabbit',enabled:true,role:'工讀'}],
   items:[
     {name:'蛋沙拉',area:'煎台',unit:'盒',std:2,min:20,band:'pre',daily:false,enabled:true,cat:'餡料備品',days:[1,3,4,6]},
@@ -612,20 +646,23 @@ function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMon
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
-  else { DB=v; ['areas','bands','staff','items'].forEach(function(k){ if(!DB[k]) DB[k]=clone(DEFAULT[k]); }); if(!DB.days)DB.days={}; }
+  else { DB=v; ['areas','bands','staff','items','cats'].forEach(function(k){ if(!DB[k]||!DB[k].length) DB[k]=clone(DEFAULT[k]); }); if(!DB.days)DB.days={}; }
   // 舊資料相容：補上種類(cat)與排定週幾(days)
   (DB.items||[]).forEach(function(it){ var d=DEFAULT.items.filter(function(x){return x.name===it.name;})[0];
     if(it.cat===undefined||it.cat===null) it.cat = d?d.cat:'';
     if(!Array.isArray(it.days)) it.days = d?clone(d.days):[];
+    if(it.tuibing===undefined) it.tuibing=false;
     if(it.enabled===false){ it.area=''; it.enabled=true; } });
+  if(!DB.cats||!DB.cats.length) DB.cats=clone(DEFAULT.cats);
   // 移除「飲料」工作區（既有資料一併清除，其品項改為未分配）
   DB.areas = (DB.areas||[]).filter(function(a){ return a.name!=='飲料'; });
   (DB.items||[]).forEach(function(it){ if(it.area==='飲料') it.area=''; });
   var t=todayStr();
-  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tasks:[]};
+  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:[]};
   if(!DB.dayType) DB.dayType={};
   (DB.staff||[]).forEach(function(s){ if(!s.role){ s.role = s.animal==='lion'?'老闆':s.animal==='sheep'?'老闆娘':(s.animal==='penguin'||s.animal==='squirrel')?'正職':'工讀'; } });
   if(!DB.days[t].stationOwner) DB.days[t].stationOwner={};
+  if(!DB.days[t].tuibing) DB.days[t].tuibing={};
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
 }
@@ -700,7 +737,7 @@ function renderStationTabs(){ var el=document.getElementById('stationTabs'); if(
   el.innerHTML=h; }
 /* 每天午夜 00:00 自動換到新的一天、清空當日盤點＋退出編輯 */
 function checkRollover(){ if(!DB||!DB.cur) return; var t=todayStr(); if(t===DB.cur) return;
-  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tasks:[], stationOwner:{}};
+  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:[], stationOwner:{}};
   DB.cur=t; editCount=null; editMode=false; dtOpen=false; save();
   var pc=document.querySelector('#page-count.on'); var pb=document.querySelector('#page-board.on');
   if(pc) go('count'); else if(pb) go('board'); }
@@ -747,6 +784,7 @@ function eAdd(area){ var label=area?('「'+area+'」'):'未分配'; var n=prompt
   if(DB.items.some(function(x){return x.name===n;})){ alert('已有同名品項'); return; }
   DB.items.push({name:n,area:area,unit:'份',std:1,min:10,band:'none',daily:false,enabled:true,cat:'',days:[]}); save(); renderCount(); }
 
+function tbToggle(name){ var D=day(); if(!D.tuibing)D.tuibing={}; D.tuibing[name]=!D.tuibing[name]; save(); renderCount(); }
 function renderCount(){
   renderCountTop();
   renderStationTabs();
@@ -755,15 +793,17 @@ function renderCount(){
   var html='';
   DB.areas.forEach(function(a){
     if(single && a.name!==countStation) return;
-    var its=DB.items.filter(function(it){return it.area===a.name;});
-    if(!its.length) return;
+    var allits=DB.items.filter(function(it){return it.area===a.name;});
+    if(!allits.length) return;
+    var its=allits.filter(function(it){return !it.tuibing;});
+    var tb=allits.filter(function(it){return it.tuibing;});
     var isCounted=function(n){return day().counts[n]!=null;};
     var shortN=its.filter(function(it){return isCounted(it.name)&&curOf(it.name)<effStd(it);}).length;
     var unN=its.filter(function(it){return !isCounted(it.name);}).length;
     var owner=stationOwner(a.name);
     var ownBtn = owner ? '<button class="ownbtn" onclick="pickOwner(event,\''+a.name+'\')"><img class="ava" src="'+AV[animalOf(owner)]+'">'+owner+'</button>'
                        : '<button class="ownbtn unset" onclick="pickOwner(event,\''+a.name+'\')">＋ 指定負責人</button>';
-    var meta=its.length+'項'+(shortN?' · <b>缺'+shortN+'</b>':'')+(unN?' · <span class="mb-un">未點'+unN+'</span>':'');
+    var meta=its.length?(its.length+'項'+(shortN?' · <b>缺'+shortN+'</b>':'')+(unN?' · <span class="mb-un">未點'+unN+'</span>':'')):(tb.length+' 項退冰');
     html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body tilebody">';
     its.forEach(function(it){
       var s=effStd(it), cur=curOf(it.name), cd=isCounted(it.name), low=cd&&cur<s;
@@ -788,11 +828,20 @@ function renderCount(){
       html+='<div class="tile '+state+'"><div class="top"><b class="nm">'+it.name+'</b>'+(tags?'<div class="tags">'+tags+'</div>':'')+sw+'</div>'
         +'<div class="bot">'+line+'</div></div>';
     });
-    html+='</div></div>';
+    html+='</div>';
+    if(tb.length){
+      html+='<div class="tbsec"><div class="tbsec-h">'+TBICON+'<span class="tbsec-t">退冰</span><span class="tbsec-c">'+tb.length+'項 · 退好打勾</span></div>';
+      tb.forEach(function(it){
+        var done=!!(day().tuibing&&day().tuibing[it.name]);
+        html+='<div class="tbrow'+(done?' done':'')+'" onclick="tbToggle(\''+it.name+'\')"><span class="tbchk'+(done?' on':'')+'"></span><b class="tbnm">'+it.name+'</b><span class="tbqty"><span class="tbq-l">需</span> '+effStd(it)+' <span class="tbq-u">'+it.unit+'</span></span></div>';
+      });
+      html+='</div>';
+    }
+    html+='</div>';
   });
   if(!html) html='<div class="hint" style="padding:22px">這一站沒有品項</div>';
   cols.innerHTML=html;
-  var unc2=DB.items.filter(function(it){return assigned(it)&&day().counts[it.name]==null;}).length;
+  var unc2=DB.items.filter(function(it){return assigned(it)&&!it.tuibing&&day().counts[it.name]==null;}).length;
   var cs=document.getElementById('countStatus');
   if(cs){ var sv=day().countSaved;
     cs.innerHTML=(unc2?('<span class="cs-un">尚有 '+unc2+' 項未點，點完才能產生任務</span>'):('<span class="cs-ok">已全部點完 ✓ 可產生任務</span>'))
@@ -801,10 +850,10 @@ function renderCount(){
 }
 function genTasks(){
   var D=day(), added=0;
-  var unc=DB.items.filter(function(it){return assigned(it)&&D.counts[it.name]==null;});
+  var unc=DB.items.filter(function(it){return assigned(it)&&!it.tuibing&&D.counts[it.name]==null;});
   if(unc.length){ alert('還有 '+unc.length+' 項未點，無法產生任務。\n請先把每一項都點過（料夠按開關轉綠，或點數字填入實際量）。'); return; }
   DB.items.forEach(function(it){
-    if(!assigned(it)) return;
+    if(!assigned(it)||it.tuibing) return;
     var counted=D.counts[it.name]!=null, cur=curOf(it.name), low=counted&&cur<effStd(it);
     if(!(low||dueTomorrow(it))) return;
     if(D.tasks.some(function(t){return t.name===it.name;})) return;
@@ -855,12 +904,12 @@ function renderCat(){
   D.tasks.forEach(function(t){ if(taskSrc(t)==='short') shrt++; else plan++; });
   var head='<div class="todaybar"><span class="tb-t">今日待備</span><span class="tb-n">'+D.tasks.length+'項</span><span class="tb-seg"><i class="plan"></i>排定 '+plan+'</span><span class="tb-seg"><i class="short"></i>臨時 '+shrt+'</span></div>';
   if(!D.tasks.length) return head+'<div class="hint" style="padding:18px">尚未產生任務。先到「盤點」按產生任務。</div>';
-  var lanes=CATS.map(function(c){
+  var lanes=catNames().map(function(c){
     var ts=D.tasks.filter(function(t){return taskCat(t)===c;}); if(!ts.length) return '';
     var tot=ts.reduce(function(a,x){return a+(x.min||0);},0);
     return '<div class="bandc"><div class="bandc-h"><span class="bar" style="background:'+catColor(c)+'"></span>'+c+'<span class="meta">'+ts.length+'項 · 約'+tot+'分</span></div><div class="bandc-body">'+ts.map(catChip).join('')+'</div></div>';
   }).join('');
-  var unc=D.tasks.filter(function(t){return CATS.indexOf(taskCat(t))<0;});
+  var unc=D.tasks.filter(function(t){return catNames().indexOf(taskCat(t))<0;});
   if(unc.length) lanes+='<div class="bandc"><div class="bandc-h"><span class="bar" style="background:var(--ink3)"></span>未分類<span class="meta">'+unc.length+'項</span></div><div class="bandc-body">'+unc.map(catChip).join('')+'</div></div>';
   return head+lanes;
 }
@@ -1001,16 +1050,18 @@ function onUp(e){ document.removeEventListener('pointermove',onMove); document.r
 
 /* ====== 後台 ====== */
 var T='I', sel=0;
-var CATS=['蔬菜備料','餡料備品','肉類醃製','醬料','點貨'];
+function catNames(){ return (DB.cats||[]).map(function(c){return c.name;}); }
+var CATSW=['#7FBF8E','#F2A766','#EF8A6B','#F3C24B','#6FB3D6','#EC9BB0','#B49BD6','#5FC0B0'];
+var TBICON='<svg class="tbico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/><line x1="18.4" y1="5.6" x2="5.6" y2="18.4"/></svg>';
 var WD=[{n:'一',d:1},{n:'二',d:2},{n:'三',d:3},{n:'四',d:4},{n:'五',d:5},{n:'六',d:6},{n:'日',d:0}];
-function catColor(c){ return c==='蔬菜備料'?'var(--bread)':c==='餡料備品'?'var(--mid)':c==='肉類醃製'?'var(--grill)':c==='醬料'?'#B6863C':c==='點貨'?'var(--drink)':'var(--ink3)'; }
-function fillCatSeg(selC){ document.getElementById('ef-cat').innerHTML=CATS.map(function(c){ return '<b data-c="'+c+'" onclick="setItemCat(\''+c+'\')" class="'+(c===selC?'on':'')+'"><span class="dot" style="background:'+catColor(c)+'"></span>'+c+'</b>'; }).join(''); }
+function catColor(c){ var f=(DB.cats||[]).filter(function(x){return x.name===c;})[0]; return f?f.color:'var(--ink3)'; }
+function fillCatSeg(selC){ document.getElementById('ef-cat').innerHTML=catNames().map(function(c){ return '<b data-c="'+c+'" onclick="setItemCat(\''+c+'\')" class="'+(c===selC?'on':'')+'"><span class="dot" style="background:'+catColor(c)+'"></span>'+c+'</b>'; }).join(''); }
 function setItemCat(c){ DB.items[sel].cat=c; save(); loadItem(sel); }
 function fillDays(it){ var on=Array.isArray(it.days)?it.days:[]; var muted=!!it.daily;
   document.getElementById('ef-days').className='wkrow'+(muted?' muted':'');
   document.getElementById('ef-days').innerHTML=WD.map(function(w){ return '<span class="wd'+(on.indexOf(w.d)>=0?' on':'')+'" onclick="toggleDay('+w.d+')">'+w.n+'</span>'; }).join(''); }
 function toggleDay(d){ var it=DB.items[sel]; if(!Array.isArray(it.days))it.days=[]; var k=it.days.indexOf(d); if(k>=0)it.days.splice(k,1); else it.days.push(d); save(); loadItem(sel); }
-function setT(t){ T=t; ['I','S','A','B'].forEach(function(x){document.getElementById('t'+x).classList.toggle('on',x===t); document.getElementById('a'+x).classList.toggle('on',x===t);}); }
+function setT(t){ T=t; ['I','S','A','C','B'].forEach(function(x){document.getElementById('t'+x).classList.toggle('on',x===t); document.getElementById('a'+x).classList.toggle('on',x===t);}); if(t==='C') renderCats(); }
 function daysLabel(it){ if(it.daily) return '每日'; if(!it.days||!it.days.length) return '未排'; var map={0:'日',1:'一',2:'二',3:'三',4:'四',5:'五',6:'六'}; return '週'+[1,2,3,4,5,6,0].filter(function(d){return it.days.indexOf(d)>=0;}).map(function(d){return map[d];}).join(''); }
 function renderItems(){ var html='';
   var cats=[]; DB.items.forEach(function(it){ var c=it.cat||'未分類'; if(cats.indexOf(c)<0) cats.push(c); });
@@ -1081,6 +1132,36 @@ function renderAreas(){ document.getElementById('arealist').innerHTML=DB.areas.m
   return '<div class="strow"><span class="aicChip" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><div><div class="nm">'+a.name+'區</div><div class="an">'+cnt+' 個品項</div></div><div class="sp"><button class="ord" onclick="moveArea('+i+',-1)">▲</button><button class="ord" onclick="moveArea('+i+',1)">▼</button></div></div>'; }).join(''); }
 function moveArea(i,d){ var j=i+d; if(j<0||j>=DB.areas.length)return; var t=DB.areas[i]; DB.areas[i]=DB.areas[j]; DB.areas[j]=t; save(); renderAreas(); renderCount(); }
 function addArea(){ var n=prompt('工作區名稱'); if(!n)return; DB.areas.push({name:n,icon:'dot',color:'var(--ink2)'}); save(); renderAreas(); }
+/* ====== 種類管理 ====== */
+var catSel=-1;
+function renderCats(){ var el=document.getElementById('catlist'); if(!el)return;
+  el.innerHTML=(DB.cats||[]).map(function(c,i){ var cnt=DB.items.filter(function(it){return (it.cat||'')===c.name;}).length;
+    return '<div class="strow catrow" onclick="editCat('+i+')"><span class="catDot" style="background:'+c.color+'"></span><div class="catTx"><div class="nm">'+c.name+'</div><div class="an">'+cnt+' 個品項</div></div><div class="sp"><button class="ord" onclick="event.stopPropagation();moveCat('+i+',-1)">▲</button><button class="ord" onclick="event.stopPropagation();moveCat('+i+',1)">▼</button></div><span class="catChev">&#8250;</span></div>'; }).join('')
+    +'<div class="iaNote" style="padding:10px 4px 2px">點種類可改名／換色／刪除；▲▼ 調整工作板分類欄順序</div>'; }
+function moveCat(i,d){ var j=i+d; if(j<0||j>=DB.cats.length)return; var t=DB.cats[i]; DB.cats[i]=DB.cats[j]; DB.cats[j]=t; save(); renderCats(); }
+function addCat(){ var n=prompt('種類名稱'); if(n===null)return; n=(''+n).trim(); if(!n)return; if(DB.cats.some(function(x){return x.name===n;})){ alert('已有同名種類'); return; } DB.cats.push({name:n,color:CATSW[DB.cats.length%CATSW.length]}); save(); renderCats(); editCat(DB.cats.length-1); }
+function editCat(i){ catSel=i; renderCatSheet(); }
+function renderCatSheet(){ var i=catSel, c=DB.cats[i]; if(!c)return;
+  var sw=CATSW.map(function(col){ return '<span class="catSw'+(c.color===col?' on':'')+'" style="background:'+col+'" onclick="catSetColor('+i+',\''+col+'\')"></span>'; }).join('');
+  var cnt=DB.items.filter(function(it){return (it.cat||'')===c.name;}).length;
+  var inner='<div class="sheet-title">編輯種類</div><div style="height:12px"></div>'
+    +'<div class="idField"><span class="fl">名稱</span><div class="idVal" onclick="catRename('+i+')">'+c.name+'</div></div>'
+    +'<div class="idField"><span class="fl">顏色</span><div class="catSwWrap">'+sw+'</div></div>'
+    +'<div class="catNote">改名後，原本歸在這個種類的品項會自動跟著改。</div>'
+    +'<button class="idDel" onclick="catDelete('+i+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>刪除這個種類</button>'
+    +'<div class="catNote" style="text-align:center">刪除後，原本歸在這裡的 '+cnt+' 個品項會變成「未分類」</div>'
+    +'<div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div>';
+  openSheetHtml(inner); }
+function catSetColor(i,col){ DB.cats[i].color=col; save(); renderCatSheet(); renderCats(); }
+function catRename(i){ var c=DB.cats[i], old=c.name; var n=prompt('種類名稱', old); if(n===null)return; n=(''+n).trim(); if(!n||n===old)return; if(DB.cats.some(function(x,k){return k!==i&&x.name===n;})){ alert('已有同名種類'); return; } c.name=n;
+  DB.items.forEach(function(it){ if((it.cat||'')===old) it.cat=n; });
+  Object.keys(DB.days).forEach(function(dk){ var D=DB.days[dk]; if(Array.isArray(D.tasks)) D.tasks.forEach(function(t){ if(t.cat===old) t.cat=n; }); });
+  save(); renderCatSheet(); renderCats(); renderItemsAdmin(); }
+function catDelete(i){ var c=DB.cats[i]; var cnt=DB.items.filter(function(it){return (it.cat||'')===c.name;}).length;
+  if(!confirm('刪除種類「'+c.name+'」？\n'+cnt+' 個品項會變成未分類。')) return;
+  DB.items.forEach(function(it){ if((it.cat||'')===c.name) it.cat=''; });
+  Object.keys(DB.days).forEach(function(dk){ var D=DB.days[dk]; if(Array.isArray(D.tasks)) D.tasks.forEach(function(t){ if(t.cat===c.name) t.cat=''; }); });
+  DB.cats.splice(i,1); save(); closeSheet(); renderCats(); renderItemsAdmin(); }
 function renderBands(){ document.getElementById('bandlist').innerHTML=['pre','am','mid'].map(function(k){
   return '<div class="bandcfg"><span class="sw3" style="background:'+bvar(k)+'"></span><div><div class="bn" onclick="editBand(\''+k+'\')">'+BNAME[k]+'</div><div class="bt">'+DB.bands[k].time+'</div></div><span class="lock">色 鎖定</span></div>'; }).join(''); }
 function editBand(k){ var v=prompt('時段名稱',BNAME[k]); if(!v)return; BNAME[k]=v; DB.bands[k].name=v; save(); renderBands(); renderBoard(); }
@@ -1123,9 +1204,9 @@ function renderItemsAdmin(){ var el=document.getElementById('itemsAdmin'); if(!e
 }
 function iaRowHtml(i){ var it=DB.items[i];
   var hand='<div class="iaHand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 7h8M8 12h8M8 17h8"/></svg></div>';
-  var nm='<div class="iaNm" onclick="openItemDetail('+i+')">'+it.name+'<span class="chev">&#8250;</span></div>';
+  var nm='<div class="iaNm" onclick="openItemDetail('+i+')">'+it.name+(it.tuibing?'<span class="tbTag">'+TBICON+'退冰</span>':'')+'<span class="chev">&#8250;</span></div>';
   var unit='<div class="iaCell iaUnit">'+it.unit+'</div>';
-  return '<div class="iaRow" data-idx="'+i+'" data-area="'+it.area+'">'+hand+nm+unit+iaCellHtml(i,'wk')+iaCellHtml(i,'ph')+iaCellHtml(i,'hol')+'</div>';
+  return '<div class="iaRow'+(it.tuibing?' tb':'')+'" data-idx="'+i+'" data-area="'+it.area+'">'+hand+nm+unit+iaCellHtml(i,'wk')+iaCellHtml(i,'ph')+iaCellHtml(i,'hol')+'</div>';
 }
 function iaCellHtml(i,t){ var it=DB.items[i];
   if(iaEdit.i===i && iaEdit.t===t){
@@ -1155,7 +1236,7 @@ function iaSetStation(i,area){ var it=DB.items[i]; DB.items.splice(i,1); it.area
 function openItemDetail(i){ detSel=i; renderItemDetail(); }
 function renderItemDetail(){ var i=detSel, it=DB.items[i]; if(!it)return;
   var areaSeg=DB.areas.map(function(a){ return '<b class="'+(it.area===a.name?'on':'')+'" onclick="dArea('+i+',\''+a.name+'\')"><span class="d" style="background:'+a.color+'"></span>'+a.name+'</b>'; }).join('')+'<b class="'+(!assigned(it)?'on':'')+'" onclick="dArea('+i+',\'\')">未分配</b>';
-  var catSeg=CATS.map(function(c){ return '<b class="'+((it.cat||'')===c?'on':'')+'" onclick="dCat('+i+',\''+c+'\')"><span class="d" style="background:'+catColor(c)+'"></span>'+c+'</b>'; }).join('');
+  var catSeg=catNames().map(function(c){ return '<b class="'+((it.cat||'')===c?'on':'')+'" onclick="dCat('+i+',\''+c+'\')"><span class="d" style="background:'+catColor(c)+'"></span>'+c+'</b>'; }).join('');
   var bands=[['none','待排'],['pre',BNAME.pre],['am',BNAME.am],['mid',BNAME.mid]];
   var bandSeg=bands.map(function(b){ return '<b class="'+(it.band===b[0]?'on':'')+'" onclick="dBand('+i+',\''+b[0]+'\')">'+b[1]+'</b>'; }).join('');
   var wk=[[1,'一'],[2,'二'],[3,'三'],[4,'四'],[5,'五'],[6,'六'],[0,'日']];
@@ -1166,6 +1247,7 @@ function renderItemDetail(){ var i=detSel, it=DB.items[i]; if(!it)return;
     +'<div class="idField"><span class="fl">品名</span><div class="idVal" onclick="dRename('+i+')">'+it.name+'</div></div>'
     +'<div class="idRow2"><div class="idField"><span class="fl">單位</span><div class="idVal" onclick="dUnit('+i+')">'+it.unit+'</div></div><div class="idField"><span class="fl">預估分</span><div class="idVal" onclick="dMin('+i+')">'+it.min+' 分</div></div></div>'
     +'<div class="idField"><span class="fl">盤點站別</span><div class="idSeg">'+areaSeg+'</div></div>'
+    +'<div class="idField"><div class="idTgRow"><span class="fl2">退冰<span class="tbHint">標了會進盤點頁的退冰打勾清單，不再盤點數量</span></span><div class="idTg'+(it.tuibing?' on':'')+'" onclick="dTuibing('+i+')"><i></i></div></div></div>'
     +'<div class="idField"><span class="fl">種類</span><div class="idSeg">'+catSeg+'</div></div>'
     +'<div class="idField"><span class="fl">建議時段（選填）</span><div class="idSeg">'+bandSeg+'</div></div>'
     +'<div class="idField"><div class="idTgRow"><span class="fl2">每日必備</span><div class="idTg'+(it.daily?' on':'')+'" onclick="dDaily('+i+')"><i></i></div></div></div>'
@@ -1183,6 +1265,7 @@ function dCat(i,c){ DB.items[i].cat=c; save(); renderItemDetail(); }
 function dArea(i,a){ DB.items[i].area=a; save(); renderItemDetail(); renderItemsAdmin(); }
 function dBand(i,b){ DB.items[i].band=b; save(); renderItemDetail(); }
 function dDaily(i){ DB.items[i].daily=!DB.items[i].daily; save(); renderItemDetail(); }
+function dTuibing(i){ DB.items[i].tuibing=!DB.items[i].tuibing; save(); renderItemDetail(); renderItemsAdmin(); }
 function dToggleDay(i,dd){ var it=DB.items[i]; if(!Array.isArray(it.days))it.days=[]; var k=it.days.indexOf(dd); if(k>=0)it.days.splice(k,1); else it.days.push(dd); save(); renderItemDetail(); }
 function dDel(i){ var it=DB.items[i]; if(!it)return; if(!confirm('刪除「'+it.name+'」？此動作無法復原。'))return; DB.items.splice(i,1); save(); closeSheet(); renderItemsAdmin(); }
 
@@ -1220,8 +1303,8 @@ function go(p){ if(p==='admin' && !adminUnlocked){ openAdminGate(); return; }
   var ht=document.getElementById('hTitle'), hs=document.getElementById('hSub');
   if(p==='count'){ ht.textContent='今日備料檢查'; hs.textContent='每日13:00後請確認隔天備料是否充足'; }
   else if(p==='board'){ ht.textContent='明日工作分配'; var db=dInfo(datePlus(DB.cur,1)); hs.textContent='明日 '+db.m+'/'+db.dd+'（週'+db.wd+'）'; }
-  else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定'; }
-  if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderBands(); renderSetup(); } }
+  else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定 · v2.0 退冰＋種類'; }
+  if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderBands(); renderSetup(); } }
 
 function init(){
   bindDrag(); setV('people'); setT('I'); go('count');
