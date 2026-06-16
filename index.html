@@ -271,6 +271,12 @@
   .cols.flow{display:block; padding:0;}
   .tilebody{display:flex; flex-direction:column; gap:8px;}
   .cols.cols2 .tilebody{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .bandc-h .snm{white-space:nowrap;}
+  .cols:not(.flow) .bandc-h{flex-wrap:wrap; gap:6px; padding:11px 11px 9px; font-size:14px;}
+  .cols:not(.flow) .bandc-h .ic{width:23px; height:23px;}
+  .cols:not(.flow) .bandc-h .meta{margin-left:auto;}
+  .cols:not(.flow) .bandc-h .ownbtn{flex:1 1 100%; margin-top:2px;}
+  .cols:not(.flow) .tile .cap{display:none;}
   .bandc-h .ic{width:25px; height:25px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--tint); flex:none;}
   .bandc-h .ic svg{width:16px; height:16px;}
   .bandc-h .meta{margin-left:auto; font-size:11px; color:var(--ink3); font-weight:700; white-space:nowrap;}
@@ -744,7 +750,7 @@ function renderCount(){
   renderCountTop();
   renderStationTabs();
   var single=(countStation!=='全部');
-  var cols=document.getElementById('countCols'); cols.className='cols'+(!single?' cols2':' flow');
+  var cols=document.getElementById('countCols'); cols.className='cols'+(single?' flow':'');
   var html='';
   DB.areas.forEach(function(a){
     if(single && a.name!==countStation) return;
@@ -757,7 +763,7 @@ function renderCount(){
     var ownBtn = owner ? '<button class="ownbtn" onclick="pickOwner(event,\''+a.name+'\')"><img class="ava" src="'+AV[animalOf(owner)]+'">'+owner+'</button>'
                        : '<button class="ownbtn unset" onclick="pickOwner(event,\''+a.name+'\')">＋ 指定負責人</button>';
     var meta=its.length+'項'+(shortN?' · <b>缺'+shortN+'</b>':'')+(unN?' · <span class="mb-un">未點'+unN+'</span>':'');
-    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span>'+a.name+'確認<span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body tilebody">';
+    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body tilebody">';
     its.forEach(function(it){
       var s=effStd(it), cur=curOf(it.name), cd=isCounted(it.name), low=cd&&cur<s;
       var state = !cd?'un':(low?'low':'ok');
