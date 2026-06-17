@@ -653,6 +653,9 @@ var DEFAULT={
 
 /* ====== store ====== */
 var DB=null, useFB=!!(FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.databaseURL.indexOf('http')===0), fbRef=null;
+/* 多裝置即時同步：本機識別碼（用來忽略「自己寫入」的回音，避免操作中畫面亂跳） */
+var CLIENT_ID = Math.random().toString(36).slice(2) + Date.now().toString(36);
+var gotFirst = false;
 function lsGet(k){ try{return localStorage.getItem(k);}catch(e){return null;} }
 function lsSet(k,v){ try{localStorage.setItem(k,v);}catch(e){} }
 function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
@@ -689,11 +692,61 @@ function tomorrowDOW(){ return dInfo(datePlus(DB.cur,1)).wi; }
 function dueTomorrow(it){ return !!(it&&it.daily) || (it&&Array.isArray(it.days)&&it.days.indexOf(tomorrowDOW())>=0); }
 function taskCat(t){ var it=itemBy(t.name); return it?(it.cat||''):(t.cat||''); }
 function taskSrc(t){ var it=itemBy(t.name); if(dueTomorrow(it)) return 'plan'; if(t.stock==='out'||(it&&curOf(t.name)<effStd(it))) return 'short'; return 'plan'; }
-function save(){ if(useFB&&fbRef){ try{fbRef.set(DB);}catch(e){} } lsSet('jenka-shouban', JSON.stringify(DB)); }
+function save(){
+  if(useFB&&fbRef){
+    try{
+      /* 分支寫入：每個分支各自更新，互不整包覆蓋。
+         days/<日期> = 當日盤點/工作；items/staff/... = 後台設定。
+         「後台改品項」與「現場盤點」從此寫到不同分支，不會互相蓋掉。 */
+      var upd={ '_w':{ id:CLIENT_ID, t:Date.now() } };
+      if(DB.cur) upd['days/'+DB.cur] = DB.days[DB.cur];
+      ['items','staff','cats','bands','areas','ops'].forEach(function(k){ if(DB[k]!==undefined) upd[k]=DB[k]; });
+      upd['dayType']  = DB.dayType||{};
+      upd['adminPass']= DB.adminPass;
+      fbRef.update(upd);
+    }catch(e){}
+  }
+  lsSet('jenka-shouban', JSON.stringify(DB));
+}
+/* 偵測使用者是否正在操作中（操作中就先不重繪，避免畫面被遠端更新打斷） */
+function uiBusy(){
+  try{
+    var sh=document.getElementById('sheet'); if(sh&&sh.classList.contains('on')) return true;
+    var ag=document.getElementById('adminGate'); if(ag&&ag.classList.contains('on')) return true;
+    if(typeof drag!=='undefined' && drag) return true;
+    if(typeof editCount!=='undefined' && editCount) return true;
+    if(typeof editMode!=='undefined' && editMode) return true;
+  }catch(e){}
+  return false;
+}
+function curPage(){
+  if(document.getElementById('page-count') && document.getElementById('page-count').classList.contains('on')) return 'count';
+  if(document.getElementById('page-board') && document.getElementById('page-board').classList.contains('on')) return 'board';
+  if(document.getElementById('page-admin') && document.getElementById('page-admin').classList.contains('on')) return 'admin';
+  return 'count';
+}
+function softRerender(){
+  var p=curPage();
+  if(p==='count') renderCount();
+  else if(p==='board') renderBoard();
+  else if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
+}
 function load(cb){
   if(useFB){ try{ firebase.initializeApp(FIREBASE_CONFIG); fbRef=firebase.database().ref('jenka-shouban');
       try{ firebase.database().ref('.info/connected').on('value', function(cs){ var el=document.getElementById('hdrCloud'); if(!el) return; var on=!!(cs&&cs.val()); el.innerHTML='<span class="cloud '+(on?'online':'offline')+'"><span class="cd"></span>'+(on?'雲端已連線':'離線')+'</span>'; }); }catch(e){}
-      fbRef.once('value').then(function(s){ applyData(s.val()); cb(); }).catch(function(){ applyData(JSON.parse(lsGet('jenka-shouban')||'null')); cb(); }); return;
+      /* 持續監聽：任何裝置改了資料，這台都會即時收到並更新（不再只讀一次） */
+      fbRef.on('value', function(s){
+        var v=s.val();
+        if(!gotFirst){ gotFirst=true; applyData(v); cb(); return; }   // 首次：初始化畫面
+        if(!v) return;
+        applyData(v);                                                 // 永遠先把本機資料更新成最新
+        if(v._w && v._w.id===CLIENT_ID) return;                       // 這是自己寫入的回音 → 不重繪，避免畫面亂跳
+        if(uiBusy()) return;                                          // 別台改了，但你正在操作 → 資料已更新，待下一動作自然帶入
+        softRerender();                                              // 別台改了且你沒在操作 → 立即同步畫面
+      }, function(){                                                  // 讀取失敗 → 退回本機儲存，仍能開啟
+        if(!gotFirst){ gotFirst=true; applyData(JSON.parse(lsGet('jenka-shouban')||'null')); cb(); }
+      });
+      return;
     }catch(e){} }
   applyData(JSON.parse(lsGet('jenka-shouban')||'null')); cb();
 }
