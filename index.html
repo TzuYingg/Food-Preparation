@@ -682,6 +682,10 @@ function applyData(v){
   (DB.staff||[]).forEach(function(s){ if(!s.role){ s.role = s.animal==='lion'?'老闆':s.animal==='sheep'?'老闆娘':(s.animal==='penguin'||s.animal==='squirrel')?'正職':'工讀'; } });
   if(!DB.days[t].stationOwner) DB.days[t].stationOwner={};
   if(!DB.days[t].tuibing) DB.days[t].tuibing={};
+  /* Firebase 不會儲存空物件/空陣列，從雲端讀回時這些欄位可能不存在 → 補上空值，避免盤點頁讀取時崩潰 */
+  if(!DB.days[t].counts || typeof DB.days[t].counts!=='object') DB.days[t].counts={};
+  if(!Array.isArray(DB.days[t].tasks)) DB.days[t].tasks=[];
+  if(!Array.isArray(DB.days[t].working)) DB.days[t].working=DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;});
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
 }
