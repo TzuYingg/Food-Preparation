@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>備料系統・資料救援（唯讀）</title>
+<style>
+  :root{ --cream:#F2F0EC; --ink:#252525; --blue:#4A6FA5; --line:#e3ded4; --amber:#b9892f; --good:#3f7d52; --bad:#b4452f; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+  .wrap{max-width:680px;margin:0 auto;padding:22px 18px 60px}
+  h1{font-size:19px;margin:0 0 4px}
+  .sub{color:#8a857a;font-size:13px;margin:0 0 18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+  .big{font-size:15px;color:#8a857a;margin:0}
+  .count{font-size:46px;font-weight:800;letter-spacing:-1px;margin:2px 0 0}
+  .count.zero{color:var(--bad)}
+  .hint{background:#fbf6ea;border:1px solid #ecddb8;border-radius:12px;padding:12px 14px;font-size:13.5px;color:#6b6357;margin:14px 0}
+  ul.items{list-style:none;margin:10px 0 0;padding:0;columns:2;column-gap:18px}
+  ul.items li{break-inside:avoid;padding:6px 0;border-bottom:1px solid #f1ece2;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+  .area{font-size:12px;color:#fff;background:var(--blue);border-radius:999px;padding:1px 9px;white-space:nowrap}
+  .area.none{background:#c9b79c}
+  .area.煎台{background:#b4452f}
+  .area.麵包{background:#3f7d52}
+  button{font-family:inherit;font-size:15px;border:none;border-radius:12px;padding:14px 18px;cursor:pointer;width:100%;font-weight:700}
+  .restore{background:var(--ink);color:#fff;margin-top:8px}
+  .restore:disabled{opacity:.4}
+  .ghost{background:#efeae0;color:var(--ink);margin-top:8px}
+  details{margin-top:14px}
+  summary{cursor:pointer;font-size:13px;color:#8a857a}
+  textarea{width:100%;height:140px;margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:11px;font-family:ui-monospace,monospace}
+  .status{margin-top:12px;font-size:14px;font-weight:700;min-height:22px}
+  .ok{color:var(--good)} .err{color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>備料系統・資料救援工具</h1>
+  <p class="sub">這頁只「讀取」這台設備的本機資料，<b>不會寫入、不會存檔</b>，可以安全打開。</p>
+
+  <div class="card">
+    <p class="big">這台設備本機有</p>
+    <p class="count" id="count">…</p>
+    <p class="big" id="src"></p>
+  </div>
+
+  <div class="hint">
+    <b>怎麼用：</b>在<b>每一台</b>設備（桌機、手機、平板）都打開這一頁，比較哪一台品項數最多、有你後來新增的品項。
+    找到最完整的那台後，<b>就在那台</b>按下方「還原到雲端」。
+  </div>
+
+  <div class="card">
+    <p class="big" style="margin-bottom:8px">這台的品項清單：</p>
+    <ul class="items" id="list"><li>讀取中…</li></ul>
+  </div>
+
+  <button class="restore" id="btnRestore" disabled>把「這台的品項清單」還原到雲端 Firebase</button>
+  <button class="ghost" id="btnFull">（進階）連同盤點、工作也一起還原</button>
+  <div class="status" id="status"></div>
+
+  <details>
+    <summary>顯示原始備份資料（可複製存檔）</summary>
+    <textarea id="raw" readonly></textarea>
+  </details>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+var FIREBASE_CONFIG = {
+  apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
+  authDomain:"jenka-inventory.firebaseapp.com",
+  databaseURL:"https://jenka-inventory-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"jenka-inventory",
+  storageBucket:"jenka-inventory.firebasestorage.app",
+  messagingSenderId:"1051643046922",
+  appId:"1:1051643046922:web:f0c0a053aabe88581643f3"
+};
+var KEY='jenka-shouban';
+var raw = localStorage.getItem(KEY);
+var DB=null;
+try{ DB = raw ? JSON.parse(raw) : null; }catch(e){ DB=null; }
+
+var items = (DB && Array.isArray(DB.items)) ? DB.items : [];
+document.getElementById('count').textContent = items.length + ' 項';
+if(!items.length){ document.getElementById('count').classList.add('zero'); }
+document.getElementById('src').textContent = raw ? '（來源：這台瀏覽器的本機儲存）' : '（這台沒有任何本機資料）';
+document.getElementById('raw').value = raw || '(空)';
+
+var listEl=document.getElementById('list');
+if(items.length){
+  listEl.innerHTML='';
+  items.forEach(function(it){
+    var area = it.area || '';
+    var cls = area==='煎台'?'煎台':(area==='麵包'?'麵包':'none');
+    var label = area || '未分配';
+    var li=document.createElement('li');
+    li.innerHTML='<span>'+ (it.name||'(無名)') +'</span><span class="area '+cls+'">'+label+'</span>';
+    listEl.appendChild(li);
+  });
+}else{
+  listEl.innerHTML='<li>這台沒有品項資料</li>';
+}
+
+/* Firebase 只在「按按鈕」時才寫入。載入這頁不會寫任何東西。 */
+var app, db;
+function fb(){ if(!app){ app=firebase.initializeApp(FIREBASE_CONFIG); db=firebase.database(); } return db; }
+function setStatus(msg, ok){ var s=document.getElementById('status'); s.textContent=msg; s.className='status '+(ok?'ok':'err'); }
+
+document.getElementById('btnRestore').disabled = !items.length;
+
+document.getElementById('btnRestore').onclick=function(){
+  if(!items.length){ return; }
+  if(!confirm('確定要把「這台的 '+items.length+' 個品項清單」上傳到雲端，覆蓋目前雲端的品項嗎？\n\n（只會覆蓋品項清單，不會動到今天的盤點。）')) return;
+  try{
+    fb().ref('jenka-shouban/items').set(items, function(err){
+      if(err){ setStatus('還原失敗：'+err.message, false); }
+      else { setStatus('✓ 已還原 '+items.length+' 個品項到雲端！現在去 app 強制重新整理就會看到。', true); }
+    });
+    setStatus('上傳中…', true);
+  }catch(e){ setStatus('錯誤：'+e.message, false); }
+};
+
+document.getElementById('btnFull').onclick=function(){
+  if(!DB){ setStatus('這台沒有資料可還原', false); return; }
+  if(!confirm('進階：把這台的「整份資料」（品項＋今天盤點＋工作分配）全部上傳覆蓋雲端？\n\n只有在你確定這台最完整時才用。')) return;
+  try{
+    fb().ref('jenka-shouban').update(DB, function(err){
+      if(err){ setStatus('還原失敗：'+err.message, false); }
+      else { setStatus('✓ 已整份還原到雲端！去 app 強制重新整理。', true); }
+    });
+    setStatus('上傳中…', true);
+  }catch(e){ setStatus('錯誤：'+e.message, false); }
+};
+</script>
+</body>
+</html>
