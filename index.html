@@ -158,6 +158,8 @@
   .sheet-actions{display:flex; gap:10px; margin-top:14px;}
   .sheet-actions button{flex:1; border:none; border-radius:13px; padding:14px; font-size:15px; font-weight:800;}
   .b-done{background:var(--ink); color:#fff;} .b-close{background:#EEE7DC; color:var(--ink2);}
+  .b-del{display:block; width:100%; margin-top:10px; border:none; background:transparent; color:var(--danger); font-weight:800; font-size:13.5px; padding:11px; border-radius:11px; cursor:pointer;}
+  .b-del:active{background:var(--danger-bg);}
   .ar{display:flex; align-items:center; gap:10px; padding:10px 2px; border-bottom:1px solid #F1ECE3;}
   .ar img{width:34px; height:34px; object-fit:contain;} .ar .arn{font-weight:800; font-size:15px;} .ar .tg{margin-left:auto;}
   .arlist{max-height:48vh; overflow:auto; margin-top:8px;}
@@ -601,6 +603,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
+/* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
+var APP_VERSION='2026.06.17-8';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -734,6 +738,24 @@ function softRerender(){
   if(p==='count') renderCount();
   else if(p==='board') renderBoard();
   else if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
+}
+/* 自動更新：抓最新程式比對版本號，有新版且使用者沒在操作時，自動以乾淨網址重新載入（繞過快取） */
+function checkForUpdate(){
+  if(location.protocol==='file:') return;
+  try{
+    fetch('index.html?vc='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():null;}).then(function(t){
+      if(!t) return;
+      var m=t.match(/APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+      if(!m) return;
+      var remote=m[1];
+      if(remote===APP_VERSION){ try{sessionStorage.removeItem('jenka_updv');}catch(e){} return; }
+      if(uiBusy()) return;                                   // 操作中先不打斷，下次檢查再說
+      var tried; try{tried=sessionStorage.getItem('jenka_updv');}catch(e){}
+      if(tried===remote) return;                             // 已試過此版本仍沒更新到 → 不重複重載，避免迴圈
+      try{sessionStorage.setItem('jenka_updv',remote);}catch(e){}
+      location.replace(location.pathname+'?u='+encodeURIComponent(remote));   // 以版本號當網址參數，強制抓新版
+    }).catch(function(){});
+  }catch(e){}
 }
 function load(cb){
   if(useFB){ try{ firebase.initializeApp(FIREBASE_CONFIG); fbRef=firebase.database().ref('jenka-shouban');
@@ -1013,11 +1035,14 @@ function closeSheet(){ document.getElementById('sheet').classList.remove('on'); 
 function renderSheet(){ var it=byId(sheetId); if(!it)return;
   var bs=[{k:'none',n:'待排'},{k:'pre',n:'開店前'},{k:'am',n:'早段'},{k:'mid',n:'午段'}];
   var picks=bs.map(function(b){ var dot=b.k==='none'?'':'<span class="dot" style="background:'+bvar(b.k)+'"></span>'; return '<b class="'+(it.band===b.k?'on':'')+'" onclick="setBand(\''+b.k+'\')">'+dot+b.n+'</b>'; }).join('');
-  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+it.name+'</div><div class="sheet-label">時段</div><div class="bandpick">'+picks+'</div><div class="sheet-row"><span>急缺（盤點不足・必補）</span><div class="tg danger'+(it.stock==='out'?' on':'')+'" onclick="toggleLack()"><i></i></div></div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">關閉</button><button class="b-done" onclick="sheetDone()">'+(it.done?'取消完成':'標完成')+'</button></div></div>';
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+it.name+'</div><div class="sheet-label">時段</div><div class="bandpick">'+picks+'</div><div class="sheet-row"><span>急缺（盤點不足・必補）</span><div class="tg danger'+(it.stock==='out'?' on':'')+'" onclick="toggleLack()"><i></i></div></div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">關閉</button><button class="b-done" onclick="sheetDone()">'+(it.done?'取消完成':'標完成')+'</button></div><button class="b-del" onclick="delTask()">刪除此任務</button></div>';
 }
 function setBand(b){ var it=byId(sheetId); it.band=b; save(); renderBoard(); renderSheet(); }
 function toggleLack(){ var it=byId(sheetId); if(it.stock==='out'){it.stock='ok';}else{it.stock='out'; it.band='pre';} save(); renderBoard(); renderSheet(); }
 function sheetDone(){ var it=byId(sheetId); it.done=!it.done; save(); renderBoard(); closeSheet(); }
+function delTask(){ var it=byId(sheetId); if(!it) return;
+  var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===sheetId){ t.splice(i,1); break; } }
+  save(); closeSheet(); renderBoard(); }
 
 /* add task / send line */
 /* ===== 新增任務：挑選清單（不在板上的品項，按種類）＋自訂一次性 ===== */
@@ -1422,6 +1447,7 @@ function init(){
   bindDrag(); setV('people'); setT('I'); go('count');
   var iac=document.getElementById('itemsAdmin'); if(iac) iac.addEventListener('pointerdown', iaPointerDown);
   setInterval(checkRollover, 60*1000);
+  checkForUpdate(); setInterval(checkForUpdate, 3*60*1000);
 }
 load(init);
 </script>
