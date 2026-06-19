@@ -54,6 +54,7 @@
 
   /* 盤點 */
   .cols{display:grid; grid-template-columns:1fr 1fr; gap:11px; padding:8px 14px;}
+  @media (max-width:600px){ .cols{grid-template-columns:1fr; gap:10px;} }
   .col{border-radius:16px; padding:9px;}
   .band-ah{display:flex; align-items:center; gap:8px; padding:4px 5px 10px; font-size:14px; font-weight:800;}
   .band-ah .ic{width:27px; height:27px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--tint);}
@@ -166,10 +167,15 @@
   .daytoggle b.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.07);}
   .daytoggle b.on span{color:var(--ink2);}
   .yestnote{font-size:12px; color:var(--ink2); background:#fbf6ea; border:1px solid #ecddb8; border-radius:11px; padding:9px 12px; margin-bottom:12px; line-height:1.5;}
-  .yrow{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid #f1ece2;}
-  .yrow .ynm{font-weight:700; font-size:14px; flex:1;}
-  .yrow .yval{font-size:12.5px; color:var(--ink3); white-space:nowrap;}
-  .ytag{font-size:11px; font-weight:800; border-radius:999px; padding:2px 9px; white-space:nowrap;}
+  .yestcols{display:block;}
+  .yestcols .bandc{margin-bottom:12px;}
+  .yestcols .bandc-h{display:flex; align-items:center; gap:8px; padding:2px 2px 10px;}
+  .yestcols .bandc-h .snm{font-weight:800; font-size:15px;}
+  .yrow{display:flex; align-items:center; gap:10px; padding:11px 6px; border-bottom:1px solid #f1ece2;}
+  .yrow:last-child{border-bottom:none;}
+  .yrow .ynm{font-weight:700; font-size:14.5px; flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .yrow .yval{font-size:12.5px; color:var(--ink3); white-space:nowrap; flex:0 0 auto;}
+  .ytag{font-size:11px; font-weight:800; border-radius:999px; padding:3px 10px; white-space:nowrap; flex:0 0 auto;}
   .ytag.ok{color:#3f7d52; background:#e8f1ea;} .ytag.low{color:var(--danger); background:var(--danger-bg);} .ytag.un{color:#9a948a; background:#efeae0;}
   .ar{display:flex; align-items:center; gap:10px; padding:10px 2px; border-bottom:1px solid #F1ECE3;}
   .ar img{width:34px; height:34px; object-fit:contain;} .ar .arn{font-weight:800; font-size:15px;} .ar .tg{margin-left:auto;}
@@ -617,7 +623,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.17-10';
+var APP_VERSION='2026.06.17-12';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -677,6 +683,19 @@ function lsGet(k){ try{return localStorage.getItem(k);}catch(e){return null;} }
 function lsSet(k,v){ try{localStorage.setItem(k,v);}catch(e){} }
 function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
+/* 把「最近一個有任務的前一天」沒做完的任務，帶進指定的某一天（只帶一次、已完成的不帶）。
+   解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
+function carryTasksInto(t){
+  if(!DB.days[t]) return;
+  if(DB.days[t]._carried){ return; }
+  if(DB.days[t].tasks && DB.days[t].tasks.length){ DB.days[t]._carried=true; return; }
+  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
+  var pk=keys[keys.length-1];
+  if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
+    DB.days[t].tasks = DB.days[pk].tasks.filter(function(x){return !x.done;}).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; return c; });
+  }
+  DB.days[t]._carried=true;
+}
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
   else { DB=v; ['areas','bands','staff','items','cats'].forEach(function(k){ if(!DB[k]||!DB[k].length) DB[k]=clone(DEFAULT[k]); }); if(!DB.days)DB.days={}; }
@@ -703,6 +722,7 @@ function applyData(v){
   if(!DB.days[t].counts || typeof DB.days[t].counts!=='object') DB.days[t].counts={};
   if(!Array.isArray(DB.days[t].tasks)) DB.days[t].tasks=[];
   if(!Array.isArray(DB.days[t].working)) DB.days[t].working=DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;});
+  carryTasksInto(t);
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
 }
@@ -870,15 +890,8 @@ function renderStationTabs(){ var el=document.getElementById('stationTabs'); if(
   el.innerHTML=h; }
 /* 每天午夜 00:00 自動換到新的一天、清空當日盤點＋退出編輯 */
 function checkRollover(){ if(!DB||!DB.cur) return; var t=todayStr(); if(t===DB.cur) return;
-  var prev=DB.cur;
-  if(!DB.days[t]){
-    /* 換日：把前一天「還沒做完」的任務帶到新的一天，讓隔天早班看得到（已完成的不帶） */
-    var carried=[];
-    if(DB.days[prev] && Array.isArray(DB.days[prev].tasks)){
-      carried = DB.days[prev].tasks.filter(function(x){return !x.done;}).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; return c; });
-    }
-    DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:carried, stationOwner:{}};
-  }
+  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:[], stationOwner:{}};
+  carryTasksInto(t);
   DB.cur=t; editCount=null; editMode=false; dtOpen=false; save();
   var pc=document.querySelector('#page-count.on'); var pb=document.querySelector('#page-board.on');
   if(pc) go('count'); else if(pb) go('board'); }
@@ -935,7 +948,7 @@ function renderCount(){
   if(tools) tools.style.display=yest?'none':'';
   if(hint) hint.style.display=yest?'none':'';
   if(foot) foot.style.display=yest?'none':'';
-  if(yest){ var cc=document.getElementById('countCols'); cc.className='cols'; cc.innerHTML=renderYestCount(); return; }
+  if(yest){ var cc=document.getElementById('countCols'); cc.className='yestcols'; cc.innerHTML=renderYestCount(); return; }
   renderCountTop();
   renderStationTabs();
   var single=(countStation!=='全部');
