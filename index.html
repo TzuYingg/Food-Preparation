@@ -169,13 +169,14 @@
   .yestnote{font-size:12px; color:var(--ink2); background:#fbf6ea; border:1px solid #ecddb8; border-radius:11px; padding:9px 12px; margin-bottom:12px; line-height:1.5;}
   .yestcols{display:block;}
   .yestcols .bandc{margin-bottom:12px;}
-  .yestcols .bandc-h{display:flex; align-items:center; gap:8px; padding:2px 2px 10px;}
+  .yestcols .bandc-body{display:block; padding:2px 14px 6px;}
+  .yestcols .bandc-h{display:flex; align-items:center; gap:9px; padding:12px 14px 10px;}
   .yestcols .bandc-h .snm{font-weight:800; font-size:15px;}
-  .yrow{display:flex; align-items:center; gap:10px; padding:11px 6px; border-bottom:1px solid #f1ece2;}
+  .yrow{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid #f1ece2;}
   .yrow:last-child{border-bottom:none;}
-  .yrow .ynm{font-weight:700; font-size:14.5px; flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .yrow .yval{font-size:12.5px; color:var(--ink3); white-space:nowrap; flex:0 0 auto;}
-  .ytag{font-size:11px; font-weight:800; border-radius:999px; padding:3px 10px; white-space:nowrap; flex:0 0 auto;}
+  .yrow .ynm{font-weight:700; font-size:14.5px; flex:0 0 auto; white-space:nowrap; color:var(--ink);}
+  .yrow .yval{flex:1 1 auto; text-align:right; font-size:13px; color:var(--ink3); white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .ytag{flex:0 0 auto; min-width:44px; text-align:center; font-size:11px; font-weight:800; border-radius:999px; padding:3px 10px; white-space:nowrap;}
   .ytag.ok{color:#3f7d52; background:#e8f1ea;} .ytag.low{color:var(--danger); background:var(--danger-bg);} .ytag.un{color:#9a948a; background:#efeae0;}
   .ar{display:flex; align-items:center; gap:10px; padding:10px 2px; border-bottom:1px solid #F1ECE3;}
   .ar img{width:34px; height:34px; object-fit:contain;} .ar .arn{font-weight:800; font-size:15px;} .ar .tg{margin-left:auto;}
@@ -623,7 +624,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.17-12';
+var APP_VERSION='2026.06.17-14';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -687,14 +688,18 @@ function clone(o){ return JSON.parse(JSON.stringify(o)); }
    解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
-  if(DB.days[t]._carried){ return; }
-  if(DB.days[t].tasks && DB.days[t].tasks.length){ DB.days[t]._carried=true; return; }
-  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
-  var pk=keys[keys.length-1];
-  if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
-    DB.days[t].tasks = DB.days[pk].tasks.filter(function(x){return !x.done;}).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; return c; });
+  if(DB.days[t]._carried2){ return; }              // 用新標記，讓既有資料強制重跑一次修正
+  var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
+  var hasToday=cur.some(function(x){ return (x['for']||'today')==='today'; });
+  if(!hasToday){                                   // 只要還沒有「今日」類任務，就把前一天沒做完的帶進來（已排的明日任務保留）
+    var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
+    var pk=keys[keys.length-1];
+    if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
+      var carried=DB.days[pk].tasks.filter(function(x){return !x.done;}).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; return c; });
+      DB.days[t].tasks=cur.concat(carried);
+    }
   }
-  DB.days[t]._carried=true;
+  DB.days[t]._carried2=true;
 }
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
