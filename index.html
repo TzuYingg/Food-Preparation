@@ -167,17 +167,27 @@
   .daytoggle b.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.07);}
   .daytoggle b.on span{color:var(--ink2);}
   .yestnote{font-size:12px; color:var(--ink2); background:#fbf6ea; border:1px solid #ecddb8; border-radius:11px; padding:9px 12px; margin-bottom:12px; line-height:1.5;}
+  .modetoggle{display:flex; align-items:center; gap:6px; padding:0 2px; margin:-2px 0 12px;}
+  .modetoggle .lbl{font-size:11px; color:var(--ink3); margin-right:auto;}
+  .modetoggle b{font-size:12.5px; font-weight:700; color:var(--ink2); background:#efeae0; border-radius:999px; padding:6px 15px; cursor:pointer;}
+  .modetoggle b.on{background:var(--ink); color:#fff;}
+  .modetoggle b.disabled{opacity:.4; cursor:default;}
   .yestcols{display:block;}
   .yestcols .bandc{margin-bottom:12px;}
-  .yestcols .bandc-body{display:block; padding:2px 14px 6px;}
-  .yestcols .bandc-h{display:flex; align-items:center; gap:9px; padding:12px 14px 10px;}
+  .yestcols .bandc-body{display:block; padding:0 14px 6px;}
+  .yestcols .bandc-h{display:flex; align-items:center; gap:9px; padding:12px 14px 8px;}
   .yestcols .bandc-h .snm{font-weight:800; font-size:15px;}
-  .yrow{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid #f1ece2;}
+  .yrow{display:grid; grid-template-columns:auto 1fr 66px; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid #f1ece2;}
   .yrow:last-child{border-bottom:none;}
-  .yrow .ynm{font-weight:700; font-size:14.5px; flex:0 0 auto; white-space:nowrap; color:var(--ink);}
-  .yrow .yval{flex:1 1 auto; text-align:right; font-size:13px; color:var(--ink3); white-space:nowrap; font-variant-numeric:tabular-nums;}
-  .ytag{flex:0 0 auto; min-width:44px; text-align:center; font-size:11px; font-weight:800; border-radius:999px; padding:3px 10px; white-space:nowrap;}
-  .ytag.ok{color:#3f7d52; background:#e8f1ea;} .ytag.low{color:var(--danger); background:var(--danger-bg);} .ytag.un{color:#9a948a; background:#efeae0;}
+  .yrow .ynm{font-weight:700; font-size:14.5px; white-space:nowrap; color:var(--ink);}
+  .yrow.un .ynm{color:var(--ink2);}
+  .yrow .yval{text-align:right; font-size:13px; color:var(--ink3); white-space:nowrap; font-variant-numeric:tabular-nums; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+  .ytag{justify-self:center; text-align:center; font-size:13px; font-weight:800; white-space:nowrap;}
+  .ytag.ok{color:#3f7d52; background:#e8f1ea; border-radius:999px; padding:3px 11px; font-size:12px;}
+  .ytag.low{color:var(--danger); background:var(--danger-bg); border-radius:999px; padding:3px 11px; font-size:12px;}
+  .ytag.todo{color:var(--ink3); font-weight:700;}
+  .tbsub{display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:800; color:var(--bread); padding:10px 0 3px; border-top:1px dashed #e7e0d3; margin-top:2px;}
+  .tbsub svg{width:13px; height:13px;}
   .ar{display:flex; align-items:center; gap:10px; padding:10px 2px; border-bottom:1px solid #F1ECE3;}
   .ar img{width:34px; height:34px; object-fit:contain;} .ar .arn{font-weight:800; font-size:15px;} .ar .tg{margin-left:auto;}
   .arlist{max-height:48vh; overflow:auto; margin-top:8px;}
@@ -431,6 +441,7 @@
   <div class="page" id="page-count">
     <div class="ctop" id="countTop"></div>
     <div class="daytoggle" id="countViewToggle"></div>
+    <div class="modetoggle" id="countModeToggle"></div>
     <div class="counttools" id="counttools"><div class="stationtabs" id="stationTabs"></div></div>
     <div class="hint" id="countHint">逐項確認：料夠按開關轉綠（空心＝未點 · 磚紅＝不足）。完成後按下方「產生工作任務」</div>
     <div class="cols" id="countCols"></div>
@@ -624,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.17-14';
+var APP_VERSION='2026.06.17-15';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -868,21 +879,50 @@ function renderCountViewToggle(){ var el=document.getElementById('countViewToggl
   el.innerHTML='<b class="'+(countView==='today'?'on':'')+'" onclick="setCountView(\'today\')">今日盤點<span>'+ti.m+'/'+ti.dd+' 週'+ti.wd+'</span></b>'
     +'<b class="'+(countView==='yest'?'on':'')+'" onclick="setCountView(\'yest\')">昨日盤點<span>'+yi.m+'/'+yi.dd+' 週'+yi.wd+'・唯讀</span></b>';
 }
-function renderYestCount(){
-  var yd=datePlus(DB.cur,-1), D=DB.days[yd], yi=dInfo(yd), ti=dInfo(DB.cur), tier=dayTypeOf(DB.cur);
-  if(!D||!D.counts){ return '<div class="hint" style="padding:22px">昨天（'+yi.m+'/'+yi.dd+'）沒有盤點紀錄</div>'; }
-  var html='<div class="yestnote">'+yi.m+'/'+yi.dd+'（週'+yi.wd+'）收班盤點　·　為 '+ti.m+'/'+ti.dd+' 備料　·　唯讀參考</div>';
+/* 今日盤點：編輯 / 檢視 切換（檢視＝跟昨日盤點一樣的清楚清單） */
+var countMode='edit';
+function countHasData(dk){ var D=DB.days[dk]; if(!D) return false;
+  if(D.countSaved) return true;
+  if(D.counts && Object.keys(D.counts).length) return true;
+  if(D.tuibing && Object.keys(D.tuibing).some(function(k){return D.tuibing[k];})) return true;
+  return false; }
+function setCountMode(m){ if(m==='view' && !countHasData(DB.cur)) return; countMode=m; renderCount(); }
+function renderCountModeToggle(){ var el=document.getElementById('countModeToggle'); if(!el) return;
+  if(countView!=='today'){ el.style.display='none'; return; }
+  el.style.display='';
+  var has=countHasData(DB.cur);
+  el.innerHTML='<span class="lbl">顯示方式</span>'
+    +'<b class="'+(countMode==='edit'?'on':'')+'" onclick="setCountMode(\'edit\')">✎ 編輯</b>'
+    +'<b class="'+(countMode==='view'?'on':'')+(has?'':' disabled')+'"'+(has?' onclick="setCountMode(\'view\')"':'')+'>☰ 檢視</b>';
+}
+/* 唯讀盤點清單：dk=要顯示的日期；showNote=是否顯示上方說明（昨日盤點才顯示） */
+function renderCountReadonly(dk, showNote){
+  var D=DB.days[dk], di=dInfo(dk), pk=datePlus(dk,1), pi=dInfo(pk), tier=dayTypeOf(pk);
+  if(!D||!D.counts){ return '<div class="hint" style="padding:22px">'+di.m+'/'+di.dd+' 沒有盤點紀錄</div>'; }
+  var counts=D.counts||{}, tub=D.tuibing||{};
+  var html=showNote?('<div class="yestnote">'+di.m+'/'+di.dd+'（週'+di.wd+'）收班盤點　·　為 '+pi.m+'/'+pi.dd+' 備料　·　唯讀參考</div>'):'';
   DB.areas.forEach(function(a){
-    var its=DB.items.filter(function(it){return it.area===a.name && !it.tuibing;});
-    if(!its.length) return;
+    var allits=DB.items.filter(function(it){return it.area===a.name;});
+    if(!allits.length) return;
+    var its=allits.filter(function(it){return !it.tuibing;}), tb=allits.filter(function(it){return it.tuibing;});
     html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'</span></div><div class="bandc-body">';
     its.forEach(function(it){
-      var rec=D.counts[it.name], std=resolveStd(it,tier)||0, cls,stat;
-      if(rec==null){ cls='un'; stat='未點'; } else if(rec<std){ cls='low'; stat='不足'; } else { cls='ok'; stat='夠'; }
-      html+='<div class="yrow '+cls+'"><b class="ynm">'+it.name+'</b><span class="yval">'+(rec==null?'—':rec)+' / '+std+' '+it.unit+'</span><span class="ytag '+cls+'">'+stat+'</span></div>';
+      var rec=counts[it.name], std=resolveStd(it,tier)||0, cls,stat,val;
+      if(rec==null){ cls='todo'; stat='未盤點'; val='—'; }
+      else if(rec<std){ cls='low'; stat='不足'; val=rec+' / '+std+' '+it.unit; }
+      else { cls='ok'; stat='夠'; val=rec+' / '+std+' '+it.unit; }
+      html+='<div class="yrow'+(cls==='todo'?' un':'')+'"><b class="ynm">'+it.name+'</b><span class="yval">'+val+'</span><span class="ytag '+cls+'">'+stat+'</span></div>';
     });
+    if(tb.length){
+      html+='<div class="tbsub">'+TBICON+'退冰</div>';
+      tb.forEach(function(it){
+        var done=!!tub[it.name], std=resolveStd(it,tier)||0, cls=done?'ok':'todo', stat=done?'退好':'未退冰';
+        html+='<div class="yrow'+(done?'':' un')+'"><b class="ynm">'+it.name+'</b><span class="yval">退冰量 '+std+' '+it.unit+'</span><span class="ytag '+cls+'">'+stat+'</span></div>';
+      });
+    }
     html+='</div></div>';
   });
+  if(!html) html='<div class="hint" style="padding:22px">沒有品項</div>';
   return html;
 }
 function toggleEdit(){ editMode=!editMode; renderCount(); }
@@ -946,14 +986,18 @@ function eAdd(area){ var label=area?('「'+area+'」'):'未分配'; var n=prompt
 function tbToggle(name){ var D=day(); if(!D.tuibing)D.tuibing={}; D.tuibing[name]=!D.tuibing[name]; save(); renderCount(); }
 function renderCount(){
   renderCountViewToggle();
+  renderCountModeToggle();
   var yest=(countView==='yest');
+  if(!yest && countMode==='view' && !countHasData(DB.cur)) countMode='edit';
+  var todayView=(!yest && countMode==='view');
+  var readonly=yest||todayView;
   var ct=document.getElementById('countTop'), tools=document.getElementById('counttools'),
       hint=document.getElementById('countHint'), foot=document.getElementById('countFoot');
   if(ct) ct.style.display=yest?'none':'';
-  if(tools) tools.style.display=yest?'none':'';
-  if(hint) hint.style.display=yest?'none':'';
+  if(tools) tools.style.display=readonly?'none':'';
+  if(hint) hint.style.display=readonly?'none':'';
   if(foot) foot.style.display=yest?'none':'';
-  if(yest){ var cc=document.getElementById('countCols'); cc.className='yestcols'; cc.innerHTML=renderYestCount(); return; }
+  if(readonly){ var cc=document.getElementById('countCols'); cc.className='yestcols'; cc.innerHTML=renderCountReadonly(yest?datePlus(DB.cur,-1):DB.cur, yest); return; }
   renderCountTop();
   renderStationTabs();
   var single=(countStation!=='全部');
