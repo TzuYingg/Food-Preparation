@@ -635,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.17-15';
+var APP_VERSION='2026.06.17-16';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -910,13 +910,13 @@ function renderCountReadonly(dk, showNote){
       var rec=counts[it.name], std=resolveStd(it,tier)||0, cls,stat,val;
       if(rec==null){ cls='todo'; stat='未盤點'; val='—'; }
       else if(rec<std){ cls='low'; stat='不足'; val=rec+' / '+std+' '+it.unit; }
-      else { cls='ok'; stat='夠'; val=rec+' / '+std+' '+it.unit; }
+      else { cls='ok'; stat='足夠'; val=rec+' / '+std+' '+it.unit; }
       html+='<div class="yrow'+(cls==='todo'?' un':'')+'"><b class="ynm">'+it.name+'</b><span class="yval">'+val+'</span><span class="ytag '+cls+'">'+stat+'</span></div>';
     });
     if(tb.length){
       html+='<div class="tbsub">'+TBICON+'退冰</div>';
       tb.forEach(function(it){
-        var done=!!tub[it.name], std=resolveStd(it,tier)||0, cls=done?'ok':'todo', stat=done?'退好':'未退冰';
+        var done=!!tub[it.name], std=resolveStd(it,tier)||0, cls=done?'ok':'todo', stat=done?'已退':'未退冰';
         html+='<div class="yrow'+(done?'':' un')+'"><b class="ynm">'+it.name+'</b><span class="yval">退冰量 '+std+' '+it.unit+'</span><span class="ytag '+cls+'">'+stat+'</span></div>';
       });
     }
