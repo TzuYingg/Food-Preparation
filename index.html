@@ -635,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.17-16';
+var APP_VERSION='2026.06.17-18';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -699,7 +699,7 @@ function clone(o){ return JSON.parse(JSON.stringify(o)); }
    解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
-  if(DB.days[t]._carried2){ return; }              // 用新標記，讓既有資料強制重跑一次修正
+  if(DB.days[t]._carried3){ return; }              // 標記升級，讓既有資料再修正一次（上班人員）
   var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
   var hasToday=cur.some(function(x){ return (x['for']||'today')==='today'; });
   if(!hasToday){                                   // 只要還沒有「今日」類任務，就把前一天沒做完的帶進來（已排的明日任務保留）
@@ -710,7 +710,11 @@ function carryTasksInto(t){
       DB.days[t].tasks=cur.concat(carried);
     }
   }
-  DB.days[t]._carried2=true;
+  /* 上班人員＝有被分配到任務的人（今日任務的負責人，去重；未指派不算） */
+  var owners=[];
+  DB.days[t].tasks.forEach(function(x){ if((x['for']||'today')==='today' && x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
+  DB.days[t].working=owners;
+  DB.days[t]._carried3=true;
 }
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
@@ -729,7 +733,7 @@ function applyData(v){
   DB.areas = (DB.areas||[]).filter(function(a){ return a.name!=='飲料'; });
   (DB.items||[]).forEach(function(it){ if(it.area==='飲料') it.area=''; });
   var t=todayStr();
-  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:[]};
+  if(!DB.days[t]) DB.days[t]={working:[], counts:{}, tuibing:{}, tasks:[]};
   if(!DB.dayType) DB.dayType={};
   (DB.staff||[]).forEach(function(s){ if(!s.role){ s.role = s.animal==='lion'?'老闆':s.animal==='sheep'?'老闆娘':(s.animal==='penguin'||s.animal==='squirrel')?'正職':'工讀'; } });
   if(!DB.days[t].stationOwner) DB.days[t].stationOwner={};
@@ -737,7 +741,7 @@ function applyData(v){
   /* Firebase 不會儲存空物件/空陣列，從雲端讀回時這些欄位可能不存在 → 補上空值，避免盤點頁讀取時崩潰 */
   if(!DB.days[t].counts || typeof DB.days[t].counts!=='object') DB.days[t].counts={};
   if(!Array.isArray(DB.days[t].tasks)) DB.days[t].tasks=[];
-  if(!Array.isArray(DB.days[t].working)) DB.days[t].working=DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;});
+  if(!Array.isArray(DB.days[t].working)) DB.days[t].working=[];
   carryTasksInto(t);
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
@@ -935,7 +939,7 @@ function renderStationTabs(){ var el=document.getElementById('stationTabs'); if(
   el.innerHTML=h; }
 /* 每天午夜 00:00 自動換到新的一天、清空當日盤點＋退出編輯 */
 function checkRollover(){ if(!DB||!DB.cur) return; var t=todayStr(); if(t===DB.cur) return;
-  if(!DB.days[t]) DB.days[t]={working:DB.staff.filter(function(s){return s.enabled;}).map(function(s){return s.name;}), counts:{}, tuibing:{}, tasks:[], stationOwner:{}};
+  if(!DB.days[t]) DB.days[t]={working:[], counts:{}, tuibing:{}, tasks:[], stationOwner:{}};
   carryTasksInto(t);
   DB.cur=t; editCount=null; editMode=false; dtOpen=false; save();
   var pc=document.querySelector('#page-count.on'); var pb=document.querySelector('#page-board.on');
@@ -1070,7 +1074,7 @@ function genTasks(){
     if(!(low||dueTomorrow(it))) return;
     var ops=(it.ops&&it.ops.length)?it.ops:[''];
     ops.forEach(function(op){
-      if(hasTask(D,it.name,op)) return;
+      if(hasTask(D,it.name,op,'tmr')) return;
       D.tasks.push({id:'t'+Date.now()+'_'+(added),name:it.name,owner:'未指派',band:low?'pre':(it.band||'none'),min:(op?taskMin(it,op):it.min),stock:low?'out':'ok',done:false,cat:it.cat||'','for':'tmr',op:op});
       added++;
     });
@@ -1174,7 +1178,7 @@ function delTask(){ var it=byId(sheetId); if(!it) return;
 /* add task / send line */
 /* ===== 新增任務：挑選清單（不在板上的品項，按種類）＋自訂一次性 ===== */
 function addTask(){
-  var onBoard=day().tasks.map(function(t){return t.name;});
+  var onBoard=day().tasks.filter(function(t){return (t['for']||'today')===boardFor;}).map(function(t){return t.name;});
   function pickable(it){ return (it.ops&&it.ops.length) ? true : onBoard.indexOf(it.name)<0; }
   var cats=[]; DB.items.forEach(function(it){ if(pickable(it)){ var c=it.cat||'未分類'; if(cats.indexOf(c)<0)cats.push(c); } });
   var body='<div class="pick-custom" onclick="addCustomTask()">＋ 自訂任務（僅這次，不存進品項庫）</div>';
@@ -1189,13 +1193,13 @@ function addTask(){
 }
 function addItemTask(name){ var it=itemBy(name); if(!it)return;
   if(it.ops&&it.ops.length){ pickOpTask(name); return; }
-  if(hasTask(day(),name,'')) return;
+  if(hasTask(day(),name,'',boardFor)) return;
   day().tasks.push({id:'t'+Date.now(),name:name,owner:'未指派',band:'none',min:it.min||10,stock:'ok',done:false,cat:it.cat||'','for':boardFor,op:''}); save(); renderBoard(); addTask(); }
 function pickOpTask(name){ var it=itemBy(name); if(!it)return; var D=day();
-  var grid=(it.ops||[]).map(function(op){ var on=hasTask(D,name,op);
+  var grid=(it.ops||[]).map(function(op){ var on=hasTask(D,name,op,boardFor);
     return '<div class="pi'+(on?' picked':'')+'"'+(on?'':' onclick="addOpTask(\''+name.replace(/'/g,"\\'")+'\',\''+op+'\')"')+'>'+op+'<span class="pl">'+(on?'&#10003;':'＋')+'</span></div>'; }).join('');
   openSheetHtml('<div class="sheet-title">'+name+' · 選作業</div><div class="sheet-label">叫出哪一步，就成一張卡（可多選）</div><div class="picklist"><div class="pickgrid">'+grid+'</div></div><div class="sheet-actions"><button class="b-close" onclick="addTask()">返回</button><button class="b-done" onclick="closeSheet()">完成</button></div>'); }
-function addOpTask(name,op){ var it=itemBy(name); if(!it)return; if(hasTask(day(),name,op))return;
+function addOpTask(name,op){ var it=itemBy(name); if(!it)return; if(hasTask(day(),name,op,boardFor))return;
   day().tasks.push({id:'t'+Date.now(),name:name,owner:'未指派',band:'none',min:taskMin(it,op),stock:'ok',done:false,cat:it.cat||'','for':boardFor,op:op}); save(); renderBoard(); pickOpTask(name); }
 function addCustomTask(){ var n=prompt('自訂任務名稱（僅這次，不存進品項庫）'); if(!n)return; n=(''+n).trim(); if(!n)return; var m=parseInt(prompt('預估幾分鐘？','10'),10);
   day().tasks.push({id:'t'+Date.now(),name:n,owner:'未指派',band:'none',min:isNaN(m)?10:m,stock:'ok',done:false,cat:'','for':boardFor,op:''}); save(); closeSheet(); renderBoard(); }
@@ -1293,7 +1297,7 @@ function opNames(){ return DB.ops||[]; }
 function opBadge(op){ if(!op)return ''; var a=op.charAt(0), b=op.slice(1); return '<span class="opbg"><span>'+a+'</span><span>'+b+'</span></span>'; }
 function nmHtml(it){ return it.name+opBadge(it.op); }
 function taskMin(it,op){ if(op){ return (it.opMin&&it.opMin[op]!=null)?it.opMin[op]:0; } return it.min||10; }
-function hasTask(D,name,op){ return D.tasks.some(function(t){return t.name===name&&(t.op||'')===(op||'');}); }
+function hasTask(D,name,op,forTag){ return D.tasks.some(function(t){return t.name===name&&(t.op||'')===(op||'')&&(forTag?((t['for']||'today')===forTag):true);}); }
 var CATSW=['#7FBF8E','#F2A766','#EF8A6B','#F3C24B','#6FB3D6','#EC9BB0','#B49BD6','#5FC0B0'];
 var TBICON='<svg class="tbico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/><line x1="18.4" y1="5.6" x2="5.6" y2="18.4"/></svg>';
 var WD=[{n:'一',d:1},{n:'二',d:2},{n:'三',d:3},{n:'四',d:4},{n:'五',d:5},{n:'六',d:6},{n:'日',d:0}];
