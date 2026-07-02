@@ -635,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.06.23-01';
+var APP_VERSION='2026.07.02-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -697,17 +697,18 @@ function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMon
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 /* 把「最近一個有任務的前一天」沒做完的任務，帶進指定的某一天（只帶一次、已完成的不帶）。
    解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
-/* 換日結轉規則（2026.06.24 起）：
-   今天的「今日工作」＝前一天的「明日工作(for:tmr)」原封不動搬過來（品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）。
-   不再帶入前一天「當日臨時任務」的殘留；前一天若沒有任何明日任務，今天即空白。
-   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，所以新規則只對之後新生成的日子生效。 */
+/* 換日結轉規則（2026.07.02 起）：
+   今天的「今日工作」＝「日曆上的昨天(datePlus(t,-1))」的「明日工作(for:tmr)」原封不動搬過來
+   （品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）——保證昨天存的，隔天逐筆完全一致。
+   來源固定是昨天：中間若有一天沒開 app/公休，不再往回抓更早、且是為別天規劃的舊清單（那是先前「亂掉」的主因）。
+   不帶入前一天「當日臨時任務」殘留；昨天沒有明日工作 → 今天即空白。
+   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，故此規則只對之後新生成的日子生效。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
   if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（6/23 以前維持原狀）
   var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
   var keepTmr=cur.filter(function(x){ return (x['for']||'today')==='tmr'; });  // 今天分支若已有明日規劃，保留
-  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
-  var pk=keys[keys.length-1];
+  var pk=datePlus(t,-1);   // 只認「日曆上的昨天」：昨天沒節點/沒明日工作 → carried 為空 → 今天空白，不再往回抓更早、且是為別天規劃的舊清單
   var carried=[];
   if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
     carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
