@@ -635,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.07.02-01';
+var APP_VERSION='2026.07.06-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -697,28 +697,52 @@ function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMon
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 /* 把「最近一個有任務的前一天」沒做完的任務，帶進指定的某一天（只帶一次、已完成的不帶）。
    解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
-/* 換日結轉規則（2026.07.02 起）：
-   今天的「今日工作」＝「日曆上的昨天(datePlus(t,-1))」的「明日工作(for:tmr)」原封不動搬過來
-   （品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）——保證昨天存的，隔天逐筆完全一致。
-   來源固定是昨天：中間若有一天沒開 app/公休，不再往回抓更早、且是為別天規劃的舊清單（那是先前「亂掉」的主因）。
-   不帶入前一天「當日臨時任務」殘留；昨天沒有明日工作 → 今天即空白。
-   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，故此規則只對之後新生成的日子生效。 */
+/* 換日結轉規則（2026.06.24 起）：
+   今天的「今日工作」＝前一天的「明日工作(for:tmr)」原封不動搬過來（品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）。
+   不再帶入前一天「當日臨時任務」的殘留；前一天若沒有任何明日任務，今天即空白。
+   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，所以新規則只對之後新生成的日子生效。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
-  if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（6/23 以前維持原狀）
+  if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（既有日子維持原狀）
+  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
+  var pk=keys[keys.length-1];
+  /* 防呆：前一天的分支若還沒從雲端載入（本機暫時看不到），就先什麼都不做、也不鎖定，
+     等資料到齊下次載入再結轉。避免「載入未完成 → 誤判前一天沒任務 → 把今天結轉成空白並永久鎖住」。 */
+  if(!(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks))){ return; }
   var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
   var keepTmr=cur.filter(function(x){ return (x['for']||'today')==='tmr'; });  // 今天分支若已有明日規劃，保留
-  var pk=datePlus(t,-1);   // 只認「日曆上的昨天」：昨天沒節點/沒明日工作 → carried 為空 → 今天空白，不再往回抓更早、且是為別天規劃的舊清單
-  var carried=[];
-  if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
-    carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
-  }
-  DB.days[t].tasks=carried.concat(keepTmr);        // 前一天沒有明日任務 → carried 為空 → 今天空白
+  var carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
+  DB.days[t].tasks=carried.concat(keepTmr);        // 前一天有分支但沒明日任務 → carried 為空 → 今天空白（符合規則）
   /* 今天上班＝這批任務被指派到的人，自動帶入（去重；未指派不算）。有人沒來再用「今天上班」手動關掉。 */
   var owners=[];
   carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
   DB.days[t].working=owners;
   DB.days[t]._carried3=true;
+}
+/* 手動救援：把前一天的任務補帶成今天的「今日工作」（用於今日工作意外空白時）。
+   優先帶「明日工作(for:tmr)」；前一天若沒有明日規劃，改帶前一天所有任務。明日規劃不受影響。 */
+function recoverFromPrev(){
+  var t=DB.cur;
+  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
+  var pk=keys[keys.length-1];
+  if(!(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks) && DB.days[pk].tasks.length)){
+    alert('前一天（'+(pk||'找不到')+'）沒有任何任務可補帶。'); return;
+  }
+  var src=DB.days[pk].tasks;
+  var plan=src.filter(function(x){ return (x['for']||'today')==='tmr'; });
+  var pool=plan.length?plan:src;
+  var note=plan.length?('明日規劃 '+plan.length+' 項'):('前一天沒有明日規劃，改帶當日任務 '+src.length+' 項');
+  if(!confirm('要把 '+pk+' 的「'+note+'」補帶成今天的今日工作嗎？\n（今天現有的今日工作會被覆蓋，明日規劃不受影響）')) return;
+  var carried=pool.map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
+  var keepTmr=(day().tasks||[]).filter(function(x){ return (x['for']||'today')==='tmr'; });
+  day().tasks=carried.concat(keepTmr);
+  var owners=[];
+  carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
+  day().working=owners;
+  save();
+  boardFor='today';
+  alert('已從 '+pk+' 補帶 '+carried.length+' 項到今天的今日工作。');
+  go('board');
 }
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
@@ -1436,7 +1460,7 @@ function editBand(k){ var v=prompt('時段名稱',BNAME[k]); if(!v)return; BNAME
 
 /* setup note */
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-3（作業選單可後台管理：新增／改名／刪除／排序）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div><div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-3（作業選單可後台管理：新增／改名／刪除／排序）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
