@@ -388,6 +388,14 @@
   .strow2 .roleseg{display:flex; gap:5px; margin-top:10px; flex-wrap:wrap;}
   .strow2 .roleseg b{font-size:12px; font-weight:800; padding:6px 11px; border-radius:9px; background:var(--tint); color:var(--ink2);}
   .strow2 .roleseg b.on{background:var(--accent); color:#fff;}
+  .stinfo{display:flex; align-items:center; gap:10px; cursor:pointer; flex:1; min-width:0;}
+  .stinfo img{width:34px; height:34px; object-fit:contain; flex:none;}
+  .stinfo .nm{font-size:15px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .stinfo .chev{color:var(--ink3); font-size:15px; font-weight:700; flex:none;}
+  .avpick{display:flex; flex-wrap:wrap; gap:8px;}
+  .avpick b{display:flex; flex-direction:column; align-items:center; gap:4px; width:64px; padding:9px 4px; border-radius:12px; background:var(--surface); border:1.5px solid var(--line); font-size:11px; font-weight:700; color:var(--ink2); cursor:pointer;}
+  .avpick b img{width:32px; height:32px; object-fit:contain;}
+  .avpick b.on{border-color:var(--accent); background:var(--accent-soft); color:var(--ink); box-shadow:0 0 0 2px rgba(191,91,61,.12);}
   /* 快照圖片（離畫面組裝用） */
   #snapStage{position:fixed; left:-9999px; top:0; width:472px; background:#FBF7F0; padding:16px;}
   .snapcard{width:440px; background:#fff; border:1.5px solid #ECE5D8; border-radius:16px; padding:16px 16px 13px; box-shadow:0 4px 16px rgba(79,74,67,.10);}
@@ -635,7 +643,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.07.06-01';
+var APP_VERSION='2026.07.02-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -697,52 +705,28 @@ function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMon
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
 /* 把「最近一個有任務的前一天」沒做完的任務，帶進指定的某一天（只帶一次、已完成的不帶）。
    解決「早上重開 app 才換日」時，前一天排的任務沒被帶過來的問題。 */
-/* 換日結轉規則（2026.06.24 起）：
-   今天的「今日工作」＝前一天的「明日工作(for:tmr)」原封不動搬過來（品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）。
-   不再帶入前一天「當日臨時任務」的殘留；前一天若沒有任何明日任務，今天即空白。
-   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，所以新規則只對之後新生成的日子生效。 */
+/* 換日結轉規則（2026.07.02 起）：
+   今天的「今日工作」＝「日曆上的昨天(datePlus(t,-1))」的「明日工作(for:tmr)」原封不動搬過來
+   （品項/負責人/時段/急缺/分鐘數全保留，僅 for 改 today、done 重置）——保證昨天存的，隔天逐筆完全一致。
+   來源固定是昨天：中間若有一天沒開 app/公休，不再往回抓更早、且是為別天規劃的舊清單（那是先前「亂掉」的主因）。
+   不帶入前一天「當日臨時任務」殘留；昨天沒有明日工作 → 今天即空白。
+   _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，故此規則只對之後新生成的日子生效。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
-  if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（既有日子維持原狀）
-  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
-  var pk=keys[keys.length-1];
-  /* 防呆：前一天的分支若還沒從雲端載入（本機暫時看不到），就先什麼都不做、也不鎖定，
-     等資料到齊下次載入再結轉。避免「載入未完成 → 誤判前一天沒任務 → 把今天結轉成空白並永久鎖住」。 */
-  if(!(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks))){ return; }
+  if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（6/23 以前維持原狀）
   var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
   var keepTmr=cur.filter(function(x){ return (x['for']||'today')==='tmr'; });  // 今天分支若已有明日規劃，保留
-  var carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
-  DB.days[t].tasks=carried.concat(keepTmr);        // 前一天有分支但沒明日任務 → carried 為空 → 今天空白（符合規則）
+  var pk=datePlus(t,-1);   // 只認「日曆上的昨天」：昨天沒節點/沒明日工作 → carried 為空 → 今天空白，不再往回抓更早、且是為別天規劃的舊清單
+  var carried=[];
+  if(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks)){
+    carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
+  }
+  DB.days[t].tasks=carried.concat(keepTmr);        // 前一天沒有明日任務 → carried 為空 → 今天空白
   /* 今天上班＝這批任務被指派到的人，自動帶入（去重；未指派不算）。有人沒來再用「今天上班」手動關掉。 */
   var owners=[];
   carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
   DB.days[t].working=owners;
   DB.days[t]._carried3=true;
-}
-/* 手動救援：把前一天的任務補帶成今天的「今日工作」（用於今日工作意外空白時）。
-   優先帶「明日工作(for:tmr)」；前一天若沒有明日規劃，改帶前一天所有任務。明日規劃不受影響。 */
-function recoverFromPrev(){
-  var t=DB.cur;
-  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
-  var pk=keys[keys.length-1];
-  if(!(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks) && DB.days[pk].tasks.length)){
-    alert('前一天（'+(pk||'找不到')+'）沒有任何任務可補帶。'); return;
-  }
-  var src=DB.days[pk].tasks;
-  var plan=src.filter(function(x){ return (x['for']||'today')==='tmr'; });
-  var pool=plan.length?plan:src;
-  var note=plan.length?('明日規劃 '+plan.length+' 項'):('前一天沒有明日規劃，改帶當日任務 '+src.length+' 項');
-  if(!confirm('要把 '+pk+' 的「'+note+'」補帶成今天的今日工作嗎？\n（今天現有的今日工作會被覆蓋，明日規劃不受影響）')) return;
-  var carried=pool.map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
-  var keepTmr=(day().tasks||[]).filter(function(x){ return (x['for']||'today')==='tmr'; });
-  day().tasks=carried.concat(keepTmr);
-  var owners=[];
-  carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
-  day().working=owners;
-  save();
-  boardFor='today';
-  alert('已從 '+pk+' 補帶 '+carried.length+' 項到今天的今日工作。');
-  go('board');
 }
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
@@ -1397,12 +1381,37 @@ function delItem(){ if(!DB.items.length)return; var it=DB.items[sel]; if(!it)ret
 function renderStaff(){ var roles=['老闆','老闆娘','正職','工讀'];
   document.getElementById('stafflist').innerHTML=DB.staff.map(function(s,i){
     var seg=roles.map(function(r){ return '<b class="'+((s.role||'工讀')===r?'on':'')+'" onclick="setStaffRole('+i+',\''+r+'\')">'+r+'</b>'; }).join('');
-    return '<div class="strow2"><div class="strow2-top"><img src="'+AV[s.animal]+'"><div class="nm">'+s.name+'</div><div class="sp"><button class="ord" onclick="moveStaff('+i+',-1)">▲</button><button class="ord" onclick="moveStaff('+i+',1)">▼</button><div class="tg'+(s.enabled?' on':'')+'" onclick="toggleStaff('+i+')"><i></i></div></div></div><div class="roleseg">'+seg+'</div></div>';
+    return '<div class="strow2"><div class="strow2-top"><div class="stinfo" onclick="openStaffEdit('+i+')"><img src="'+AV[s.animal]+'"><div class="nm">'+s.name+'</div><span class="chev">&#8250;</span></div><div class="sp"><button class="ord" onclick="moveStaff('+i+',-1)">▲</button><button class="ord" onclick="moveStaff('+i+',1)">▼</button><div class="tg'+(s.enabled?' on':'')+'" onclick="toggleStaff('+i+')"><i></i></div></div></div><div class="roleseg">'+seg+'</div></div>';
   }).join(''); }
 function setStaffRole(i,r){ DB.staff[i].role=r; save(); renderStaff(); }
 function moveStaff(i,d){ var j=i+d; if(j<0||j>=DB.staff.length)return; var t=DB.staff[i]; DB.staff[i]=DB.staff[j]; DB.staff[j]=t; save(); renderStaff(); }
 function toggleStaff(i){ DB.staff[i].enabled=!DB.staff[i].enabled; save(); renderStaff(); }
 function addStaff(){ var n=prompt('員工姓名'); if(!n)return; var used=DB.staff.map(function(s){return s.animal;}); var free=ANIMKEYS.filter(function(a){return used.indexOf(a)<0;}); var an=free.length?free[0]:'rabbit'; DB.staff.push({name:n,animal:an,enabled:true,role:'工讀'}); save(); renderStaff(); }
+var staffEditI=-1;
+function openStaffEdit(i){ staffEditI=i; renderStaffEdit(); }
+function renderStaffEdit(){ var i=staffEditI, s=DB.staff[i]; if(!s)return;
+  var avHtml=ANIMKEYS.map(function(a){ return '<b class="'+(s.animal===a?'on':'')+'" onclick="sPickAnimal('+i+',\''+a+'\')"><img src="'+AV[a]+'"><span>'+(ANM[a]||a)+'</span></b>'; }).join('');
+  var inner='<div class="sheet-title">編輯員工</div>'
+    +'<div style="height:12px"></div>'
+    +'<div class="idField"><span class="fl">姓名</span><div class="idVal" onclick="sRename('+i+')">'+s.name+'</div></div>'
+    +'<div class="idField"><span class="fl">所屬小動物</span><div class="avpick">'+avHtml+'</div></div>'
+    +'<button class="idDel" onclick="sDelStaff('+i+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>刪除這位員工</button>'
+    +'<div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div>';
+  openSheetHtml(inner); }
+function sRename(i){ var s=DB.staff[i]; if(!s)return; var old=s.name; var v=prompt('修改姓名', old); if(v===null)return; v=(''+v).trim(); if(!v||v===old)return;
+  s.name=v;
+  Object.keys(DB.days||{}).forEach(function(dk){ var D=DB.days[dk]; if(!D)return;
+    if(Array.isArray(D.working)){ var wi=D.working.indexOf(old); if(wi>=0) D.working[wi]=v; }
+    if(Array.isArray(D.tasks)) D.tasks.forEach(function(t){ if(t.owner===old) t.owner=v; });
+    if(D.savedBy && D.savedBy.name===old) D.savedBy.name=v;
+  });
+  save(); renderStaffEdit(); renderStaff(); }
+function sPickAnimal(i,a){ var s=DB.staff[i]; if(!s||s.animal===a)return;
+  var other=null; for(var k=0;k<DB.staff.length;k++){ if(k!==i && DB.staff[k].animal===a){ other=DB.staff[k]; break; } }
+  if(other) other.animal=s.animal;
+  s.animal=a;
+  save(); renderStaffEdit(); renderStaff(); }
+function sDelStaff(i){ var s=DB.staff[i]; if(!s)return; if(!confirm('刪除「'+s.name+'」？此動作無法復原。'))return; DB.staff.splice(i,1); save(); closeSheet(); renderStaff(); }
 function renderAreas(){ document.getElementById('arealist').innerHTML=DB.areas.map(function(a,i){ var cnt=DB.items.filter(function(it){return it.area===a.name;}).length;
   return '<div class="strow"><span class="aicChip" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><div><div class="nm">'+a.name+'區</div><div class="an">'+cnt+' 個品項</div></div><div class="sp"><button class="ord" onclick="moveArea('+i+',-1)">▲</button><button class="ord" onclick="moveArea('+i+',1)">▼</button></div></div>'; }).join(''); }
 function moveArea(i,d){ var j=i+d; if(j<0||j>=DB.areas.length)return; var t=DB.areas[i]; DB.areas[i]=DB.areas[j]; DB.areas[j]=t; save(); renderAreas(); renderCount(); }
@@ -1460,7 +1469,7 @@ function editBand(k){ var v=prompt('時段名稱',BNAME[k]); if(!v)return; BNAME
 
 /* setup note */
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div><div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-3（作業選單可後台管理：新增／改名／刪除／排序）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-3（作業選單可後台管理：新增／改名／刪除／排序）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
