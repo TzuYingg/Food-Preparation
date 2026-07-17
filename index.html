@@ -635,7 +635,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.07.06-02';
+var APP_VERSION='2026.07.18-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -703,21 +703,29 @@ function clone(o){ return JSON.parse(JSON.stringify(o)); }
    _carried3 為冪等保護：已結轉過的日子（含舊邏輯產生的）一律不再動，所以新規則只對之後新生成的日子生效。 */
 function carryTasksInto(t){
   if(!DB.days[t]) return;
-  if(DB.days[t]._carried3){ return; }              // 已結轉過就不再動（既有日子維持原狀）
   var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
   var pk=keys[keys.length-1];
-  /* 防呆：前一天的分支若還沒從雲端載入（本機暫時看不到），就先什麼都不做、也不鎖定，
-     等資料到齊下次載入再結轉。避免「載入未完成 → 誤判前一天沒任務 → 把今天結轉成空白並永久鎖住」。 */
+  /* 防呆：前一天分支還沒從雲端載入時，先什麼都不做、也不鎖定，等資料到齊下次再結轉。 */
   if(!(pk && DB.days[pk] && Array.isArray(DB.days[pk].tasks))){ return; }
-  var cur=Array.isArray(DB.days[t].tasks)?DB.days[t].tasks:[];
-  var keepTmr=cur.filter(function(x){ return (x['for']||'today')==='tmr'; });  // 今天分支若已有明日規劃，保留
-  var carried=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; }).map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
-  DB.days[t].tasks=carried.concat(keepTmr);        // 前一天有分支但沒明日任務 → carried 為空 → 今天空白（符合規則）
-  /* 今天上班＝這批任務被指派到的人，自動帶入（去重；未指派不算）。有人沒來再用「今天上班」手動關掉。 */
-  var owners=[];
-  carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
-  DB.days[t].working=owners;
-  DB.days[t]._carried3=true;
+  var td=DB.days[t];
+  if(!Array.isArray(td.tasks)) td.tasks=[];
+  var srcTmr=DB.days[pk].tasks.filter(function(x){ return (x['for']||'today')==='tmr'; });
+  var todayHas=td.tasks.filter(function(x){ return (x['for']||'today')==='today'; }).length;
+  /* 自癒結轉：只要「今天沒有任何今日類任務」且「昨天有明日規劃」，就(重新)把昨天的明日規劃結轉成今天。
+     這樣即使某次多裝置同步把今天的今日工作洗成空的，下次開啟會自動補回，不必手動補帶。
+     昨天若沒有明日規劃 → 今天維持空白（符合規則）。 */
+  if(todayHas===0 && srcTmr.length>0){
+    var carried=srcTmr.map(function(x){ var c={}; for(var k in x){ c[k]=x[k]; } c['for']='today'; c.done=false; return c; });
+    var keepTmr=td.tasks.filter(function(x){ return (x['for']||'today')==='tmr'; });
+    td.tasks=carried.concat(keepTmr);
+    var owners=[];
+    carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
+    td.working=owners;
+    td._carried3=true;
+    if(useFB && fbRef && gotFirst){ try{ save(); }catch(e){} }   // 自癒後寫回雲端，讓兩台裝置同步
+  } else {
+    td._carried3=true;
+  }
 }
 /* 手動救援：把前一天的任務補帶成今天的「今日工作」（用於今日工作意外空白時）。
    優先帶「明日工作(for:tmr)」；前一天若沒有明日規劃，改帶前一天所有任務。明日規劃不受影響。 */
@@ -1475,7 +1483,8 @@ function diagHtml(){
       ['\u6628\u5929\u00b7\u660e\u65e5\u898f\u5283 tmr', pd?cf(pd,'tmr'):'\u7121\u6b64\u5929'],
       ['\u6628\u5929\u00b7\u7576\u65e5\u4efb\u52d9 today', pd?cf(pd,'today'):'\u2014'],
       ['\u6628\u5929\u00b7\u5df2\u6307\u6d3e\u4eba\u6578', pd?ow(pd):'\u2014'],
-      ['\u4eca\u5929\u00b7\u4efb\u52d9\u6578', td?(Array.isArray(td.tasks)?td.tasks.length:0):'\u7121\u6b64\u5929'],
+      ['\u4eca\u5929\u00b7\u4eca\u65e5\u5de5\u4f5c today', td?cf(td,'today'):'\u7121\u6b64\u5929'],
+      ['\u4eca\u5929\u00b7\u660e\u65e5\u898f\u5283 tmr', td?cf(td,'tmr'):'\u2014'],
       ['\u4eca\u5929\u00b7\u7d50\u8f49\u9396\u5b9a', (td&&td._carried3)?'\u662f':'\u5426'],
       ['\u6700\u5f8c\u5beb\u5165', DB._w?('@ '+new Date(DB._w.t||0).toLocaleString()):'\u2014']
     ];
