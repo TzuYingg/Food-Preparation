@@ -437,6 +437,15 @@
 <div class="app">
   <div class="head"><div class="title" id="hTitle">庄腳・收班工作分配</div><div class="sub" id="hSub"></div></div>
 
+  <div id="bootLoading" style="padding:56px 24px;text-align:center;">
+    <div style="font-weight:800;font-size:14px;color:var(--ink2);margin-bottom:6px;">載入中…</div>
+    <div style="font-size:12px;color:var(--ink3);">正在連線雲端資料，請稍候</div>
+    <div id="bootRetryWrap" style="margin-top:16px;display:none;">
+      <div style="font-size:12px;color:var(--brick);margin-bottom:10px;">連線逾時，已改用本機最後一次的資料。</div>
+      <button onclick="location.reload()" style="background:var(--btn-ink);color:#fff;border:none;border-radius:11px;padding:11px 20px;font-size:13px;font-weight:700;">重新整理</button>
+    </div>
+  </div>
+
   <!-- 盤點 -->
   <div class="page" id="page-count">
     <div class="ctop" id="countTop"></div>
@@ -635,7 +644,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.07.18-01';
+var APP_VERSION='2026.08.16-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -847,23 +856,35 @@ function checkForUpdate(){
   }catch(e){}
 }
 function load(cb){
+  /* 把畫面渲染包一層：不管走哪條路徑完成初次渲染，都要把開機載入提示收起來 */
+  function done(){ var bl=document.getElementById('bootLoading'); if(bl) bl.style.display='none'; cb(); }
   if(useFB){ try{ firebase.initializeApp(FIREBASE_CONFIG); fbRef=firebase.database().ref('jenka-shouban');
       try{ firebase.database().ref('.info/connected').on('value', function(cs){ var el=document.getElementById('hdrCloud'); if(!el) return; var on=!!(cs&&cs.val()); el.innerHTML='<span class="cloud '+(on?'online':'offline')+'"><span class="cd"></span>'+(on?'雲端已連線':'離線')+'</span>'; }); }catch(e){}
+      /* 逾時保護：Firebase 連線卡住（弱網路／訊號差）時，不要讓畫面永遠空白 →
+         等一段時間沒回應就先用本機資料把畫面畫出來，之後 Firebase 真的回來了會自動補上最新資料 */
+      setTimeout(function(){
+        if(gotFirst) return;                                         // 已經正常收到資料，不需要退場
+        gotFirst=true;
+        applyData(JSON.parse(lsGet('jenka-shouban')||'null'));
+        done();
+        var rw=document.getElementById('bootRetryWrap'); if(rw) rw.style.display='block';
+        var el=document.getElementById('hdrCloud'); if(el) el.innerHTML='<span class="cloud offline"><span class="cd"></span>連線逾時，使用本機資料</span>';
+      }, 7000);
       /* 持續監聽：任何裝置改了資料，這台都會即時收到並更新（不再只讀一次） */
       fbRef.on('value', function(s){
         var v=s.val();
-        if(!gotFirst){ gotFirst=true; applyData(v); cb(); return; }   // 首次：初始化畫面
+        if(!gotFirst){ gotFirst=true; applyData(v); done(); return; }   // 首次：初始化畫面
         if(!v) return;
         applyData(v);                                                 // 永遠先把本機資料更新成最新
         if(v._w && v._w.id===CLIENT_ID) return;                       // 這是自己寫入的回音 → 不重繪，避免畫面亂跳
         if(uiBusy()) return;                                          // 別台改了，但你正在操作 → 資料已更新，待下一動作自然帶入
         softRerender();                                              // 別台改了且你沒在操作 → 立即同步畫面
       }, function(){                                                  // 讀取失敗 → 退回本機儲存，仍能開啟
-        if(!gotFirst){ gotFirst=true; applyData(JSON.parse(lsGet('jenka-shouban')||'null')); cb(); }
+        if(!gotFirst){ gotFirst=true; applyData(JSON.parse(lsGet('jenka-shouban')||'null')); done(); }
       });
       return;
     }catch(e){} }
-  applyData(JSON.parse(lsGet('jenka-shouban')||'null')); cb();
+  applyData(JSON.parse(lsGet('jenka-shouban')||'null')); done();
 }
 
 /* ====== helpers ====== */
