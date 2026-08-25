@@ -651,7 +651,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.16-02';
+var APP_VERSION='2026.08.25-01';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -710,6 +710,21 @@ var gotFirst = false;
 /* 自癒結轉每天最多只允許寫回雲端一次（同一次開啟頁面期間），避免「讀到資料→自動補回→寫回雲端→
    觸發自己的監聽器→又讀一次→又觸發判斷」在極端情況下反覆循環，拖垮手機、甚至讓頁面被系統強制關閉。 */
 var SELFHEAL_DONE = {};
+/* ====== 任務逐筆寫入（取代整包覆蓋）======
+   雲端 days/<日期>/tasks 改存成「以 id 為 key 的物件」，而不是陣列：
+     舊格式（相容讀取）：tasks: [ {id:'t123',...}, {id:'t456',...} ]
+     新格式（實際寫入）：tasks: { t123:{...}, t456:{...} }
+   本機記憶體中仍然維持陣列（DB.days[d].tasks 是 Array），只有「讀進來」與「存出去」這兩層做轉換，
+   中間所有畫面/拖曳/指派邏輯完全不用改。
+   TASK_SNAPSHOT[日期] 記錄「目前已知雲端上有哪些任務 id」，每次收到雲端最新資料、或每次成功送出寫入後都會更新，
+   讓 save() 能正確分辨「這次要刪除哪些任務 id」，而不用整包覆蓋去蓋掉別人剛存的任務。 */
+var TASK_SNAPSHOT = {};
+function tasksToArray(raw){
+  if(!raw) return [];
+  if(Array.isArray(raw)) return raw.slice();
+  return Object.keys(raw).map(function(k){ var t=raw[k]||{}; if(!t.id) t.id=k; return t; })
+    .sort(function(a,b){ return a.id<b.id?-1:(a.id>b.id?1:0); });
+}
 function lsGet(k){ try{return localStorage.getItem(k);}catch(e){return null;} }
 function lsSet(k,v){ try{localStorage.setItem(k,v);}catch(e){} }
 function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
@@ -741,7 +756,7 @@ function carryTasksInto(t){
     carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
     td.working=owners;
     td._carried3=true;
-    if(useFB && fbRef && gotFirst && !SELFHEAL_DONE[t]){ SELFHEAL_DONE[t]=true; try{ save(); }catch(e){} }   // 自癒後寫回雲端，讓兩台裝置同步（同一天只做一次）
+    if(useFB && fbRef && gotFirst && !SELFHEAL_DONE[t]){ SELFHEAL_DONE[t]=true; try{ save(t); }catch(e){} }   // 自癒後寫回雲端，讓兩台裝置同步（同一天只做一次）；明確指定日期 t，避免這時 DB.cur 還沒切換過來，寫錯天導致結轉沒真的存上雲端
   } else {
     td._carried3=true;
   }
@@ -774,6 +789,12 @@ function recoverFromPrev(){
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
   else { DB=v; ['areas','bands','staff','items','cats'].forEach(function(k){ if(!DB[k]||!DB[k].length) DB[k]=clone(DEFAULT[k]); }); if(!DB.days)DB.days={}; }
+  // 任務逐筆寫入相容層：不論雲端存的是舊格式(陣列)還是新格式(以id為key的物件)，讀進記憶體一律轉成陣列；
+  // 同時把 TASK_SNAPSHOT 更新成「目前雲端已知的任務id」，讓之後 save() 判斷刪除時有正確基準。
+  Object.keys(DB.days).forEach(function(dk){
+    var D=DB.days[dk]; D.tasks=tasksToArray(D.tasks);
+    var ids={}; D.tasks.forEach(function(t){ ids[t.id]=true; }); TASK_SNAPSHOT[dk]=ids;
+  });
   // 舊資料相容：補上種類(cat)與排定週幾(days)
   (DB.items||[]).forEach(function(it){ var d=DEFAULT.items.filter(function(x){return x.name===it.name;})[0];
     if(it.cat===undefined||it.cat===null) it.cat = d?d.cat:'';
@@ -808,14 +829,25 @@ function tomorrowDOW(){ return dInfo(datePlus(DB.cur,1)).wi; }
 function dueTomorrow(it){ return !!(it&&it.daily) || (it&&Array.isArray(it.days)&&it.days.indexOf(tomorrowDOW())>=0); }
 function taskCat(t){ var it=itemBy(t.name); return it?(it.cat||''):(t.cat||''); }
 function taskSrc(t){ var it=itemBy(t.name); if(dueTomorrow(it)) return 'plan'; if(t.stock==='out'||(it&&curOf(t.name)<effStd(it))) return 'short'; return 'plan'; }
-function save(){
+function save(dateKey){
+  var d = dateKey || DB.cur;
   if(useFB&&fbRef){
     try{
       /* 分支寫入：每個分支各自更新，互不整包覆蓋。
          days/<日期> = 當日盤點/工作；items/staff/... = 後台設定。
-         「後台改品項」與「現場盤點」從此寫到不同分支，不會互相蓋掉。 */
+         「後台改品項」與「現場盤點」從此寫到不同分支，不會互相蓋掉。
+         days/<日期>/tasks 進一步拆到「逐筆任務」層級：每個任務各自寫自己的 id 節點，
+         沒被這次動作碰到的任務完全不會被送出去、也就不會被覆蓋掉——
+         解決「老闆手機排定完、平板隔天用舊資料寫回去，把老闆的指派整批蓋掉」的問題。 */
       var upd={ '_w':{ id:CLIENT_ID, t:Date.now() } };
-      if(DB.cur) upd['days/'+DB.cur] = DB.days[DB.cur];
+      if(d && DB.days[d]){
+        var D=DB.days[d];
+        for(var k in D){ if(k==='tasks') continue; upd['days/'+d+'/'+k] = (D[k]===undefined?null:D[k]); }
+        var prevIds=TASK_SNAPSHOT[d]||{}, curIds={};
+        (D.tasks||[]).forEach(function(t){ curIds[t.id]=true; upd['days/'+d+'/tasks/'+t.id]=t; });
+        Object.keys(prevIds).forEach(function(id){ if(!curIds[id]) upd['days/'+d+'/tasks/'+id]=null; });
+        TASK_SNAPSHOT[d]=curIds;
+      }
       ['items','staff','cats','bands','areas','ops'].forEach(function(k){ if(DB[k]!==undefined) upd[k]=DB[k]; });
       upd['dayType']  = DB.dayType||{};
       upd['adminPass']= DB.adminPass;
@@ -1532,7 +1564,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-3（作業選單可後台管理：新增／改名／刪除／排序）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-4（任務逐筆寫入，取代整包覆蓋）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
