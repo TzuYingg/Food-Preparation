@@ -577,7 +577,7 @@
           <div class="cal-title" id="qCalTitle"></div>
           <div class="cal-nav" onclick="qCalNav(1)">›</div>
         </div>
-        <div class="cal-wd"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="cal-wd"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
         <div class="cal-grid" id="qCalGrid"></div>
       </div>
     </div>
@@ -727,7 +727,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-06';
+var APP_VERSION='2026.08.25-07';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1363,7 +1363,7 @@ function byId(id){ var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===
 /* ====== 查詢頁（唯讀，回顧過去每天儲存的工作分配）====== */
 var qPicked=todayStr(), qWeekAnchor=todayStr(), qMoreOn=false;
 var qCalYear=+todayStr().slice(0,4), qCalMonth=+todayStr().slice(5,7);
-function qWeekStartStr(dstr){ return datePlus(dstr,-dInfo(dstr).wi); }
+function qWeekStartStr(dstr){ var wi=dInfo(dstr).wi; return datePlus(dstr,-((wi+6)%7)); }
 function qToday(){ qPicked=todayStr(); qWeekAnchor=todayStr(); qCalYear=+qPicked.slice(0,4); qCalMonth=+qPicked.slice(5,7); renderQPicker(); renderQuery(); }
 function qWeekNav(n){ qWeekAnchor=datePlus(qWeekAnchor,n*7); renderQPicker(); }
 function qToggleMore(){ qMoreOn=!qMoreOn; var w=document.getElementById('qMoreWrap'); if(w) w.classList.toggle('on',qMoreOn); var l=document.getElementById('qMoreLink'); if(l) l.textContent=qMoreOn?'收起月曆 ‹':'查更早的日期 ›'; if(qMoreOn) renderQCal(); }
@@ -1384,7 +1384,7 @@ function renderQPicker(){
 }
 function renderQCal(){
   var ct=document.getElementById('qCalTitle'); if(ct) ct.textContent=qCalYear+'年'+qCalMonth+'月';
-  var startOffset=new Date(qCalYear,qCalMonth-1,1).getDay();
+  var startOffset=(new Date(qCalYear,qCalMonth-1,1).getDay()+6)%7;
   var daysInMonth=new Date(qCalYear,qCalMonth,0).getDate();
   var html='';
   for(var i=0;i<startOffset;i++){ html+=qCalCell(new Date(qCalYear,qCalMonth-1,1-startOffset+i),true); }
@@ -1743,7 +1743,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-9（查詢頁改用自製週列＋展開月曆）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-10（查詢頁週次改為週一為起始）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
