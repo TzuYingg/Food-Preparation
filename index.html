@@ -86,20 +86,21 @@
 
   /* 出勤 */
   .attend{display:flex; gap:8px; margin:10px 14px 0; align-items:stretch;}
-  .attbar{flex:7.5; display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--line); border-radius:13px; padding:8px 12px;}
+  .attbar{flex:1; display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--line); border-radius:13px; padding:8px 12px;}
   .attbar img{width:24px; height:24px; object-fit:contain;}
   .attbar .al{font-size:12px; font-weight:800; color:var(--ink2); margin-right:2px;}
   .attbar .aedit{margin-left:auto; background:var(--tint); border:none; border-radius:9px; padding:7px 13px; font-size:12px; font-weight:800; color:var(--ink2);}
-  .attbar .aedit.sel{margin-left:8px;}
-  .attbar .aedit.sel.on{background:var(--accent-soft); color:var(--accent);}
   .chip.sel{outline:2px solid var(--accent); outline-offset:-1px; background:var(--accent-soft);}
-  .batchbar{display:none; align-items:center; gap:10px; margin:0 14px 10px; background:var(--btn-ink); border-radius:13px; padding:10px 14px;}
-  .batchbar.on{display:flex;}
-  .batchbar .bb-n{color:#fff; font-size:13px; font-weight:700; flex:1;}
-  .batchbar .bb-btn{background:var(--accent); color:#fff; border:none; border-radius:9px; padding:8px 16px; font-size:13px; font-weight:800;}
-  .batchbar .bb-btn:disabled{opacity:.4;}
-  .batchbar .bb-cancel{background:transparent; color:#fff; opacity:.7; border:none; font-size:12.5px; font-weight:700; padding:8px 6px;}
-  .addbtn-sm{flex:2.5; display:flex; align-items:center; justify-content:center; border:1.5px dashed var(--accent); color:var(--accent); background:var(--surface); border-radius:13px; font-size:12px; font-weight:700; text-align:center; line-height:1.2;}
+
+  /* 任務工具列：新增任務／選取多項在同一條；選取模式下原地變成已選N項/指派給/取消 */
+  .taskbar{display:flex; gap:8px; margin:10px 14px 10px;}
+  .tb-add{flex:1; display:flex; align-items:center; justify-content:center; border:1.5px dashed var(--accent); color:var(--accent); background:var(--surface); border-radius:13px; font-size:12.5px; font-weight:700; padding:9px 6px;}
+  .tb-sel{flex:1; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--line); color:var(--ink2); background:var(--surface); border-radius:13px; font-size:12.5px; font-weight:700; padding:9px 6px;}
+  .taskbar.active{background:var(--accent-soft); border:1.5px solid var(--line); border-radius:13px; padding:8px 8px 8px 14px; align-items:center;}
+  .taskbar.active .bb-n{color:var(--ink); font-size:13px; font-weight:800; flex:1;}
+  .taskbar.active .bb-btn{background:var(--accent); color:#fff; border:none; border-radius:9px; padding:8px 14px; font-size:12.5px; font-weight:800;}
+  .taskbar.active .bb-btn:disabled{opacity:.4;}
+  .taskbar.active .bb-cancel{background:var(--surface); border:1px solid var(--line); color:var(--ink2); font-size:12px; font-weight:700; padding:8px 12px; border-radius:9px;}
 
   /* 圖例 */
   .key{display:flex; gap:7px; margin:10px 14px 2px;}
@@ -484,6 +485,7 @@
     <div class="daytoggle" id="dayToggle"></div>
     <div class="seg"><div class="segb" id="segP" onclick="setV('people')">人員</div><div class="segb" id="segT" onclick="setV('time')">時段</div><div class="segb" id="segC" onclick="setV('cat')">分類</div></div>
     <div class="attend" id="attend"></div>
+    <div id="batchbar" class="taskbar"></div>
     <div class="key">
       <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">盤點不足</div></span></div>
       <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開店前</div><div class="kn">最急</div></span></div>
@@ -492,7 +494,6 @@
     </div>
     <div class="hint" id="boardTip"></div>
     <div id="stage"></div>
-    <div id="batchbar" class="batchbar"></div>
     <div class="footwrap">
       <div id="signbar"></div>
       <div class="frow">
@@ -661,7 +662,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-03';
+var APP_VERSION='2026.08.25-04';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -874,6 +875,7 @@ function uiBusy(){
     if(typeof drag!=='undefined' && drag) return true;
     if(typeof editCount!=='undefined' && editCount) return true;
     if(typeof editMode!=='undefined' && editMode) return true;
+    if(typeof selectMode!=='undefined' && selectMode) return true;
   }catch(e){}
   return false;
 }
@@ -1213,10 +1215,15 @@ function toggleSelectTask(id){ if(selectedIds[id]) delete selectedIds[id]; else 
 function chipSelCls(id){ return selectedIds[id] ? ' sel' : ''; }
 function renderBatchBar(){
   var el=document.getElementById('batchbar'); if(!el) return;
-  el.classList.toggle('on', selectMode);
-  if(!selectMode){ el.innerHTML=''; return; }
+  if(!selectMode){
+    el.className='taskbar';
+    var add=(V==='people')?'<button class="tb-add" onclick="addTask()">＋ 新增任務</button>':'';
+    el.innerHTML=add+'<button class="tb-sel" onclick="toggleSelectMode()">選取多項</button>';
+    return;
+  }
   var n=Object.keys(selectedIds).length;
-  el.innerHTML='<span class="bb-n">已選 '+n+' 項</span><button class="bb-btn"'+(n?'':' disabled')+' onclick="pickBatchOwner()">指派給…</button><button class="bb-cancel" onclick="toggleSelectMode()">取消選取</button>';
+  el.className='taskbar active';
+  el.innerHTML='<span class="bb-n">已選 '+n+' 項</span><button class="bb-btn"'+(n?'':' disabled')+' onclick="pickBatchOwner()">指派給…</button><button class="bb-cancel" onclick="toggleSelectMode()">取消</button>';
 }
 function pickBatchOwner(){
   var n=Object.keys(selectedIds).length; if(!n) return;
@@ -1291,9 +1298,8 @@ function byId(id){ var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===
 /* attend */
 function renderAttend(){ var order=DB.staff.map(function(s){return s.name;});
   var avs=order.filter(isWorking).map(function(pn){return '<img src="'+AV[animalOf(pn)]+'">';}).join('');
-  var bar='<div class="attbar"><span class="al">今天上班 '+day().working.length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button><button class="aedit sel'+(selectMode?' on':'')+'" onclick="toggleSelectMode()">'+(selectMode?'取消選取':'選取')+'</button></div>';
-  var add=(V==='people'&&!selectMode)?'<button class="addbtn-sm" onclick="addTask()">＋ 新增任務</button>':'';
-  document.getElementById('attend').innerHTML=bar+add;
+  var bar='<div class="attbar"><span class="al">今天上班 '+day().working.length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button></div>';
+  document.getElementById('attend').innerHTML=bar;
 }
 function openAttend(){ document.getElementById('sheet').classList.add('on');
   var rows=DB.staff.map(function(s){ return '<div class="ar"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span><div class="tg'+(isWorking(s.name)?' on':'')+'" onclick="toggleWork(\''+s.name+'\')"><i></i></div></div>'; }).join('');
@@ -1611,7 +1617,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-6（未指派檢查・批次指派；分頁維持原設計）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-7（選取工具列重新規劃・uiBusy 保護）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
