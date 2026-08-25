@@ -102,6 +102,22 @@
   .taskbar.active .bb-btn:disabled{opacity:.4;}
   .taskbar.active .bb-cancel{background:var(--surface); border:1px solid var(--line); color:var(--ink2); font-size:12px; font-weight:700; padding:8px 12px; border-radius:9px;}
 
+  /* 查詢頁 */
+  .qpick{display:flex; gap:8px; margin:12px 14px 14px;}
+  .qdate{flex:1; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; font-weight:700; color:var(--ink); background:#fff; font-family:inherit;}
+  .qgo{background:var(--tint); border:none; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:800; color:var(--ink2);}
+  .qempty{padding:40px 20px; text-align:center; color:var(--ink3); font-size:13px; line-height:1.7;}
+  .qsign{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink2); font-weight:700; margin:2px 14px 12px; background:var(--tint); border-radius:10px; padding:9px 12px;}
+  .qsign img{width:20px;height:20px;}
+  .qprow{background:#fff; border:1px solid var(--line); border-radius:13px; padding:10px 12px; margin:0 14px 8px;}
+  .qwho{display:flex; align-items:center; gap:6px; margin-bottom:8px;}
+  .qwho img{width:22px;height:22px;}
+  .qwho .pn{font-size:12.5px; font-weight:800; color:var(--ink2);}
+  .qtasks{display:flex; flex-wrap:wrap; gap:6px;}
+  .qchip{display:inline-flex; align-items:center; gap:6px; background:#FBF8F2; border:1.5px solid var(--line); border-radius:11px; padding:7px 11px; font-weight:800; font-size:14px; color:var(--ink);}
+  .qchip.done{opacity:.5; text-decoration:line-through;}
+  .qchip .cm{font-size:11px; color:var(--ink3); font-weight:600;}
+
   /* 圖例 */
   .key{display:flex; gap:7px; margin:10px 14px 2px;}
   .kc{flex:1; display:flex; align-items:center; gap:6px; background:#fff; border-radius:12px; padding:8px; box-shadow:0 1px 4px rgba(79,74,67,.06);}
@@ -519,12 +535,22 @@
     <div class="page" id="aB"><div class="hint" style="text-align:left;padding:12px 18px 4px">名稱可改（點一下），顏色鎖定</div><div id="bandlist"></div></div>
     <div class="setup" id="setup"></div>
   </div>
+
+  <!-- 查詢 -->
+  <div class="page" id="page-query">
+    <div class="qpick">
+      <input type="date" id="qDate" class="qdate" onchange="renderQuery()">
+      <button class="qgo" onclick="qToday()">今天</button>
+    </div>
+    <div id="queryBody"></div>
+  </div>
 </div>
 
 <div class="nav">
   <button id="nCount" onclick="go('count')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16.5" rx="2.5"/><path d="M9 4.5 V3.6 A1.4 1.4 0 0 1 10.4 2.2 H13.6 A1.4 1.4 0 0 1 15 3.6 V4.5"/><path d="M8.7 12.3 L10.6 14.2 L14.4 10"/></svg></span><span class="lab">盤點</span></button>
   <button id="nBoard" onclick="go('board')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M9 5.3 V18.7"/><path d="M15 5.3 V18.7"/></svg></span><span class="lab">工作分配</span></button>
   <button id="nAdmin" onclick="go('admin')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="lab">後台</span></button>
+  <button id="nQuery" onclick="go('query')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="lab">查詢</span></button>
 </div>
 <div id="sheet"></div>
 <div id="snapStage"></div>
@@ -662,7 +688,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-04';
+var APP_VERSION='2026.08.25-05';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1295,6 +1321,33 @@ function setV(v){ V=v; selectedIds={}; document.getElementById('segT').classList
   document.getElementById('boardTip').textContent = v==='time'?'拖待排卡進時段＝排定；長按設定時段/急缺；輕點完成':v==='people'?'拖卡改負責人；長按設定時段/急缺；輕點完成':'依種類分欄總覽；標籤：排定＝明天輪到、臨時＝盤點不足。輕點完成、長按可調'; renderBoard(); }
 function byId(id){ var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===id) return t[i]; } return null; }
 
+/* ====== 查詢頁（唯讀，回顧過去每天儲存的工作分配）====== */
+function qToday(){ var el=document.getElementById('qDate'); if(el){ el.value=todayStr(); renderQuery(); } }
+function renderQuery(){
+  var input=document.getElementById('qDate'); var body=document.getElementById('queryBody'); if(!input||!body) return;
+  var dstr=input.value; if(!dstr){ body.innerHTML=''; return; }
+  var D=DB.days[dstr];
+  var tasks=(D&&Array.isArray(D.tasks))?D.tasks.filter(function(t){ return (t['for']||'today')==='today'; }):[];
+  var di=dInfo(dstr);
+  var head='<div class="hint" style="text-align:left;padding:2px 14px 10px">'+di.m+'/'+di.dd+'（週'+di.wd+'）'+(tasks.length?'・共'+tasks.length+'項':'')+'</div>';
+  if(!D || !tasks.length){ body.innerHTML=head+'<div class="qempty">這天沒有找到已儲存的工作分配紀錄</div>'; return; }
+  var sign;
+  if(D.savedBy && D.savedBy.name){
+    var an=animalOf(D.savedBy.name);
+    sign='<div class="qsign">'+(an?'<img src="'+AV[an]+'">':'')+'由 '+D.savedBy.name+' 於 '+D.savedBy.time+' 儲存（簽核）</div>';
+  } else { sign='<div class="qsign" style="color:var(--ink3)">這天沒有簽核紀錄</div>'; }
+  function chip(it){ return '<div class="qchip'+(it.done?' done':'')+'">'+lackTag(it)+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }
+  function row(label,ts,img){ return '<div class="qprow"><div class="qwho">'+(img?'<img src="'+img+'">':'<span class="av-un">?</span>')+'<span class="pn">'+label+'</span></div><div class="qtasks">'+ts.map(chip).join('')+'</div></div>'; }
+  var un=tasks.filter(function(t){ return !t.owner || t.owner==='未指派'; });
+  var owners=[];
+  (D.working||[]).forEach(function(n){ if(owners.indexOf(n)<0 && tasks.some(function(t){return t.owner===n;})) owners.push(n); });
+  tasks.forEach(function(t){ if(t.owner && t.owner!=='未指派' && owners.indexOf(t.owner)<0) owners.push(t.owner); });
+  var rows='';
+  if(un.length) rows+=row('未指派',un,null);
+  owners.forEach(function(pn){ var ts=tasks.filter(function(t){return t.owner===pn;}); var an=animalOf(pn); rows+=row(pn,ts,an?AV[an]:null); });
+  body.innerHTML=head+sign+rows;
+}
+
 /* attend */
 function renderAttend(){ var order=DB.staff.map(function(s){return s.name;});
   var avs=order.filter(isWorking).map(function(pn){return '<img src="'+AV[animalOf(pn)]+'">';}).join('');
@@ -1617,7 +1670,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-7（選取工具列重新規劃・uiBusy 保護）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-8（新增查詢頁：回顧每天工作分配）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
@@ -1752,12 +1805,14 @@ function iaPointerUp(){ document.removeEventListener('pointermove', iaPointerMov
 
 /* ====== nav ====== */
 function go(p){ if(p==='admin' && !adminUnlocked){ openAdminGate(); return; }
-  ['count','board','admin'].forEach(function(x){ document.getElementById('page-'+x).classList.toggle('on',x===p); var b=document.getElementById('n'+x.charAt(0).toUpperCase()+x.slice(1)); if(b)b.classList.toggle('on',x===p); });
+  ['count','board','admin','query'].forEach(function(x){ document.getElementById('page-'+x).classList.toggle('on',x===p); var b=document.getElementById('n'+x.charAt(0).toUpperCase()+x.slice(1)); if(b)b.classList.toggle('on',x===p); });
   var ht=document.getElementById('hTitle'), hs=document.getElementById('hSub');
   if(p==='count'){ ht.textContent='今日備料檢查'; hs.textContent='每日13:00後請確認隔天備料是否充足'; }
   else if(p==='board'){ ht.textContent='工作分配'; hs.textContent='收班排定 → 隔天執行'; }
   else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定 · v2.0 退冰＋種類'; }
-  if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); } }
+  else if(p==='query'){ ht.textContent='查詢'; hs.textContent='回顧過去每天儲存的工作分配（唯讀）'; }
+  if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
+  if(p==='query'){ var qd=document.getElementById('qDate'); if(qd && !qd.value) qd.value=todayStr(); renderQuery(); } }
 
 function init(){
   bindDrag(); setV('people'); setT('I'); go('count');
