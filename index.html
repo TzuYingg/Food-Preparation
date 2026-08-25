@@ -90,6 +90,15 @@
   .attbar img{width:24px; height:24px; object-fit:contain;}
   .attbar .al{font-size:12px; font-weight:800; color:var(--ink2); margin-right:2px;}
   .attbar .aedit{margin-left:auto; background:var(--tint); border:none; border-radius:9px; padding:7px 13px; font-size:12px; font-weight:800; color:var(--ink2);}
+  .attbar .aedit.sel{margin-left:8px;}
+  .attbar .aedit.sel.on{background:var(--accent-soft); color:var(--accent);}
+  .chip.sel{outline:2px solid var(--accent); outline-offset:-1px; background:var(--accent-soft);}
+  .batchbar{display:none; align-items:center; gap:10px; margin:0 14px 10px; background:var(--btn-ink); border-radius:13px; padding:10px 14px;}
+  .batchbar.on{display:flex;}
+  .batchbar .bb-n{color:#fff; font-size:13px; font-weight:700; flex:1;}
+  .batchbar .bb-btn{background:var(--accent); color:#fff; border:none; border-radius:9px; padding:8px 16px; font-size:13px; font-weight:800;}
+  .batchbar .bb-btn:disabled{opacity:.4;}
+  .batchbar .bb-cancel{background:transparent; color:#fff; opacity:.7; border:none; font-size:12.5px; font-weight:700; padding:8px 6px;}
   .addbtn-sm{flex:2.5; display:flex; align-items:center; justify-content:center; border:1.5px dashed var(--accent); color:var(--accent); background:var(--surface); border-radius:13px; font-size:12px; font-weight:700; text-align:center; line-height:1.2;}
 
   /* 圖例 */
@@ -483,6 +492,7 @@
     </div>
     <div class="hint" id="boardTip"></div>
     <div id="stage"></div>
+    <div id="batchbar" class="batchbar"></div>
     <div class="footwrap">
       <div id="signbar"></div>
       <div class="frow">
@@ -651,7 +661,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-01';
+var APP_VERSION='2026.08.25-03';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1196,8 +1206,32 @@ function genTasks(){
 var V='time';
 /* 分配板：今日(執行) / 明日(規劃) 切換。任務用 for 標記屬於哪一天，'today' 或 'tmr'。 */
 var boardFor='today';
+/* 批次選取：開啟後點卡片＝勾選/取消，不再是拖曳或標完成；選好後一次指派給同一人。 */
+var selectMode=false, selectedIds={};
+function toggleSelectMode(){ selectMode=!selectMode; selectedIds={}; renderBoard(); }
+function toggleSelectTask(id){ if(selectedIds[id]) delete selectedIds[id]; else selectedIds[id]=true; renderBoard(); }
+function chipSelCls(id){ return selectedIds[id] ? ' sel' : ''; }
+function renderBatchBar(){
+  var el=document.getElementById('batchbar'); if(!el) return;
+  el.classList.toggle('on', selectMode);
+  if(!selectMode){ el.innerHTML=''; return; }
+  var n=Object.keys(selectedIds).length;
+  el.innerHTML='<span class="bb-n">已選 '+n+' 項</span><button class="bb-btn"'+(n?'':' disabled')+' onclick="pickBatchOwner()">指派給…</button><button class="bb-cancel" onclick="toggleSelectMode()">取消選取</button>';
+}
+function pickBatchOwner(){
+  var n=Object.keys(selectedIds).length; if(!n) return;
+  var elig=DB.staff.filter(function(s){ return isWorking(s.name); });
+  var rows = elig.length ? elig.map(function(s){ return '<div class="ar" onclick="applyBatchOwner(\''+s.name.replace(/'/g,"\\'")+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span></div>'; }).join('') : '<div class="hint" style="padding:14px">今天沒有上班的人可以指派</div>';
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">指派 '+n+' 項給誰</div><div class="sheet-label">今天上班可指派的人</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">取消</button></div></div>';
+}
+function applyBatchOwner(name){
+  var t=day().tasks; var ids=selectedIds;
+  t.forEach(function(x){ if(ids[x.id]) x.owner=name; });
+  save(); selectedIds={}; selectMode=false; closeSheet(); renderBoard();
+}
 function boardTasks(){ var f=boardFor; return day().tasks.filter(function(t){ return (t['for']||'today')===f; }); }
-function setBoardFor(f){ boardFor=f; renderBoard(); }
+function setBoardFor(f){ boardFor=f; selectedIds={}; renderBoard(); }
 function renderDayToggle(){ var el=document.getElementById('dayToggle'); if(!el) return;
   var t=dInfo(DB.cur), m=dInfo(datePlus(DB.cur,1));
   el.innerHTML='<b class="'+(boardFor==='today'?'on':'')+'" onclick="setBoardFor(\'today\')">今日工作<span>'+t.m+'/'+t.dd+' 週'+t.wd+'</span></b>'
@@ -1210,7 +1244,7 @@ function renderTime(){
     var ts=D.tasks.filter(function(it){return it.band===b.key;});
     var tot=ts.reduce(function(a,c){return a+(c.min||0);},0);
     var chips=ts.map(function(it){
-      return '<div class="chip'+(it.done?' done':'')+'" data-id="'+it.id+'">'+lackTag(it)+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>';
+      return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>';
     }).join('');
     return '<div class="bandc"><div class="bandc-h"><span class="bar" style="background:'+bvar(b.key)+'"></span>'+b.name+' <span class="t">'+b.t+'</span><span class="meta">'+ts.length+'項 · 約'+tot+'分</span></div><div class="bandc-body" data-zone="band:'+b.key+'">'+chips+'</div></div>';
   }).join('');
@@ -1218,7 +1252,7 @@ function renderTime(){
 function rowFromTasks(label,ts,isUn){
   ts=ts.slice().sort(function(a,c){return BORDER.indexOf(a.band)-BORDER.indexOf(c.band);});
   var sum={none:0,pre:0,am:0,mid:0}; ts.forEach(function(it){sum[it.band]=(sum[it.band]||0)+(it.min||0);});
-  var chips=ts.map(function(it){ return '<div class="chip'+(it.done?' done':'')+'" data-id="'+it.id+'">'+lackTag(it)+(it.band==='none'?'':'<span class="blk" style="background:'+bvar(it.band)+'"></span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }).join('');
+  var chips=ts.map(function(it){ return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+(it.band==='none'?'':'<span class="blk" style="background:'+bvar(it.band)+'"></span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }).join('');
   var parts=BORDER.filter(function(b){return sum[b]>0;}).map(function(b){ if(b==='none')return '<span class="bm" style="color:var(--ink3)">待排'+sum[b]+'分</span>'; return '<span class="bm"><i style="background:'+bvar(b)+'"></i>'+sum[b]+'</span>'; }).join('');
   var who=isUn?'<span class="av-un">?</span>':avImg(label,'');
   var zone=isUn?'未指派':label;
@@ -1232,9 +1266,10 @@ function renderPeople(){
   out+=order.filter(isWorking).map(function(pn){ return rowFromTasks(pn, D.tasks.filter(function(it){return it.owner===pn;}), false); }).join('');
   return out;
 }
-function renderBoard(){ renderDayToggle(); document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); renderSign(); }
+function renderBoard(){ renderDayToggle(); document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); renderSign(); renderBatchBar();
+  var tip=document.getElementById('boardTip'); if(tip&&selectMode) tip.textContent='選取模式：點卡片勾選／取消，選好後在下方按「指派給…」一次分給同一人'; }
 function catChip(it){ var s=taskSrc(it); var stag=s==='short'?'<span class="stag short">臨時</span>':'<span class="stag plan">排定</span>';
-  return '<div class="chip'+(it.done?' done':'')+'" data-id="'+it.id+'">'+lackTag(it)+stag+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }
+  return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+stag+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }
 function renderCat(){
   var D={tasks:boardTasks()}, plan=0, shrt=0;
   D.tasks.forEach(function(t){ if(taskSrc(t)==='short') shrt++; else plan++; });
@@ -1249,15 +1284,15 @@ function renderCat(){
   if(unc.length) lanes+='<div class="bandc"><div class="bandc-h"><span class="bar" style="background:var(--ink3)"></span>未分類<span class="meta">'+unc.length+'項</span></div><div class="bandc-body">'+unc.map(catChip).join('')+'</div></div>';
   return head+lanes;
 }
-function setV(v){ V=v; document.getElementById('segT').classList.toggle('on',v==='time'); document.getElementById('segP').classList.toggle('on',v==='people'); document.getElementById('segC').classList.toggle('on',v==='cat');
+function setV(v){ V=v; selectedIds={}; document.getElementById('segT').classList.toggle('on',v==='time'); document.getElementById('segP').classList.toggle('on',v==='people'); document.getElementById('segC').classList.toggle('on',v==='cat');
   document.getElementById('boardTip').textContent = v==='time'?'拖待排卡進時段＝排定；長按設定時段/急缺；輕點完成':v==='people'?'拖卡改負責人；長按設定時段/急缺；輕點完成':'依種類分欄總覽；標籤：排定＝明天輪到、臨時＝盤點不足。輕點完成、長按可調'; renderBoard(); }
 function byId(id){ var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===id) return t[i]; } return null; }
 
 /* attend */
 function renderAttend(){ var order=DB.staff.map(function(s){return s.name;});
   var avs=order.filter(isWorking).map(function(pn){return '<img src="'+AV[animalOf(pn)]+'">';}).join('');
-  var bar='<div class="attbar"><span class="al">今天上班 '+day().working.length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button></div>';
-  var add=(V==='people')?'<button class="addbtn-sm" onclick="addTask()">＋ 新增任務</button>':'';
+  var bar='<div class="attbar"><span class="al">今天上班 '+day().working.length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button><button class="aedit sel'+(selectMode?' on':'')+'" onclick="toggleSelectMode()">'+(selectMode?'取消選取':'選取')+'</button></div>';
+  var add=(V==='people'&&!selectMode)?'<button class="addbtn-sm" onclick="addTask()">＋ 新增任務</button>':'';
   document.getElementById('attend').innerHTML=bar+add;
 }
 function openAttend(){ document.getElementById('sheet').classList.add('on');
@@ -1314,7 +1349,13 @@ function addCustomTask(){ var n=prompt('自訂任務名稱（僅這次，不存�
 /* ===== 儲存（簽核） ===== */
 function renderSign(){ var sb=document.getElementById('signbar'); if(!sb)return; var s=day().savedBy;
   sb.innerHTML = (s&&s.name) ? '<div class="signed"><img src="'+AV[animalOf(s.name)]+'">✓ 由 '+s.name+' 於 '+s.time+' 儲存</div>' : ''; }
-function pickSaver(){ var elig=eligibleStaff();
+function pickSaver(){
+  var un=boardTasks().filter(function(t){return !isWorking(t.owner);});
+  if(un.length){
+    var names=un.map(function(t){return t.name;}).slice(0,6).join('、')+(un.length>6?' 等':'');
+    if(!confirm('還有 '+un.length+' 項尚未指派負責人：'+names+'\n確定要繼續儲存（簽核）嗎？')) return;
+  }
+  var elig=eligibleStaff();
   var rows = elig.length ? elig.map(function(s){ return '<div class="ar" onclick="doSave(\''+s.name+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span></div>'; }).join('') : '<div class="hint" style="padding:14px">今天沒有可簽核的人（需上班且職稱為老闆/老闆娘/正職）</div>';
   document.getElementById('sheet').classList.add('on');
   document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">儲存（簽核）· 誰儲存</div><div class="sheet-label">記錄是誰、什麼時候定的這份分配</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">取消</button></div></div>';
@@ -1352,6 +1393,11 @@ function buildSnapEl(){
   return '<div class="snapcard"><div class="head"><img class="logo" src="'+SCARE+'"><div><div class="sh">'+shLabel+'</div><div class="sd">'+di.m+'/'+di.dd+'（<b>週'+di.wd+'</b>）· 備料工作</div></div></div>'+legend+rows+foot+'</div>';
 }
 function copySnapshot(){
+  var un=boardTasks().filter(function(t){return !isWorking(t.owner);});
+  if(un.length){
+    var names=un.map(function(t){return t.name;}).slice(0,6).join('、')+(un.length>6?' 等':'');
+    if(!confirm('還有 '+un.length+' 項尚未指派負責人：'+names+'\n確定要複製快照嗎？')) return;
+  }
   if(typeof html2canvas==='undefined'){ alert('圖片元件還在載入，請稍候再試一次'); return; }
   var stage=document.getElementById('snapStage'); stage.innerHTML=buildSnapEl();
   html2canvas(stage.firstChild,{backgroundColor:'#FBF7F0',scale:2}).then(function(canvas){
@@ -1380,6 +1426,7 @@ function shareOrDownload(file,done){
 var drag=null,start=null,lpTimer=null,lpFired=false;
 function bindDrag(){ var stage=document.getElementById('stage');
   stage.addEventListener('pointerdown',function(e){ var el=e.target.closest('.chip'); if(!el)return;
+    if(selectMode){ toggleSelectTask(el.dataset.id); return; }
     start={id:el.dataset.id,x:e.clientX,y:e.clientY,el:el,moved:false}; lpFired=false;
     lpTimer=setTimeout(function(){ lpFired=true; openSheet(start.id); },420);
     document.addEventListener('pointermove',onMove); document.addEventListener('pointerup',onUp); document.addEventListener('pointercancel',onUp); });
@@ -1564,7 +1611,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-4（任務逐筆寫入，取代整包覆蓋）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-6（未指派檢查・批次指派；分頁維持原設計）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
