@@ -103,9 +103,31 @@
   .taskbar.active .bb-cancel{background:var(--surface); border:1px solid var(--line); color:var(--ink2); font-size:12px; font-weight:700; padding:8px 12px; border-radius:9px;}
 
   /* 查詢頁 */
-  .qpick{display:flex; gap:8px; margin:12px 14px 14px;}
-  .qdate{flex:1; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; font-size:14px; font-weight:700; color:var(--ink); background:#fff; font-family:inherit;}
-  .qgo{background:var(--tint); border:none; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:800; color:var(--ink2);}
+  .qpick{margin:12px 14px 4px;}
+  .qwk-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .cal-nav{width:28px; height:28px; border-radius:8px; background:var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--ink2); font-size:13px;}
+  .wk-title{font-size:12.5px; font-weight:800; color:var(--ink2);}
+  .wk-row{display:flex; gap:6px;}
+  .wk-d{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 0 8px; border-radius:12px; background:var(--surface); border:1px solid var(--line);}
+  .wk-d .w{font-size:10px; color:var(--ink3); font-weight:700;}
+  .wk-d .n{font-size:14.5px; font-weight:800; color:var(--ink);}
+  .wk-d.sel{background:var(--accent-soft); border-color:var(--accent);}
+  .wk-d.sel .w,.wk-d.sel .n{color:var(--accent);}
+  .wk-d.today .n::after{content:''; display:block; width:4px; height:4px; border-radius:50%; background:var(--ink3); margin:3px auto 0;}
+  .wk-d.sel.today .n::after{background:var(--accent);}
+  .qlinks{display:flex; justify-content:space-between; margin:8px 2px 0;}
+  .qlink{font-size:11.5px; font-weight:700; color:var(--ink2); text-decoration:underline; text-underline-offset:2px;}
+  .c-cal{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
+  .c-cal.on{display:block;}
+  .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .cal-title{font-size:13.5px; font-weight:800;}
+  .cal-wd{display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:10.5px; color:var(--ink3); font-weight:700; margin-bottom:4px;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:3px;}
+  .cal-d{aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--ink); border-radius:10px; position:relative;}
+  .cal-d.other{color:var(--ink3); opacity:.4;}
+  .cal-d.today::after{content:''; position:absolute; bottom:4px; width:4px; height:4px; border-radius:50%; background:var(--ink3);}
+  .cal-d.sel{background:var(--accent-soft); color:var(--accent); font-weight:800;}
+  .cal-d.sel.today::after{background:var(--accent);}
   .qempty{padding:40px 20px; text-align:center; color:var(--ink3); font-size:13px; line-height:1.7;}
   .qsign{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink2); font-weight:700; margin:2px 14px 12px; background:var(--tint); border-radius:10px; padding:9px 12px;}
   .qsign img{width:20px;height:20px;}
@@ -539,8 +561,25 @@
   <!-- 查詢 -->
   <div class="page" id="page-query">
     <div class="qpick">
-      <input type="date" id="qDate" class="qdate" onchange="renderQuery()">
-      <button class="qgo" onclick="qToday()">今天</button>
+      <div class="qwk-head">
+        <div class="cal-nav" onclick="qWeekNav(-1)">‹</div>
+        <div class="wk-title" id="qWkTitle"></div>
+        <div class="cal-nav" onclick="qWeekNav(1)">›</div>
+      </div>
+      <div class="wk-row" id="qWkRow"></div>
+      <div class="qlinks">
+        <span class="qlink" onclick="qToday()">回到今天</span>
+        <span class="qlink" id="qMoreLink" onclick="qToggleMore()">查更早的日期 ›</span>
+      </div>
+      <div class="c-cal" id="qMoreWrap">
+        <div class="cal-head">
+          <div class="cal-nav" onclick="qCalNav(-1)">‹</div>
+          <div class="cal-title" id="qCalTitle"></div>
+          <div class="cal-nav" onclick="qCalNav(1)">›</div>
+        </div>
+        <div class="cal-wd"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="cal-grid" id="qCalGrid"></div>
+      </div>
     </div>
     <div id="queryBody"></div>
   </div>
@@ -688,7 +727,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-05';
+var APP_VERSION='2026.08.25-06';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1322,10 +1361,44 @@ function setV(v){ V=v; selectedIds={}; document.getElementById('segT').classList
 function byId(id){ var t=day().tasks; for(var i=0;i<t.length;i++){ if(t[i].id===id) return t[i]; } return null; }
 
 /* ====== 查詢頁（唯讀，回顧過去每天儲存的工作分配）====== */
-function qToday(){ var el=document.getElementById('qDate'); if(el){ el.value=todayStr(); renderQuery(); } }
+var qPicked=todayStr(), qWeekAnchor=todayStr(), qMoreOn=false;
+var qCalYear=+todayStr().slice(0,4), qCalMonth=+todayStr().slice(5,7);
+function qWeekStartStr(dstr){ return datePlus(dstr,-dInfo(dstr).wi); }
+function qToday(){ qPicked=todayStr(); qWeekAnchor=todayStr(); qCalYear=+qPicked.slice(0,4); qCalMonth=+qPicked.slice(5,7); renderQPicker(); renderQuery(); }
+function qWeekNav(n){ qWeekAnchor=datePlus(qWeekAnchor,n*7); renderQPicker(); }
+function qToggleMore(){ qMoreOn=!qMoreOn; var w=document.getElementById('qMoreWrap'); if(w) w.classList.toggle('on',qMoreOn); var l=document.getElementById('qMoreLink'); if(l) l.textContent=qMoreOn?'收起月曆 ‹':'查更早的日期 ›'; if(qMoreOn) renderQCal(); }
+function qCalNav(n){ var d=new Date(qCalYear,qCalMonth-1+n,1); qCalYear=d.getFullYear(); qCalMonth=d.getMonth()+1; renderQCal(); }
+function qPick(ds){ qPicked=ds; qWeekAnchor=ds; renderQPicker(); renderQuery(); }
+function qDs(dateObj){ return dateObj.getFullYear()+'-'+('0'+(dateObj.getMonth()+1)).slice(-2)+'-'+('0'+dateObj.getDate()).slice(-2); }
+function renderQPicker(){
+  var start=qWeekStartStr(qWeekAnchor), si=dInfo(start), ei=dInfo(datePlus(start,6));
+  var wt=document.getElementById('qWkTitle'); if(wt) wt.textContent=si.m+'/'+si.dd+' – '+ei.m+'/'+ei.dd;
+  var html='';
+  for(var i=0;i<7;i++){
+    var ds=datePlus(start,i), di=dInfo(ds);
+    var cls='wk-d'+(ds===todayStr()?' today':'')+(ds===qPicked?' sel':'');
+    html+='<div class="'+cls+'" onclick="qPick(\''+ds+'\')"><span class="w">'+WDL[di.wi]+'</span><span class="n">'+di.dd+'</span></div>';
+  }
+  var wr=document.getElementById('qWkRow'); if(wr) wr.innerHTML=html;
+  if(qMoreOn) renderQCal();
+}
+function renderQCal(){
+  var ct=document.getElementById('qCalTitle'); if(ct) ct.textContent=qCalYear+'年'+qCalMonth+'月';
+  var startOffset=new Date(qCalYear,qCalMonth-1,1).getDay();
+  var daysInMonth=new Date(qCalYear,qCalMonth,0).getDate();
+  var html='';
+  for(var i=0;i<startOffset;i++){ html+=qCalCell(new Date(qCalYear,qCalMonth-1,1-startOffset+i),true); }
+  for(var d=1; d<=daysInMonth; d++){ html+=qCalCell(new Date(qCalYear,qCalMonth-1,d),false); }
+  var cg=document.getElementById('qCalGrid'); if(cg) cg.innerHTML=html;
+}
+function qCalCell(dateObj,other){
+  var ds=qDs(dateObj);
+  var cls='cal-d'+(other?' other':'')+(ds===todayStr()?' today':'')+(ds===qPicked?' sel':'');
+  return '<div class="'+cls+'" onclick="qPick(\''+ds+'\')">'+dateObj.getDate()+'</div>';
+}
 function renderQuery(){
-  var input=document.getElementById('qDate'); var body=document.getElementById('queryBody'); if(!input||!body) return;
-  var dstr=input.value; if(!dstr){ body.innerHTML=''; return; }
+  var body=document.getElementById('queryBody'); if(!body) return;
+  var dstr=qPicked;
   var D=DB.days[dstr];
   var tasks=(D&&Array.isArray(D.tasks))?D.tasks.filter(function(t){ return (t['for']||'today')==='today'; }):[];
   var di=dInfo(dstr);
@@ -1670,7 +1743,7 @@ function diagHtml(){
   }catch(e){ return '<div style="margin-top:10px;font-size:11px;color:var(--ink3)">\u8cc7\u6599\u6aa2\u67e5\u5931\u6557\uff1a'+(e&&e.message||e)+'</div>'; }
 }
 function renderSetup(){ var base = useFB ? '已連線 Firebase（jenka-shouban）。' : '目前用本機儲存（localStorage）。要多裝置同步：在程式最上方 FIREBASE_CONFIG 填入你的 Firebase 設定；要實際推 LINE：填 GAS_ENDPOINT。';
-  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-8（新增查詢頁：回顧每天工作分配）</div>'; }
+  document.getElementById('setup').innerHTML = base + '<div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">後台密碼</span><button onclick="changeAdminPass()" style="font-size:12.5px;font-weight:700;color:var(--ink2);background:var(--tint);border:none;border-radius:8px;padding:7px 14px">更改</button></div><div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px"><span style="font-size:13px;font-weight:700;color:var(--ink)">從昨天補帶任務<span style="display:block;font-size:11px;font-weight:500;color:var(--ink3);margin-top:2px">今日工作意外空白時，把前一天的任務補回今天</span></span><button onclick="recoverFromPrev()" style="font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);border:none;border-radius:8px;padding:7px 14px;white-space:nowrap">補帶</button></div>' + diagHtml() + '<div style="margin-top:10px;font-size:11px;color:var(--ink3);font-family:\'DM Mono\',monospace">版本 作業軸-9（查詢頁改用自製週列＋展開月曆）</div>'; }
 
 /* ====== 後台密碼門 ====== */
 var adminUnlocked=false;
@@ -1812,7 +1885,7 @@ function go(p){ if(p==='admin' && !adminUnlocked){ openAdminGate(); return; }
   else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定 · v2.0 退冰＋種類'; }
   else if(p==='query'){ ht.textContent='查詢'; hs.textContent='回顧過去每天儲存的工作分配（唯讀）'; }
   if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
-  if(p==='query'){ var qd=document.getElementById('qDate'); if(qd && !qd.value) qd.value=todayStr(); renderQuery(); } }
+  if(p==='query'){ renderQPicker(); renderQuery(); } }
 
 function init(){
   bindDrag(); setV('people'); setT('I'); go('count');
