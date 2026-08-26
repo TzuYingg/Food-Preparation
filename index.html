@@ -117,6 +117,76 @@
   .wk-d.sel.today .n::after{background:var(--accent);}
   .qlinks{display:flex; justify-content:space-between; margin:8px 2px 0;}
   .qlink{font-size:11.5px; font-weight:700; color:var(--ink2); text-decoration:underline; text-underline-offset:2px;}
+  .qquick{display:flex; gap:6px; margin-left:auto;}
+  .qpill{font-size:11.5px; font-weight:700; padding:6px 11px; border-radius:20px; background:var(--tint); color:var(--ink2); white-space:nowrap;}
+  .qpill.now{background:var(--accent); color:#fff;}
+
+  /* 頁面標頭（E2：圓形色塊icon＋小藥丸），套用在共用的 .head 上 */
+  .hRow{display:flex; align-items:center; gap:10px;}
+  .hIcon{width:34px; height:34px; border-radius:50%; display:none; align-items:center; justify-content:center; flex:none;}
+  .hIcon svg{width:18px; height:18px;}
+  .hIcon.on{display:flex;}
+  .hIcon.accent{background:var(--accent); color:#fff;}
+  .hIcon.neutral{background:var(--tint); color:var(--ink3); border:1px solid var(--line);}
+  .hPill{display:none; margin-top:3px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px;}
+  .hPill.on{display:inline-block;}
+  .hPill.accent{background:var(--accent-soft); color:var(--accent);}
+  .hPill.neutral{background:var(--tint); color:var(--ink2);}
+
+  /* 週總覽列（工作分配頁） */
+  .wkstripwrap{margin:2px 14px 6px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 10px 8px;}
+  .wkhead2{display:flex; align-items:center; gap:8px; padding:0 2px 8px;}
+  .wkhead2 .wk-range{font-size:12px; font-weight:800; color:var(--ink2);}
+  .wk-jump{margin-left:auto; font-size:11px; font-weight:800; color:var(--accent); background:var(--accent-soft); border-radius:20px; padding:5px 10px; white-space:nowrap;}
+  .wkstriprow{display:flex; gap:5px;}
+  .wks-d{flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 0 7px; border-radius:10px; background:#fff; border:1px solid var(--line); position:relative;}
+  .wks-d .w{font-size:9.5px; color:var(--ink3); font-weight:700;}
+  .wks-d .n{font-size:13px; font-weight:800; color:var(--ink);}
+  .wks-d .dot{width:5px; height:5px; border-radius:50%; margin-top:1px;}
+  .wks-d .dot.ok{background:var(--ok);}
+  .wks-d .dot.warn{background:var(--warn2);}
+  .wks-d .dot.empty{background:var(--ink3); opacity:.4;}
+  .wks-d.sel{background:var(--accent-soft); border-color:var(--accent);}
+  .wks-d.sel .n{color:var(--accent);}
+  .wks-d.today .w{visibility:hidden; position:relative;}
+  .wks-d.today .w::after{content:'今天'; visibility:visible; position:absolute; left:50%; top:0; transform:translateX(-50%); font-size:8.5px; font-weight:800; color:var(--ink); white-space:nowrap;}
+  .wks-d.today.sel .w::after{color:var(--accent);}
+  .wks-d.tmr .w{visibility:hidden; position:relative;}
+  .wks-d.tmr .w::after{content:'明天'; visibility:visible; position:absolute; left:50%; top:0; transform:translateX(-50%); font-size:8.5px; font-weight:800; color:var(--ink3); white-space:nowrap;}
+  .wks-d.tmr.sel .w::after{color:var(--accent);}
+  /* G1：今天／明天以外的日子視覺弱化，暗示「只能預排常態任務/備料，不能完整操作」 */
+  .wks-d.muted{opacity:.55;}
+  .wks-d.muted.sel{opacity:1;}
+
+  /* 常態任務（本週待辦，可順延） */
+  .flexc{margin:8px 14px 12px; background:#fff; border:1.5px dashed var(--line); border-radius:16px; overflow:hidden;}
+  .flexc-h{display:flex; align-items:center; gap:8px; padding:11px 13px 8px; font-weight:800; font-size:13.5px; color:var(--ink2);}
+  .flexc-h .meta{margin-left:auto; font-size:10.5px; color:var(--ink3); font-weight:700;}
+  .flexc-body{padding:2px 11px 12px; display:flex; flex-direction:column; gap:7px;}
+  .rtrow{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:11px; background:var(--bg);}
+  .rtrow .av{width:22px; height:22px; border-radius:50%; object-fit:contain; flex:none;}
+  .rtrow .av-un{width:22px; height:22px; border-radius:50%; background:var(--line); color:var(--ink3); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex:none;}
+  .rtrow .fname{font-size:13.5px; font-weight:700; flex:1; min-width:0;}
+  .rtrow .fsub{font-size:10.5px; color:var(--ink3); font-weight:600; display:block; margin-top:1px;}
+  .rtrow.overdue{background:var(--brick-bg);}
+  .rtrow.overdue .fname{color:var(--brick);}
+  .rtrow.done{opacity:.4;}
+  .rtrow.done .fname{text-decoration:line-through;}
+  .rtbtns{display:flex; gap:5px; flex:none;}
+  .rtbtn{font-size:10.5px; font-weight:800; padding:5px 9px; border-radius:8px; white-space:nowrap;}
+  .rtbtn.done{background:var(--ink); color:#fff;}
+  .rtbtn.push{background:var(--surface); color:var(--ink2); border:1px solid var(--line);}
+  .flexc-empty{padding:14px; text-align:center; font-size:12px; color:var(--ink3);}
+
+  /* 未來日期・提前輸入上班人員 */
+  .wkatt{margin:8px 14px 0; background:#fff; border:1px solid var(--line); border-radius:14px; padding:11px 12px;}
+  .wkatt-lab{font-size:11.5px; font-weight:800; color:var(--ink2); margin-bottom:8px;}
+  .wkatt-lab .hint2{font-size:10px; font-weight:600; color:var(--ink3); margin-left:6px;}
+  .wkatt-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .wkatt-chip{display:inline-flex; align-items:center; gap:5px; padding:6px 10px 6px 6px; border-radius:20px; border:1.5px solid var(--line); background:var(--bg); font-size:12px; font-weight:700; color:var(--ink3);}
+  .wkatt-chip img{width:18px; height:18px; border-radius:50%; opacity:.5;}
+  .wkatt-chip.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent);}
+  .wkatt-chip.on img{opacity:1;}
   .c-cal{display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);}
   .c-cal.on{display:block;}
   .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
@@ -483,7 +553,7 @@
 <body>
 <div class="apphdr"><div class="apphdr-inner"><div class="hdr-side" id="hdrCloud"></div><img class="hdr-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAABCUElEQVR42u19eXxV5Zn/933Pdtfc7BASEiKShLCIIKuJAvUnoaJ179iKMo5WftNFnU6n82uZaTvDtDPjTLG107HCtLiMVq22aiwBHYIkhFUMW0gImNyQkJCVm7ue7X1/f5xzT4K1U7tZgfP9fPLhhiTn3nvu9zznWb7P8wAuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cKFCxcuXLhw4cIFAM4ZGTxzUgm3NUru2XBxwaOpoU4c9/gjIXVXR6vS1FCnuGffxR/UMqcfMy3yeFdH6/+1Se37I5FYDrc1Khv+dZ1LZBd/NEvpaWqoe6GpoY7X124ymxrqvmST2vsHvgucZ/kHz5z8766O1v8AgPraTcLFfp5Fl2ofDSZPKVN8injn59belwoGs+VlS6/9t3BbIy8pr3q8vnaTvGzV/drvc/xE5KCwt+GgZ0l1Tbyro/WHXBssfeXVOlb7xuuf7A6H4wA+v2vPUeIS2sUfAgRA7MjBHStLSkprOztOmVu3bRFKCoKPDp45KZ84dfJ7ichByReaq/8uBz/beDP1heaaAOLt+177z+1vbVnbHQ6jvaMTQ+f6zdnTZ/BL5US7hP5ofGgQQs1odKhJCRUJ//bot3lkJGK8uWOvEu6NXrbmgUeMDf+6zgtAT/vbhNAPRcKujlZlQmmF2tXR+p3tb225ef33flwRjQ5DMw1jdGiYzJu/MFlWXnkl54wQQs2L/VxTl24fgXkmlHPOiMDCyROtx68tKSkVPT4FrSfatJGRoXvqazc9/MjfrE9u3rhBIoTyD0vmzRs3SMWlFWp97aZvvvzSs3+zdduWiqFz/eCMQU8kxXnzFwp33HmXtOaBR06mry3XQrv4g8EXmqsPnjl5uqxiOl//j/8AAFJD404hKyvn38NtjXpJedV/1NduennW3KX/J6Eas4pLK8K2Zf0VIj7yxXuFe+9/iI2MDH1t156jf9+0b58JZoIqAgWAiZNKcMedd5mLq67P/3XHcC20i9/LSq9f9zDNKbisc+/uxuolCxbIVIKWSqhGdzhMn3nmZ5FkfOh74d7orc88uzl46lhj3vh0Xxrt+14TAOAf/uHb9+5448fqtm1vfHPPvgYiixCpRKieSIJQytbctSq2uOr6bELo6KVCZpfQHzEeqOkEIZQvXFyVKCopGWY6CKigvNN8AEUlJc8YWupLANB86KgBYH/XiaYiQij/OUDONt5M2ve9JkxbcJPZ1dF6z4FdW/7riSefYhm+gJWmM0xIgohkMqnddOMtVAkVXUYIHbUDUriEdvEHx4SqX7B7P3uzsKS65t1Dh5tvnTN7hgxAVTWGPbsb+HB/By+rmA6vQrFrz1G++t77RwDgFgD5V79CbTJ/9tSxxqe++/gmNaHqUjylQhQFQBSQSsV5VVW1vOya+eFFCxfTdEDqEtrFHyvbQR5cu1bknJErZs8J5OVPMMFMKDJF/+Agqd+5nxTmB+D1B0n3mS7yz48+tpRzJtouizl45uRnTh1rfPa7j29KCQJVJEWGCAKTURBCeIYvoK761G1HiZw7m8qhs+N9Z84Z4ZyJ7fteEy/mAosbFH60fjQAqInIQXHZNfPF99pbhZ+/EtGDvjwkVA2HDjejpCAIAEIkGuOF+YHXuR4NdXW0qj5F/PSJUyefevKpF1OiJHo4Y2CGAYgCBACJREL90pc/71Ej3Z9WyBPR+tpNQjpN19RQJxFCDQCGm+Vw8Qc10l0drbf4QhU/HzxzshNo3VU4uXiBqqaYKAq0r68XzS2dSMajAID6nfu1VcGJrLi0Qm1qqHvq3x79tppKqB6PTwFnDCZjEAUBhmGyiZNKoISKtl955ZXw+O8j+QCrr4Xc3NLJl1TX6AAB0859dnhwgAPozJ10eRPnjBJCmUtoF7+1q/HUpu+JAL7e3d35ja6O1rtyJ13+06/99QPfLi0peePIkSMpAJ7ISARtrS2IRGMYHhzAyMiQnDvp8tjmjRu+9PRPnlRTCVWmEgFnDIRScALo4ACF9uDatR4A3/QGJrQ0PfttUc3Mp+lyerit8YvvtbcW7tm7+6v2S9rW1FB3w+7GbSKAlOtDu/htXQ1+2+13+ssqpn/jpRefN04da1wPAGXllWUAoGkq4ZzB41MwMjiAyEgEsqIQm4z/3B0Of69/cFAxTY3Ikgxd06BrSUiEYnRo2Jx2eTkAvHTllVcOJSIHBTUzX1y26n4t3Nb4t5s3bvhO/c7939+15+hXH/2X9bHtW+tUAKeWVNcYABTO2UXFAddCf0ScDmQWxIEjX03Go//85o69ns0bN9wCYG9e/gQA4IRScMaQ0A1waAgE8xAfjeG99tav7tnXpEGgsiRJSCaiYCYgSRS6aQCAftOKao8a6X7BG6hpqa/dFFq26v5IU0PdN+t37v9GdziMbW/VqYGMbDJn9gzf6tW388mlsz4RbmtcWVJeteWiO9Eu1z6y88wBiJs3btBfe/3nmDt77vCnb1q+/4XXtq9o2PU283q91DQZQABRsJIQRBCgKB4tGT8nG8Z4GYYASCKYaup5EwqEZUuvfXrZNfP/paS8qhUA6ms3fae5pfNvd+7coasa44pM5WuuWYrVd68BAJZQDXrqWONpJVRUD+C5JdU1W7s6WoXi0ooLXuvhWuiPEE0NdZPUSLcOAN1nurK7+/tXDEVGAIAahgG/x9Ljq4aJZDIJAEgmorJAJQACRBEwDBOwqtswTY1NK50iAThYUl7VGm5rXP9ee+vc17Y2rGxrazcViYihUIAsmL8At91xN06cOontW+voUGSEDw9HCtbcteoeJVTUAWDrqWONAgCX0C4+VFAIQiiumreA9Z4OSIriMSLRGH9tawMDIHglGQY4EpoOgTKYjEKSxuv0Tccym4xBEAAwhmQyiaKSEpQUBMNdHa2f6+7u/H+vbW2g7+zfywonFwsAMKO8EgsXV+Hll55FW2sL+gcHMdjfr82bv1AJ90afKUH3f2zeuEFaesN9OnC/60O7+HBB4c8BInkz++p37r9Bln21A2d7DVVNSQBAJBEi5zAMA6qhQ6ASJEmCYZowDBWWhbZILVAKUMtC5+TmygAwa+7SHxw5uCNn8/O1tO9M2CicXCwm4zGUTp2GopISvPTi8+jsOAU1pQNU0G+59XZlTuWUl6fOqPrL4tKK2MUkXnKzHB8RbrastLFnd8PRwoI8AipwZhhIJVSb9AR+jwKP4gNgQtdTECiDQCWIImAyBkIkQFIgC5Yd8nh9pKQgiHi0b/JrWxt8Q+f6uSB5xdjoKJLJJJLxKOp3vI3299rh8fpgmpqxZMECaeHiqtpFS29c/fR/PZFYv+5hejGJly5JC22nqvhH9UGOV80tWlytjIwMwdQPgMh+KAqBrqcgigJUAzDsWh6hEgxCQSgDIQKYqcMwTRAOcMLAVBOhCQGEe6N4betG3nr8MAAQRfYCBockSYhEYwAAPZFEFGDVV18rrl59+1Yi5962Z8fr5tf/8bv8YlPiXXIWuqmhbuKON36sP/bo3x+LjvT4Nm/coPyxyZwW7XPOgiUFwYz4aAySROHx+iDbAZ5hmIBBIMkyRFGBpqpgqglRFKGqBiSJQqDUIr7GYJoa+gcH8drrP0f7e+1EkSUiUArY2RARBMlIBKqaAgC26MoFfPmKmrrisiWf3P7WFq6c6+d2Kf6iwiVloTlndHfjtt4nn3oRM8orpw/3d+xY88AjCzZv3OBZ88AjqT/G8xFCWSJycCKAjFR8oG1h9Vy88MovMToal52QjzEosgSAQ6YE1BuAQQCmmlBTOhRFBNfTx+QQCIMgK9BMAyI3LBKLAkRRgGEYEMd9rKmEymtW3kBX372mPafgstvtUjd7/2t0LfQFihOtx83ISIS3d3Ty+p37pWTsbPH73YI/oGVmicjBywD0AmgbbX6QR4/8A79n+VWorKzE6Gh8HJktK60aKlKJOERuQJY5gj6b96JgEdcwIQiWpRa5gfH5aYNTQJCgQYAhWV/l0yvIrZ+qYQnVmLa7cduhDf+6rmLzxg2zoiM9FZyzYJrMf+j3/ycLwC81C/31rzyod4TDdHhwwLzrM/cIy69buaO4tGJZ+77X/NMW3BT/A/rMNDnaPBPAwZ62bp6h/ZgBOG9mxqnOBaht7sDhwwcxOhqHP+B13ApFVKCmNBiwLK5JCATOoTFAUUTIAh37uWgVYgwyZpnTgaOieCDLPngVypMqI4UFeQCAVZ+6DQD+u2zq5T+IR/uOlZRXRS+GbMclRej16x6mQ5ERveNUO00mk6y0tJQvWly9v6xi+pol1TVtTQ11kqVM+/3Qvu81eUCV2ZzZ+X09bd2ZGdqP6W861881zURbawtaWloAANnZGRapDdUKFCURIgc0A5BFgIqiJR+1LbQBAxAkgFLIggjNKotDFkSkUgY8HhGK4uGRSEwHMwmowPPy8uUH165FUdGU72dlBtcf2LVleOkN97ELmdSXnIX+p7/7K71h19vU5/eDM2ZWVs4QVn3qttbC/MCtJeVVx5sa6ryLq65P/a4fKudMOLm/1jdtwU3RROTgOwDm2hb6Q53rU50L8PT2Aw6xMzL8lm9sW1/RflWEEHBuf2OYFqEhQBRFEEqhv69ThelIkxqy7IOmJTA8OMAEyRtd93d/HwJw65Lqmp8nIgcFe8aHGxReKJAkmpZgCu+8c0DzefwVVy+a+dOujtY/Ky6tOA4A4bZGpbhsifZhiJ2IHBQGh33CqWONhBCqAogmY2dv5mZPYU9bNx84cRQZUz7ca5s6ZR++dR9wqvOe84iddkeoxw8AVkB43gcp2mw3wJn1wRqGqeo6gyB5IYsAZwyy7MPQuX4wHcjOzcPw4AB56cXnY8WTJ8cAoPn1OjfLcSHBnxFQg6Ec77mRAXgUH7xer9yw620tkYrPbm7p3Bxua/xldn7pU8Gswk4AtL52k6yEilCYHwCRc887Vnd3JwDAF5qrwi7lMS1yo6ql5r777rtfPdF63LtndwMPd3WQkuJSlFdU4jNLjv5WxH6u6Xa0tbaguzuM0dE4MBpHdnYGZNGTzmIAADw+K/vITTPtX6vTymcqxZMnIysrByUFQSihovcHyBgZGVIWLq6CGukOAMCcG2sAfM31oS8Ul+N05wnzS5+/D2kxkGYygBAYumEGMjKEFdevBID/WX7dypbJU8q+TgiN/qbjMi1yBYAH9+zdnVQj3XcDyH/hlV+ys2fPkpSaIMwEkskk/AEvMnwBzJo9Dw/UdP5Wrz3tioS7OhCPWccCAI/HD4/Xh2Q8BkIIdF2H36OoK2+8VekOh7969aKZSSVUhKKiKfApIjy+AFKJGBKqAa4Noqc/Zs6aOUsYORd97X+bA+IS+uNJaNJ1ounPH/vBxv/sONUuJZNJIkkUfo8POgiYYTBNM43i4kK5vKIS8dHY9qKSkr6yiumkMD/A/cGJlosxRgaqRrpZuDd6ZUlBcHpzSyfaWlsQ7urQAEgexUeIICCVMiDDRFLXHBVdRoYfRUUl+NZ9v30K+Hu/yENLyyEMD4+elxmhltU2v/i5ewQlVPTQkuqa719qd+ALjtD1tZskAEQJFfHfNSPR1FDH13/rG5rHp8i6pjn6Y1mg0EwGXddNXdfZxEkl0rTSKfBnBH7tseKjMXSf6UJLS4tuZycEANQwAAYRHs9YlkFXNYiiACII0FJxy4UAUJCfh6llFXjo5oHfmdj2cYyVN94qLL9u5YPFpRUbH/nivdIVs+eQkoIgT7tNeRN9GOhLoKffKourkW4srJ6L7z76tLlu/WPMJfSfNg0nXr1oJl+26v4PG5WTZOys3N2yd0Xtjn2vvrntTdXjUxRNH5tkK1HB1lYoMAzDHB0d5QDg9XohSRJEUQQVrWxBJBJDbHQYXq+XUgFUsFVwJmMgkBHKCkGWrZnmAwP9EAizSte6dUfnLAmB0t+b2BvrpqD7TBeKJhVrf/WVe2QARd999Onei1GrcdEQOu3b1ddu2q+EigKF+YGzJeVVS9M/c97Qh/wA62s3rWpu6Xz9zW1v6lQRJAAwVcsdYKZFYEUUoBomNM2ETAFvKASmJqGDQFE8UNUUtFQKoh1aG4YJkzGrRcrnRdBnWfZIJAZTT8IryYAoQLMFSB7PWL5Y5IBhqA65Kysrf2t35FTnAm3OjTWyxzu1hMqhrktppt0FR+izjTeTCVW/4Gvvu9VMqoxmZ4dwxew5Z8oqpr+zpLrmprEup9/q4ljR3NK5pW7LG7okSXIwlIlk/BwIkZBSE2Am4PNZAqLRRAwejx+EUmipuGOJBUrHSCxRAILVUWIyABbBAUCRJZiMwjQ4QAUoMgWhFKmURWgKFSZjyPAFoBqq4x9n+AJ46M6VmDpl34d6a6PyfWZhedHwQF9idkl51dn0eXMJ/TG10F/76wfizYePeQEgFAoQAJg4sWD4phXVshIqemL71rqvLl9RIy+uuv4DJ+Kf3F9LXnhtO1++omZaYX5gzyuv1vkbGneKmq4RU1etACud0zWIU3omkq1B9vmRSsSRSCRguSISCJGg65a2iTERVLJPq6k7pIcgAaY1fkAURXDGoGm2aF8gEARqFUt0w3lOAE4gWZCfh0VV136YtJ8RnPX3Yk9bd9G0BTf1uIT+mBO6qaHuzL89+u2Jmq4RpnNOFYGIHCCUQqYEWbl5zOsPYnz+FQDCvVb27URbC5Kqhr6+XgKAMNvNiKcsglryTB0CpZAkjxMoGoZp/Uw1QO27uMms3yNUcm4OgkBhmsx5bHMMgAjDMEAohU+WoINAVzWrPYta0lAAME3m/J8oCOBcd1wZgVIUFZWgaFLxr037jcr36YXlRSqAMl9obu+l5nZckEHh1/76AX742BGYumr7u5aVBOAEdFQUIdkss1NyME0GSZHBTRO6rjvkAgDVUB0ii6Ji+8SqQ6T0/5kmg2lyKIoIj88PpiahGuZ5JH4/oU2T2dJOEyCAJFsKujShRXGsvmUYY9O6CKFOP6J1UVsWP52HHk/w5RX5yCubqRWWF8kDfYlpJeVVJy9FH/qCqxRyzoTdjdtaT51onXYupQrZuXmIRoZgMh0exQeTMZhaEtAAjVo+7Xghe7qyZhtEaCYD5xyqpjsWOj0CThQFwLD+TRctgqFMMDWJeEoFj8egakn7dxXHyoLAHtX1Aa8/PZMOOI+sv0JiSgFufS8pMjhjAERInEOhsm33DYS7OtDS0oIDBzP4Q3+ZT4oqF4bzJvZcUiQejwtOD00INZdU10xf+7l7BQB6NDbqWM9EIgGP4oNAqa0xFmwLycG5ZVk9PgWKx0q/gQO6rsMwVCdwAwBVs27zVPQgGMoBFT3pChxCwQCo4rVfC4FAJfuL2gGgYZPPdkEotQjO+XlW2LHExAouzXF/Q8hYd4ogUKQSKtSUDlVjUHUOIksgkgjGRHgUHwry85BM6hoAqb+nfZUvNPeULdy/5Ih9QY5VHTxzMjShYMpixeO9bE/TLtUfDBJJUqiuaZA9HlAiwDAYTKaD87TLIEJSZKQSKkyDgXPdYpNAIQrEKa5YptOyyjIVQEQJhq5ZQR8RYHLYdwQTkuIBAaAbKkzTAAEFIxTgBgAOUSAAKCgxAVBwcBAQEDKWkSGEOP43H5eloZQ4/rcgAKIkQ5IECBRWCxYDPF4ZqsZARQGiIJgef5Z4vO3kD7e+uXNAMiNk+849lxyhL0SXgxBCIwCWdnW0/hLAyvodb2PgbK/hDwbFVEK1gzbTbv+Hk2IzVQ2CmCaQZPu4hhN0pS2q5XaIlm+sjYIza7RAumwtigpEGGBGCqqmg5kAFZwn+kBb4WQ7kC68UOf5xj932nKbDLalt4JRXUs66UFB8joVSMttMqAnk7Tr9Gl2x5133c45Ow0gum79Y67LcQG4HJxzRpoa6sTi0oobll+38vE5V8z85Zw5s8XB/v44qGBKsgxJ9kL2eCCKoj1xSAXnOiRZdoI1y1KOuQbjW6EMQ7X+hukgxHJRvF7JcU/SQagiWzM00uMGxuI787wgLx1gpsnLuZXNMAzbReFwgsmxC0t00neiKFjyUcGqMDIjBQoVnCUBXQUVILUeP2wU5ge+OdT73uWECPxiaau6qC30OFKbTc9+WygurfgS5yx7xxs/fqasvPKT9TveRsepVjUjK1MyUypNkzTDF8BoImbpoAkBCGCYJgQqQvZ4rFVothVUZGlcr54wLv1mWVc9mbQnG1nWU5LSeWgrk0Fo+sLQIXv8SCaiEAUFhqHCo/iQSCQgSRSESDBMa5BMOttBqAjY/rZhmhBEbqUMIUKSPICegskYVE23ijUaOy/X/cqrdfrPX/nZe5fABreLh9DnkbpkrpcQOhwfPXv/rFj0DgC3LFt67dL6HW+j70xYNU0Kw1Rlw7BSlIZuQJREJ3XGTRNaKu6QQqDUTt9ZlpdzDpMxcMYgioBAJSgyoIgKzkVj8Ht8yMrNw8jgAM5FY6AC4JFFpFJxKLIEbpoQKAXnds5aEBwyCwIF55J9QTht3fZj03JbqOiMBeO61ZWSvr7Saca05RcECG2tLeSfH33s8bKpl38ZwMCllrq7oAX+9geVXL/uYerPmNAL4PtaYnhr7+mWeSUFwa8BmLFrz1Eca2vBuZEBCIoXIrG6VThjVn5YElFUVILs7BwMDw/hbH8/zFQcomg3ohqm5XZQCYbBnNMWT6nIzs3DgvkLkJWVg/odb0NKqZBkGYl4HJIkgYoeDPb3IyMrE5IgQqYECVWDKCoghNjFGtHJgKQvKl3XQQVAkZXz3CIiiRB1AwYEO0awyCwoXoAx6ClV6B8c1NVI9925k2rusyNP4lroCwzr1j/GOGdkd+M2UfZltwFoY1rknVPNb88Yiox0l5aUvNAj+6b0nQlzORgkGaFcZGeHkBPKSg87RLg3iq3btoAzDV5fEMxIIZ4yAJiWNaUUBrES2IRQBEOZWHH9Sqy64UbUvvE6RiODCIYyERmJQPIokCUZ8WgUufn5iEej+MTK69DW2oJzHR2Oak9whsyMFVMUUYASDEA1TIv0pgmB2QbW7u62RoNZr4lpptV5RSh0AKmUIW5+vlYPtzXWZU+afmswmBNxCX2BZT0AUHtBjr5+3cN0eUU+pXKoDUDb4JmT//TMs5vzDh8/xrJz8+iK61di2TXzMV6sv/2tLdi6bQtSCUt0xAzD8YV9sp3j1nQwRuGRRFRXXYNVSxegqHIh+nvacehwMwAgMhIBVQQEfQGkkgkIguXWVF99LeZUTkHzoaOQJAmEWNkMSZZh6AYIofApEhKajoRmBa7pMrlAKUwwCNTKcac/Met7CkEgME0GQaCQZQWcq6T/bFh8r711eUl51SVF5ouC0LbbYdoiHABA0dW30vZ9M8WsosofHTm44759+/eBqSZW3LwSt91+J/z+AFQthT07XsebO/aiIxwGU5OQBQodHjDDgOzxgzOGeEoFYwSKIiI7Jw9r7lqFWXOXQvFaxZWe/hiGhyPQOQNVBMiCaBFbIgAVUFJSirV/+QXUvvE6+s6E4fNbir14NGoVdwigqSp8ioRAMAPDgwO2+6FDpHafILGHyAAQCbPn35nW3cPWkaTL67rOADDy5FMvmk0NdccXV10/81JYWn/BEzo9wqqro/U6AH89obSiBiBYt/4x/vV//C4jpRVGU0NdyZs79iIZjxl3fvrPxM989l6YTMfpjiN45dU6WES3tRjMyjLopu742bqmgRCK4uJJKK+oxG133I2sTEvsJEoi4qNR7N3diIGBfoRCAahqCvFoFP6g9Tsll5fi4S88AH9GEHt2NyCZTMLr9TpZjPQWKy5RTCq5DDmhLBxDC1KJOATqBSHEbgagSKfUDVBAYHZW0LSDVdEWNXHrIjFMDA8OCHt3N1Ysqa4xXQt9AeCf/u6vAAAvv/RsKj4aW3HvZ28emHPFTHLrp2rk3Y3b7g63NS565dW6a95554Axb95V4m2334kD7+zD3t2NaD50FNHoMAAgHo0hMxgAVQKIRs5Z2gq7JpKTNwlzrpiJVUsXoGRmFUxmZSIM3YBAJcSjfWhrbbGKHElLrecPBhGPRjFv3lVY+/kvIy8vC++++y5GBgeQk5sLXUsCEOD1ekHtpHVO5mTctKIaSqgI3We6EBsdtYo7hADMAKgA+6kdYhNKAVBwpgMQYZocpmnC41PANBOSh+B/3t7ON2/ccObe+x8qTOfvL/aMxwXvcmRl5aQAqKORwdz/eXs79u3fBwCvAkhP3sTw8BC+8uUvIhKN/YoVBawVEGpiAIpsdal4gjlYtvRaLLtmPrLzS6HY2g2BShg9NwzF64XJdNTv3I+ker4CKZUyULPyBqy+ew2yc/MQj8egRrqtuwrTAAgg1FLkUdH6/YqyPFw2rQIA4PUHoWkqfEoA8VQCiuKBzkwwk4IKDGAAGfeUaR2LLFvT/XVVsyqlJoepq6jf8XZBWcX0bs7ZNEJowrXQH+PMRn3tJmHZqvsPNDXUXTencsovX9vaEOzr60UqmUhviII/GERXVw9MU4MgyDBNDZLP66jusnOtWW8TJ05E0aRiXL1opuMjEyJAoBJMg1vaZ5EgOzcPhmGi72w/Dh1udiy9mtLh8Sm4847bsOqGG6F4vRgeHEB2bp6jxbZLMxCo6KTjQqEAysor4Q9OREI1kBPKAhUsFaAoKs7saIiWRR4vYkq7LdbVcl5cYS0fogrpOxPmL734/KTC/MBxztm83Y3bYourrtcutoWbF4WFXrbqfjMROSj6QnMbB8+cvOXa6+/44emOI8FXXq0r+J+3t3NZEMnc2XMxFBlBMh6F1z9mldPfF0+ejIWLqyxSRroR7o1i1w9/AH9GAAsXV6Fs6uXwB7JsYutQkUJ8NIpTxxoxPByBoniQSiZQXFyIT9/6SVx19UqIdneLKAXTCzSt+R82AYmdleCGgVBuAGUV05GRmQ1FtXamZBy22rCo6IGpJSFibIS1o/3gtvwUaa30+Wq9NCSPQtqOt7IfbXyq+MEH8OaS6porAeBs4810QtUvmEvojxl8obkGAPLED39Qv279Y+XhtsYvzqmc8v26LUntEytvUOxVZk6KznFVMoNQFC9UNYm+9nfwwmvbcaytBekOFtUw8ea2N7Fk0WKsXn07JpfOQiKhQ5E9GFBH8OaOvRgY6IfHI2LenKuwfEUNZs2cBUIsBzw+GoU3EERGZjbiozF7sLniiPwBa+BieUUlyqZe7vjnZRXTsWd3Hrq7uyHC8tXPs8LpMsn4FkoCEFCH1Jwz52eSLCORiqMjHObf+ZfvoqmhblFhfmBgQnnVqaaGOtFewOkS+mOW8cCON34sRkd6So4cPbJk156jLDs3T1i4uAoZmdlQ1SRESYTH4BAkCQIhUNUkNE3DkaNH8NKLL+NM+D2otn5D00woHgmhrAAOHj6IxMa4FeDl5CGZSuHUsUZ0hMMoL5+GK2bPwfLrVqKosADxeAycmxCoF4rXC85+Nf4SRcHRawSD2ZhTOQX+jKCdjxZQNvVyFE0qRld3n/06rM2xaXcFXHBcCscS819JZTqPdU1Ddm4ejSZiUNXUnBOtx3cX5s9/l3N2KyG0s6mhzrO46nrVXRr0McLpzhPSslX3a2oyeRuAP2vat08rLSkRy6ZeDlVNQk0mYdpkNnUdmk2QVCKG2ldfRsvRw6CKF4ahghCCoM8qX0cTMcSjUTQfPoZTxxrtEyZCCRVhwfwFuOPOu/Dpuz6DvHwr+KOCCFESrcBR8UKWZYyeG3YG1aT7FgmlMEwT2dkhKKGi82Su/owgikpKEAoFxmUzLDI7lprAkaKmVXtp65wmuyBQq9ji8SAaOWddqKbBn3/u6fgrr9Zdubtx20/DbY2lS6prUoRQ3r7vNfliUOddFBZ6+1tbeH3tJuHEqZOJE63HDQCkrLwSitcLKojwh7LATAMwrUyFYabg9wdwYNcWdIStYkcyHoMke6FrSei6rW/WDavax0zs2nMUi665BYJIMGvmLJRNvRweXwAClaBpGggRIIkSTKbDnxGEaXDreQJZyMrKGWc9JUjgSBkcXkVGUdEU6IZuk9MEiAfLrpmPQ4ebkUomwOyKITiFQPXz/GinhStNQz72b1oXoukadF2HT5ZBKCXB3Dz/m9veVLtOn16YE8raHG5rfCm/aPorXn/OGQA03NYol5RXqa6F/hOiOxwmy1bdb55oPT4yMjIk5uXl87KK6aCCCGYaEAgBZ9wS9wMQBQ/i8Rhe29oAVU05aTSZEug6g64zKLIXuq7brkcI7R2dlp00OAgRrEBRkqCqSciyDEEklh/MRICJEEQCak/RL6uY7rRtWZaSQfFIyMufAJ8iQhIlp1gDANn5pbhi9hx4vL6xsQecObLUdBFofDBoGKqt3mOOBTcMAzAZJHtDraZrUNUUPD5FaT/ZZh5ra7mmfuf+x1947un/DLc1fpNzplzIZL4oCG2vaDMGz5y8qqQgeH9ba4uRnR2SCvMD8Ho8DgnT6TcAEESCkXNRq2StamCGAUGgiKcsnbLP74dhqJAkyerlU1PwKhQm0+3RBZYlNrSUk6MGAEX2AIJVtjYNDgqL2EVFUxAKBiCKCmTBcjcIpY7lVu1A1NANGFoKoiRi+XUrEQoGLPfEMJweSOuCFJy+RUmSnI4aS0aqn9dOJooigoEMa8yDJEPTNSiKB8FAhqCqKfP5555W9+xuuKl+5/5vPLXpe892dbR+f/DMyUz73BKX0B8xdjduo+vWP8bi0b4rAFzT1dVj5ISyBCLnWgIj8v5WKIts6dnOgkBBRdHpRJFkqzRtMoZgKBOmqSGVUJGdPeY2KB4Rsiw7x9YNHYZuIJlKwbR1zWmLbXKOvPw8LFpcbVlJxhEIZkBRPCgpsLIgajIJQgSIsgeK4oWhG8jLy3L+BtzKiBimNYba6qixRE2WdlqwiZ2Wn6ZsbYcIrz+AGeWVmDt7LvJzc1kwkKFGRiJqNDaqaqZhSD4vurp6Es8/93R0z+6GW7e/teWLtW+8Hnh/cOn60B8VwgdxtvFm2tLeqja3dJoASFFJCbIyg9CNMWuaDrzS/6qRbmhawpnfodka43TXikCpo5jz+BT47Mn5Pp8X8XgMhAjnPfb7A06XSzroFKgVhMqyjFU33IhDh5vRdrwVnMUQysp3sh6K1wogLV9adO4q6b85eaINnFluUDKZhCRZbWGBjAwAQDRyDro+ptKz1ilbCztTiTiGIiO44867UJgfoFpkWNl16BQAYGRkCPHRmB2MWkFoWkrruhx/qoCwtR8Tqn7Bmls6IwAEj0/hJQVBiJLtP4vkVyz0eCiKB55gDvweBaKoOJkEUVSgaxoUj2X5ikpKIMsykqkURMEDzk3E4zEoiheCSNDd04ve0y3WxSONuTecmzANjuzcPDz8hQcwZ85sy0/ODmHqjCqoWgoj56LoO9uPoaERxGMjCGQWgHMT3kAQd9x5F7JzJ4JQa1SYJEkIhnLAuY5QMIAV169ETt4k2yWxnjMzK896n4QAhKD9ZBvbu7sRRM5tLqpcOGPZNfOXlRQEF82pnLK4qKRksT8jsDgrK2fxnMopiy6bVrH46ium9uMDE4Kuhf6jIr3gZvDMyWtOnDr5xI+eeELLz81VlFARFNkDQ4/B5Od/JoQSgBpQQkWQZZ9TutZMBlVLQpHHzaoTJOicgenAsmvmw+SWX5wO4BTZCi4P7NqCN3fshc/jd4owKqxg1GQCTKZjeHAEk0tnYe3nv4zu7k4U5gfAtUG88PwWdIfDGIqMAAByQlm4etFMLLrmFigeEVfNW4ATS4/jZy89D13X4fV6kUomIIqKoyNZtvRabN22BbHRUXDOwNQkPIpv7G4jKbRuyxtmfDR2+fIVNXcvqa75Gi5SXNCE3ttwEAB4PNqXAWDSwEC/Wl4+jRTmj93+06m6tNtBqfV9YX7AKTxoqRRMZo0jsHNr1skhFFQQMffKucjOL4Wp646bAROIjw6g9o3XUb/jbQwM9KO4aCJ6+mOYXAoYWgomESDLMkRxzD2ZOCEfEyfk48A7+1D76svoCIcdwZQgWDOlj7W1INwbxaobboQ/I4hVN9yI7nAYx9osaWkiHkdmMIChgTPYs7sB9/z559AdDuPI4XeQ0HSMJmLw+oLQEwzZuXlIJRMI5mYITXt2+wH8v3BbY0ZJedUX6ms3eXbtOXreUMuv/+N3cSHrPC6KPHRPf8w80Xqcm7qVLRi/3IfBsPLD9sdmGhwQdfiDE+FVqHOrFrnojPsSRUsYZHCGnGA2Vq++HYpiKezi8Rj8/gCGBy0yb922BaqaQigUcJbFp5HOrGj2uDBCBJico7/7OJ7+yZPo6u4DmAmqCBAkK1sSicTg8Yio3/E2yiqm48orr4Q/I4iHvvwVfO/fH8WefU3IDAagMQ6/R0EkGsOJ1uNYvqIG3We6oA8OQrQ3BPj8fpwbGYDXF0Q0NgqqCDh4+KDpfzXw+fraTcllqx74ys/B6S0AS0tLL/RZHhdFHlqNdGNkZIikb9lpX5kQAZRaQZqQ7pzmplOR+/Stn4TH64OqGjCINUpM9nigGdaCy5zsiVi29FoUTK6EpmkwdAN+fwDdPb144oc/wIsv/NTRQUdjowgFA3ZOeExTL4jWuDAuSJBlGfHICH608Sl0dHTAajbRAN0AheHM2dB0DaORQezd3QhDN2AaHH5/APf8xVrMnn0Fognr6qSKF6lEHPU73kZhfgD3/PnnkJ+bC1W1Om7UlA5F9kLTNYhWxoJoqZTwP/VvGbv2HP3rDf/69X/6lBbxc86kdOn7Qq8WXhSE/rBRuUEAvz+A+GgUpsFx1dUrseL6lSguLkTQF0B2bh4UxYO8vHzMmT0DD65di8989l4nT+z3B3C64wie+I9/x8HDBxHKCiERjyOZiEKW5HG5X8F5PtPgVnMtANXkOHHqJHp6ByBIXphq0nGHYO/vVmQvRMKQiMcx0H8WAKwLwXZXHnzgXpRPrwChFMl4DB6fH9HoMH608SnMmjkLixZXI5QVsqYqUQGEUiaOS78FQ5mQJVls2rMbDY07//btbS+N7m7c9iDTIpMA4gzycV2OjwEEQT5vwY9ljUUrEARAuYF4PAV/KAuKJELVUlh1w41Yft1KdHd3OkJ8JVSEsqmXIyMzG5qmgQpWNW/P3t14+idPoq+vD1QUMTw44KyuiKdS5wefRICQLoRwy/VhpoHtW+swPNQHgQKaDgh2u59EBciCZK9CNiFJEpLqr85sz8632roe+8FGdJxqd5oYTp1oxYFdW1BWMR31O94GWATFxYUAQDs6OkzJo0CiIqKJmADdgOKRoSge+viTT/OSktLHATze1LDlM4urrn+XENrqEvpjBJ/ywW+LM6tsDW4gkbDSdxmZ2cgAMHFCPjRtDgi1S9bcsIc9WoL8A+/sc8hsMgYFHLKSTvNZK4nf371yntsBCb297Wjv6LTL0iokiULXmbXKghA702IFr8FQJryK7BRuFMVrCZ1CWcgtmIY77rwLta++jOOtx+HxWouJNj9fi8KCPKSiQwCA8opKBuDd8orKeV2nT6OvrxeJwQFD8ijWJFMtBkWmaGtrZ//26LfZ3NlznyvMD6Cpoe4GNdK99ULc+33JbZIVRAJHtEYJdENHMhaF4vU6gZ+hpcblqb048M4+vPTi8+gfHLRH6FoDaAQ7GaAxayWx49oY7xsUaVg6kp7+mEU2e7SXAQNUsF0UzsF1A6KgQBAoVDUFn8dvxQGCCFVNIjs3D4lEEpybuGreAhTmB/DMMz/DO80HoGoMoRDQ0nIMVBQRygohKyvHXPPAX10Vbmt4q37nfs2ryHkL5i+4CgAG+s86d4B0s8NQZATPPPMzPPTlr7whCvMz7aGYroX+U8E0NcRHrS2p/g+y0IIExgxQmp7uySHLMmiG1cmiqklLnecPOEWT0XPDeOnF59HW1o6gR8C5RAKZdvB3LpqE1ytZE5EM6gSowIJffW1MhxrptmSqqQREUYCpMShUBiGis1tFVqxXnkoZ8GcEwAUJBgMgepBMpSBIEgzNhMk58oum456/WAv/S8+ioXEnIpEYZPsTtRsVRICjpLzqOjvgC8XO9f7wyNEjmhrplsO9UYyMDDmv0V7hwUfORTWfkrwgRUoXFaHT424BgDE4WgvOxgIzSbTknrI9207TNKeaqCheaJqGeDwGUfbAZDqOHNyBZNwKOuMpFT6fD6qt+/B6vY5lFgUBmpZwLox0P+LYCxKdXduESCBEgGL79ulBj6IogBmGZWFDAac1DAD8ioh4PGUp82QPTF0HFyTk5GRh9d1rkJWVg0OHmxEOd0BXNegADh1u5vW1m740dUZVqri04kl7zfNnL+Y78EXnciTslWuSKNnZCdFOnVnuhaqOpd4AICcnCyAiTF2H4hOgaXB8aBDr9ESiMYRCASTjsfPcCkmSQAQPVMN43wR+4bxijkEARbBUd9adhEMQOFSmOcuJLFIr0DQTZjKJirJy5/cBQE0ZgOiBybllsQXJuVizc/Nw2+13oqxiOvbubsTOnTsAAG3HW+muUNb3wr1R1Ndu4kqo6CcAPLCnepxoPQ7A0nSklX8lBUFMnVGF4tIK10L/qZDedBUIhJBUNXBtEKJYAE0TxnxYO6smyh4MDw7g5ZeeRVZWDj5912cQj4w4k5A4NyGLXuiGDs50TJ1RhRnlR9G0bx88HtEeEzbOV7aVeaIoQpZ9dkldhmlwK6AUZcDgUE0OnyJiRnklGna9DUL91vBIbiCl2jM9RGvEAaEKysorkZUZBOUGKEQwGKAcMNj5H5kgSRgeHIDHF8CihYtxwg4Sk/EY8iYUqIlUXBkZGUJZxfQnl1TXbGxqqBOWVNeoroX+GEMJFTH0HjdkWUAyHkVPfwwFk03LlWAiOE9BNTlEQYRgl7W7Tp/GQP9Zp5mVmQZULQVR9lg9iLIHhpnCxAn5uOcv1iKRiuPI0SMQBQH+tGDeZDBME5IsO9P0HQtuphyXJ+3uKMEsLF9Rg/aOTgyc7UXQJyM91SY9nleSKD5xnTV/T5REGLoBKo0VDNKbKtKDUA1mHZcbKcTjMXSHw4iMRODxKVj30H3KrkOnVgNgAIYAYPvWOh0XMS7owsrSG+4DAMyaOcu77Jr5IgDePziIE63HMXpuGKbBwWA4nSDMNJxswU0rqtHTO4AjB3dAEi2f1jQ4BEIcIoqSlV0oKizA2s9/GcuXX4cJEyZYfi8IiGCl61Ipi3TTSqc4bsL4mR4wxrImixYuxpq7VqVzxOjtH4Bq6y8kiWJauTWpKW+iD9zscV77WGRrpJcDjFklat95+jusyUuxCA8Gs6Hkld265oFHnl3zwCPPLamu2QpY80xcH/rjC3bvZ28W/P7AjgPtrd+orJzxjXfeOaCfaGuREtethD+DwNANeD0BGKoBKojgjEPVDUydUQWgFm/u2IvLplVgcuksDA8OQBCDkGXZsdKAJdwvKizA6rvXIB7tw3vtrWhu6UTX6dO/Mt8jOysTJrfcDQY7p008tjlNAUoAi5beCCVUhBOtx3HocDPOhN9DVm4eyisqsXCSD939/c4blEMJ5E30gQiF52VMRJHA4CJgpKy1nrIH77W3IqkyBDKyMa10CopLK36+ft3D4vKKfKBkLi62kQUXHaHtzbKEyqFz9bWbDuflT6AA9OHhIXBtEIpcAEOPQdVSgGFYg8FFgnhkBHl5WY7s8pVX67D67olOZRCibllGbll30+CIx2PIyMyGNxBEdn4prroaUJNJJFTDKeR4fAFLVWdfPOm7giiIMBicdCAAXHnllZgzOx9XXzEVAyfOX3esnOvHwLkxUmP+NfAHo/Db6cV0VoZyA0z0QKRAPDKCXXuOYuBsL0AFXL1oJo+O9GQGswrPXUp1BnqxvJGpM6oy5lROgSB5EYnGrLlzKcuPTc+8ACwFnDcQBGPA8utWQpZ92Ld/H44c3OF0X6eHMYJYPqwgEihKOlDkoIJo5asDWcjLz0N2bh78oSxwQULSLoGnCQ3Aasuy3Q5F8UJNJsHNHvS0dX+o96ZFhhGP9sHQP8DAGikYDDhx6iS6z3TBNDWEQgFcNq2CBDILLqnJoxcFoZdU1xibN26Qurs7nw/3Rr8yZ/YMeXhwQD10uBlDQyMQRMsnFiQJuqHbumfLgmZlBrHmrlUIBQN44ZVf4tChd51eQVVNQiDE8WE1TbM6xyXJIrSdeYAJxO2JTCK10mgitSxz+nkESYIoe5BIJKGqSfj8o+hp68bAiaO/Yp0/CAMnjkKLDEOgZ8/Ls3PGAdtCn2g9jv7BQQiS11gwfwHp6Y+VA4jhEltJcVFY6JKCIJZU1+hlFdO1svJKAoAPD0fQ3d1pb5gynVEGjFljDGBagdusuUtRXlGJrq4evPTi8zjwzj74fF7HV01bxQ9q5WLEynGnCWwwOJU9RkRA9MBgcL4IJRDoWYfMvwu42QNF9oAzDi5I8CsiBvoHcKKtBfFoFB6PyBcuroqXTb18xFbOuRb6Asx2cM4ZKSqaEiurmK6WlpYqfWfCvPbVl9F31vJF0/Mz0sNg0vAHsnDbHXdjyaLFaDveipdefB579u62ehJtLljtXOf3J3JBAjGtKUwGs1wM8TeczfT8jd8F6QuACIWIx2OOvnt4cADb37IG5giCrFVXXSPt3d04J3fS5QOX4vL6i4LQhFBjd+M2sbi04scAvlheUTkMQOsIh/mpY43WCopk0iFyuorn81lipIkT8rF69e2YM2c22tra8fj3v4sXnn/OEi0pXmfMF2C3Vuk6RGoVNQSRQBGIpc7TdVBuQCTnf1FufalqEgN9YyOa955J4OntB7D3zG8e25xXNvO8vzV1HYpAEI/2Yc/uBkRGIjzok/mcyimdt91x9yW7vF64WN7If/3kWbZ54wbfjbes3nvXnbcUK7K0+NjRI1r/4Dlx9oypyJ1QDF3TwBiH16tAt5f1GIaGRCyK3AnFKL+8ED09ZxDu6kH/wCCOHX0XgYwQMoMZyMgIwWQApQAzTTDTsAJEai3tYaalqCNUhEAFUCKAc2ZVDJkJQaRIxuOID3QBABJD/Xh5y1vo6AwjMjQAklWIouCvt+D+nHxMnJID0/TZ+SkFpp7Cfz/3Uxw7egSRyDn1zj9b7YnEtOprP3Fj2/p1D9NrP7HSXV5/IeNv/uYR/MV9dwtXzJlfPDoaufZUV4fv3LkYHxmKkKll0+Hz+qzStiyDmQS6bk0+EmURuqYhM3sSKiqvgJqKov1kK7pPn0FnRzt6zvQAhEIUZPgDQXg9HnAwcGYtmWcmt+fSUZiGBtM0YJoGGGNwltSjF1TMhGaqMNUkmrujOHb4ECRFRCKp4siRwwgWTfu1pPbn5MOfPc2+IwlQJBF7d76OurcaER0dZXkTJpifvOGmdxcvXPxahpcOfv0fv8u/9a1vuRb6QrfS1UvmCdd+4sa9N99U0ycScuXIyFCgr7+PyJJI5lw5D6Io4dzwEGTZC1DANExQSsA5gWmaCAS9mF5eCUIootER9A8O4sSJU+h8rw39/b0w4n0QPdmAaUAQBXi9PmtqESwrTYi1x5AKAgSRwuv1QZZlGMYIKIkjEdOxc99RHDrcjPc6TkFRZGT4/Qj6/SgqnvKBhFYz85E7aTKCmXlgjEFRPDjwzj489/xPMXJuCGoqGX/o//65ryDkuWtyxeL96//pm0JxyTSGSxAXZUpn88YNwTUPPBLdvHHD24cON1/TdrxVD2WFpM/deycWLbvFmR8H4Lx5d+O/B4ChsyfxzDM/w1BkBG1t7QAzkTehAIUFecjLn4A5lVOghIpQmB8AkXM/sFMmoRrg2qBTXRzoP4tTJ1rR2z+A7IwQJhYV4p7lV/2v76dw/jXIzi+1PA1JRH9PO3608SkcPn4MeiKp1qy8Qbn1UzUNk0tnfWHP3t0ti6uuZxfryonfhIuyY+Xe+x9KAPAuu2b+RgCLhocjwsDZXrb5+VqqhIqwaOFiqFrK2fvNmJXXpdRqSE2n6/ILp2HtX34BJ06dxN7djUi3MTU3H4YsC2g+lI/s7BAAwKvIyMu3dB5ZWTnOmK30AJm+vl6cGxkAM4HMYABVVdUoK6+0lILjq4IfEAxapW/ro4qPRvHKq3VoPdEGPZFU5827Slm4uKqRyLl/RuXQmfS6u0s1KLwoCU0INZue/bZeUl71bFNDXXRkZOgXO3cO6kPn+snTP3mSFOYHkDPhclBBdNqjGLMqhEyAM3nfNDgyMrNxxRVXomzq5Y6OY9eeo87eluHhCDQtgWQ8Bs0mOhVFcMagagyKRODx+SHLPlRMn43iyZMxp3IKLptWgbyJPqtamJ9/Xl46r2zmmHUuL4LJJgDMgJpMovaN19F86ChSKUOtnDlb+T9LFzYB+GxxacWZ+tpNEiFUxyWMi7qK1NRQpyyprlE3b9xQMzIytOXNt7ZrAKQ5s2eQVZ+6DVfNW+Csq0gPLhdE4pDcNDhSiRgUrxd+vz2FPx5zNBzpTvF0K1N8NOY0GPg8fvgzAo5wvqxiOgCgqGgKcnKy4PV4oGopcLMHA30JaJHh892M8iIr5zwaddZqvPyzF7F12xZEEzGtaMJEedHi6n0lBcFPL1t1f2dTQ520pLrmkibzRU9o25+W1zzwiFZfu+naXXuO7mjat08z9aQ8b95VWPWp2zBr5qxxlt0qkadHHKTnSgsicdqq0v52ur1K0zRneE2a6MD5neeK14tAZgEAIBYbGXtxRsrRPKfL2kQodKqTiuKFKAro7unFyy89i33796HndJdRWVkpLlpc3Qzg5jUPPBLevHGDtOaBRy55Ml8ShAaA9eseFtetf8zYvHHDghNtLXuPW2srRI/XhxXXr7RmyNlrK5i935CMm0unpsZGGjjEt90UZhrO9+9HWm/BhV+fXxaJJYRKD7MRBY9zLE3TnMB021t18Hq9ZuXM2cIVs+e0lFVMr1lSXXP6Ytxk5RL6Q8Be0mlu+Nd18wAcePOt7QzMpFQRMHv6DKRdEADnkRgYmyntZEI4B7gxJhCCpdOg4+qu47Mn6b8fP0UJsOWfZJwlFwhUk4OYOlKJGI4c3IHNz9ei41QrMnKy2bTLptGbVlSfAlC1bNX9fen35NL4EiQ0ANz72ZuFp/77F2Z97aa5AN55/MmnGWeMEkoRDGaftw7Z7w8gkUg6Lke6+4UREZQbDpG5IEGklviIcktdl34MjBHe6QCnxq9Y8TSp04Q+0rwf27fW4Z3mA0il4hAUL6ZdNg03rajuumxaxZyS8qqRi3Vxpkvo3979oOvWP8aSsbPz+nva933nX75r9A8OyqmUwQGQ4qKJWLS4GsuvW4mJE/KhG5bcNK2HdjQd76PSeGHS+J+llXjppUXjNc1OexUTYRDgSPN+7N3diOZDRzFwtpebpgZ/MEjmzp7LVq++vc8fnDgtd9LliUtRdOQS+kOAc0Z3vPHj68K90dfrd7wtDwz0AwD3eEQSDGZjzhUznfXIGZnZ57kbaevqHItxEDq2bSvtX6eJa+iGs2Ao7S8DwMg5a83ymzv2oiMcRiQS42AmPD6FlJSU4orZc0bvvf+hHACmTeLxO2RduIQ+n9CEUNbV0XojgB89/V9P+LvPdGX0Dw4iHo0yyaNAlmRqEwtlFdNRmB+wZksHrHao9AB1x+qKgtXyNc7NSFv5dCZkfD77WFsLIpEYp9YyKygypRPy81FeUTlw66dq9OKyJVMu9dyyS+jfntiEEMqjIz0PjpyLPvzyS88Wx0djvvaOTvSdCQOA6Q8GoSgeIRQMoGhSMYpKSlBSEHRK384JtYetc20QANDTH3Ny1enVE8PDEUSjwzyVspyTUCggyLIP00qnwJ8R6Fp995pETsFl1xJC+9MukvspuYT+rQi9u3GbkE5/DZ45+bV4tO9Tr7xap8dHY1cnUnH09A6g41SrAVgjwHx+P/F4fYIs+6BpCciyD16F/toJpAMD/YapJ63NtFRAKBQQJ04sQE4oC4lUfLisvPLobbff6fH7A/dROXTs3s/eLDy4di1xU3IuoX8vF+Tk/lpx2oKbnMHMXR2tP+zu7pyyd3cjAKxM6zOGhyMYONurU4mA6Xap3NQ+8Lj+YBAlJaWSV5GdCiIAPSsrp27VDTcqitf7n8Gswl+Me065uLRCd31ll9B/KGKLpztP0Kf/6wmybv1jztiscFvjMz39MeFE63E+MjJUMKdyyrLmls7feLysrBx0h8PPF5WU8LKK6WZR0RQBwN7i0orvp39n88YNyqobbuQ5BZcZl7K46PeF6J6CD7jKyViyuKujVe7u7iTbt9ahpLxq9TjS+7ke/c5l047oAKSefmvexvgtAICl3fApIs+ddPlD73+eNIlPnDrJrHlzj7gn37XQHx3CbY1KT7+1dWrNA4/8VgMPH/nivUo6U1JUNAXd3Z3MFRO5hP7YYP26h+k9f7FWSu8MH2+dx1voPEWDHMpGSXmV6p41Fy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuHDhwoULFy5cuLi08f8BqsZHdMnDhB8AAAAASUVORK5CYII=" alt="庄腳"><div class="hdr-side"></div></div></div>
 <div class="app">
-  <div class="head"><div class="title" id="hTitle">庄腳・收班工作分配</div><div class="sub" id="hSub"></div></div>
+  <div class="head"><div class="hRow"><span class="hIcon" id="hIcon"></span><div><div class="title" id="hTitle">庄腳・收班工作分配</div><span class="hPill" id="hPill"></span></div></div><div class="sub" id="hSub"></div></div>
 
   <div id="bootLoading" style="padding:56px 24px;text-align:center;">
     <div style="font-weight:800;font-size:14px;color:var(--ink2);margin-bottom:6px;">載入中…</div>
@@ -520,19 +590,23 @@
 
   <!-- 分配 -->
   <div class="page" id="page-board">
-    <div class="daytoggle" id="dayToggle"></div>
-    <div class="seg"><div class="segb" id="segP" onclick="setV('people')">人員</div><div class="segb" id="segT" onclick="setV('time')">時段</div><div class="segb" id="segC" onclick="setV('cat')">分類</div></div>
-    <div class="attend" id="attend"></div>
-    <div id="batchbar" class="taskbar"></div>
-    <div class="key">
-      <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">盤點不足</div></span></div>
-      <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開店前</div><div class="kn">最急</div></span></div>
-      <div class="kc"><span class="sw2" style="background:var(--am)"></span><span><div class="ku">早段</div><div class="kn">6:30–10:00</div></span></div>
-      <div class="kc"><span class="sw2" style="background:var(--mid)"></span><span><div class="ku">午段</div><div class="kn">10:00–打烊</div></span></div>
+    <div class="wkstripwrap" id="weekStrip"></div>
+    <div id="foodPrepZone">
+      <div class="seg"><div class="segb" id="segP" onclick="setV('people')">人員</div><div class="segb" id="segT" onclick="setV('time')">時段</div><div class="segb" id="segC" onclick="setV('cat')">分類</div></div>
+      <div class="attend" id="attend"></div>
+      <div id="batchbar" class="taskbar"></div>
+      <div class="key">
+        <div class="kc lk"><span class="sw2"><span>急</span><span>缺</span></span><span><div class="ku">急缺</div><div class="kn">盤點不足</div></span></div>
+        <div class="kc"><span class="sw2" style="background:var(--pre)"></span><span><div class="ku">開店前</div><div class="kn">最急</div></span></div>
+        <div class="kc"><span class="sw2" style="background:var(--am)"></span><span><div class="ku">早段</div><div class="kn">6:30–10:00</div></span></div>
+        <div class="kc"><span class="sw2" style="background:var(--mid)"></span><span><div class="ku">午段</div><div class="kn">10:00–打烊</div></span></div>
+      </div>
+      <div class="hint" id="boardTip"></div>
+      <div id="stage"></div>
     </div>
-    <div class="hint" id="boardTip"></div>
-    <div id="stage"></div>
-    <div class="footwrap">
+    <div id="futureNotice" style="display:none;margin:2px 14px 4px;padding:10px 12px;background:var(--tint);border-radius:12px;font-size:12px;color:var(--ink2);font-weight:700;">食品備料僅能規劃到明天，這天可以先預排常態任務、上班人員，以及下方「排定備料」的負責人與叫貨參考。</div>
+    <div id="routineCard"></div>
+    <div class="footwrap" id="boardFootwrap">
       <div id="signbar"></div>
       <div class="frow">
         <button class="savebtn" onclick="pickSaver()">儲存（簽核）</button>
@@ -545,12 +619,14 @@
   <div class="page" id="page-admin">
     <div class="seg">
       <div class="segb" id="tI" onclick="setT('I')">品項</div>
+      <div class="segb" id="tR" onclick="setT('R')">常態</div>
       <div class="segb" id="tS" onclick="setT('S')">員工</div>
       <div class="segb" id="tA" onclick="setT('A')">工作區</div>
       <div class="segb" id="tC" onclick="setT('C')">種類</div>
       <div class="segb" id="tB" onclick="setT('B')">時段</div>
     </div>
     <div class="page on" id="aI"><div id="itemsAdmin"></div></div>
+    <div class="page" id="aR"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addRoutineTask()">＋ 新增常態任務</button><div id="routineAdmin"></div></div>
     <div class="page" id="aS"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addStaff()">＋ 新增員工</button><div id="stafflist"></div></div>
     <div class="page" id="aA"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addArea()">＋ 新增工作區</button><div id="arealist"></div></div>
     <div class="page" id="aC"><button class="addbtn" style="margin:12px 14px 2px;width:calc(100% - 28px)" onclick="addCat()">＋ 新增種類</button><div id="catlist"></div><div class="ah" style="margin-top:20px">作業選單</div><button class="addbtn" style="margin:2px 14px 2px;width:calc(100% - 28px)" onclick="addOp()">＋ 新增作業</button><div id="oplist"></div></div>
@@ -565,10 +641,13 @@
         <div class="cal-nav" onclick="qWeekNav(-1)">‹</div>
         <div class="wk-title" id="qWkTitle"></div>
         <div class="cal-nav" onclick="qWeekNav(1)">›</div>
+        <div class="qquick" id="qQuick">
+          <span class="qpill" onclick="qYesterday()">昨天</span>
+          <span class="qpill" onclick="qToday()">今天</span>
+        </div>
       </div>
       <div class="wk-row" id="qWkRow"></div>
       <div class="qlinks">
-        <span class="qlink" onclick="qToday()">回到今天</span>
         <span class="qlink" id="qMoreLink" onclick="qToggleMore()">查更早的日期 ›</span>
       </div>
       <div class="c-cal" id="qMoreWrap">
@@ -588,8 +667,8 @@
 <div class="nav">
   <button id="nCount" onclick="go('count')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16.5" rx="2.5"/><path d="M9 4.5 V3.6 A1.4 1.4 0 0 1 10.4 2.2 H13.6 A1.4 1.4 0 0 1 15 3.6 V4.5"/><path d="M8.7 12.3 L10.6 14.2 L14.4 10"/></svg></span><span class="lab">盤點</span></button>
   <button id="nBoard" onclick="go('board')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M9 5.3 V18.7"/><path d="M15 5.3 V18.7"/></svg></span><span class="lab">工作分配</span></button>
-  <button id="nAdmin" onclick="go('admin')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="lab">後台</span></button>
   <button id="nQuery" onclick="go('query')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><span class="lab">查詢</span></button>
+  <button id="nAdmin" onclick="go('admin')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="lab">後台</span></button>
 </div>
 <div id="sheet"></div>
 <div id="snapStage"></div>
@@ -727,7 +806,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.25-07';
+var APP_VERSION='2026.08.26-07';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -775,7 +854,8 @@ var DEFAULT={
     {name:'疊菜',area:'麵包',unit:'份',std:10,min:8,band:'am',daily:false,enabled:true,cat:'餡料備品',days:[]},
     {name:'起司',area:'麵包',unit:'包',std:2,min:5,band:'mid',daily:false,enabled:false,cat:'餡料備品',days:[]},
     {name:'鮪魚',area:'麵包',unit:'盒',std:1,min:8,band:'mid',daily:false,enabled:true,cat:'餡料備品',days:[]}
-  ]
+  ],
+  routineTasks:[]
 };
 
 /* ====== store ====== */
@@ -795,6 +875,7 @@ var SELFHEAL_DONE = {};
    TASK_SNAPSHOT[日期] 記錄「目前已知雲端上有哪些任務 id」，每次收到雲端最新資料、或每次成功送出寫入後都會更新，
    讓 save() 能正確分辨「這次要刪除哪些任務 id」，而不用整包覆蓋去蓋掉別人剛存的任務。 */
 var TASK_SNAPSHOT = {};
+var ROUTINE_SNAPSHOT = {};
 function tasksToArray(raw){
   if(!raw) return [];
   if(Array.isArray(raw)) return raw.slice();
@@ -830,7 +911,10 @@ function carryTasksInto(t){
     td.tasks=carried.concat(keepTmr);
     var owners=[];
     carried.forEach(function(x){ if(x.owner && x.owner!=='未指派' && owners.indexOf(x.owner)<0) owners.push(x.owner); });
-    td.working=owners;
+    /* 如果這天已經有預先輸入好的上班名單（透過週總覽列提前排好），保留不覆蓋，
+       只把結轉任務的負責人「補進去」（避免漏掉），不會用結轉結果整包蓋掉你先排好的名單。 */
+    if(!Array.isArray(td.working) || !td.working.length){ td.working=owners; }
+    else { owners.forEach(function(o){ if(td.working.indexOf(o)<0) td.working.push(o); }); }
     td._carried3=true;
     if(useFB && fbRef && gotFirst && !SELFHEAL_DONE[t]){ SELFHEAL_DONE[t]=true; try{ save(t); }catch(e){} }   // 自癒後寫回雲端，讓兩台裝置同步（同一天只做一次）；明確指定日期 t，避免這時 DB.cur 還沒切換過來，寫錯天導致結轉沒真的存上雲端
   } else {
@@ -862,6 +946,193 @@ function recoverFromPrev(){
   alert('已從 '+pk+' 補帶 '+carried.length+' 項到今天的今日工作。');
   go('board');
 }
+
+/* ====== 常態任務（本週待辦，可順延）====== */
+function dowOf(dateStr){ var p=String(dateStr).split('-'); return new Date(+p[0],+p[1]-1,+p[2]).getDay(); }
+function ensureRoutineArr(dateStr){ if(!DB.days[dateStr]) DB.days[dateStr]={working:[], counts:{}, tuibing:{}, tasks:[]}; if(!Array.isArray(DB.days[dateStr].routine)) DB.days[dateStr].routine=[]; return DB.days[dateStr].routine; }
+/* 常態任務實例 id 固定用「日期＋任務庫id」組成（不摻亂數／時間戳），這樣同一天同一件常態任務不管
+   哪台裝置、生成幾次，算出來的 id 永遠一樣：寫回 Firebase 時是同一個節點互相覆蓋，不會因為兩台裝置
+   前後腳各自生成而變成兩筆重複的任務。 */
+function routineIid(dateStr,taskId){ return 'r_'+dateStr+'_'+taskId; }
+/* 依常態任務庫的週期規則，把當天該出現的常態任務生成進去；用 taskId 去重，不會重複產生、也不覆蓋已存在（含老闆娘手動預排）的那一筆 */
+function ensureRoutineForDate(dateStr){
+  var arr=ensureRoutineArr(dateStr), dow=dowOf(dateStr), added=false;
+  (DB.routineTasks||[]).forEach(function(rt){
+    if(!rt.enabled) return;
+    if(!Array.isArray(rt.days)||rt.days.indexOf(dow)<0) return;
+    if(arr.some(function(x){ return x.taskId===rt.id; })) return;
+    arr.push({id:routineIid(dateStr,rt.id),taskId:rt.id,name:rt.name,band:rt.band||'none',min:rt.min||10,owner:rt.owner||'未指派',done:false,overdue:false});
+    added=true;
+  });
+  if(added) save(dateStr);
+}
+/* 換日時：把前一天沒完成的常態任務順延帶進今天，標記「已順延」；今天原本排定要出現的（依週期規則）維持不受影響、不重複 */
+function carryOverdueRoutine(t){
+  var keys=Object.keys(DB.days).filter(function(k){ return k<t; }).sort();
+  var pk=keys[keys.length-1];
+  if(!pk||!DB.days[pk]||!Array.isArray(DB.days[pk].routine)) return;
+  var prev=DB.days[pk].routine, today=ensureRoutineArr(t);
+  var moved=false;
+  prev.slice().forEach(function(x){
+    if(x.done) return;
+    if(today.some(function(y){ return y.taskId===x.taskId; })) return; // 今天已經有同一個常態任務排定，不重複帶
+    today.push({id:routineIid(t,x.taskId),taskId:x.taskId,name:x.name,band:x.band,min:x.min,owner:x.owner,done:false,overdue:true});
+    var k=prev.indexOf(x); if(k>=0) prev.splice(k,1);
+    moved=true;
+  });
+  if(moved){ save(pk); save(t); }
+}
+function toggleRoutineDone(dateStr,id){ var arr=ensureRoutineArr(dateStr); var it=arr.filter(function(x){return x.id===id;})[0]; if(!it)return; it.done=!it.done; save(dateStr); renderRoutineCard(); }
+/* 順延：把這筆從今天移到明天，標記已順延；今天畫面上就不再出現 */
+function pushRoutineTomorrow(dateStr,id){ var arr=ensureRoutineArr(dateStr); var i=-1;
+  for(var k=0;k<arr.length;k++){ if(arr[k].id===id){ i=k; break; } }
+  if(i<0) return; var it=arr[i]; arr.splice(i,1);
+  var nd=datePlus(dateStr,1), narr=ensureRoutineArr(nd);
+  if(!narr.some(function(x){ return x.taskId===it.taskId; })){ narr.push({id:routineIid(nd,it.taskId),taskId:it.taskId,name:it.name,band:it.band,min:it.min,owner:it.owner,done:false,overdue:true}); }
+  save(dateStr); save(nd); renderRoutineCard();
+}
+function routineAssignSheet(dateStr,id){
+  var arr=ensureRoutineArr(dateStr); var it=arr.filter(function(x){return x.id===id;})[0]; if(!it)return;
+  var opts=(DB.staff||[]).filter(function(s){return s.enabled;}).map(function(s){ return '<b class="'+(it.owner===s.name?'on':'')+'" onclick="routineSetOwner(\''+dateStr+'\',\''+id+'\',\''+s.name+'\')">'+s.name+'</b>'; }).join('')+'<b class="'+(it.owner==='未指派'?'on':'')+'" onclick="routineSetOwner(\''+dateStr+'\',\''+id+'\',\'未指派\')">未指派</b>';
+  openSheetHtml('<div class="sheet-title">指派負責人</div><div class="sheet-label" style="text-align:center;color:var(--ink3);font-size:12px;margin:6px 0 12px">'+it.name+'</div><div class="idSeg" style="justify-content:center">'+opts+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div>');
+}
+function routineSetOwner(dateStr,id,name){ var arr=ensureRoutineArr(dateStr); var it=arr.filter(function(x){return x.id===id;})[0]; if(!it)return; it.owner=name; save(dateStr); closeSheet(); renderRoutineCard(); }
+var boardWeekDate=todayStr();
+function weekStartStr(dateStr){ var dow=dowOf(dateStr); var diff=(dow===0)?-6:(1-dow); return datePlus(dateStr,diff); }
+function weekNav(dir){ boardWeekDate=datePlus(boardWeekDate, dir*7); renderWeekStrip(); renderRoutineCard(); }
+function renderWeekStrip(){
+  var el=document.getElementById('weekStrip'); if(!el) return;
+  var start=weekStartStr(boardWeekDate), t=todayStr(), tmr=datePlus(t,1);
+  var wk=[[1,'一'],[2,'二'],[3,'三'],[4,'四'],[5,'五'],[6,'六'],[0,'日']];
+  var end=datePlus(start,6), si=dInfo(start), ei=dInfo(end);
+  var tmrInView=(tmr>=start && tmr<=end);
+  var jump=tmrInView?'':('<span class="wk-jump" onclick="weekPick(\''+tmr+'\')">→ 明天 '+dInfo(tmr).m+'/'+dInfo(tmr).dd+'</span>');
+  var head='<div class="wkhead2"><span class="cal-nav" onclick="weekNav(-1)">‹</span><span class="wk-range">'+si.m+'/'+si.dd+' – '+ei.m+'/'+ei.dd+'</span><span class="cal-nav" onclick="weekNav(1)">›</span>'+jump+'</div>';
+  var html=head+'<div class="wkstriprow">'+wk.map(function(w,idx){
+    var d=datePlus(start,idx);
+    ensureRoutineForDate(d);
+    var D=DB.days[d];
+    var dotcls='empty';
+    if(D && Array.isArray(D.tasks) && D.tasks.length){ var unassigned=D.tasks.some(function(x){ return x.owner==='未指派'; }); dotcls=unassigned?'warn':'ok'; }
+    var cls=(d===t?' today':'')+(d===tmr?' tmr':'')+(d!==t&&d!==tmr?' muted':'')+(d===boardWeekDate?' sel':'');
+    return '<div class="wks-d'+cls+'" onclick="weekPick(\''+d+'\')"><span class="w">'+w[1]+'</span><span class="n">'+dInfo(d).dd+'</span><span class="dot '+dotcls+'"></span></div>';
+  }).join('')+'</div>';
+  el.innerHTML=html;
+}
+/* 週總覽列身兼原本「今日工作／明日工作」的切換：點今天／明天，食品備料時段卡片跟著換；
+   點更遠的日子，時段卡片改顯示提示（食品備料本來就只能規劃到明天），常態任務與上班人員照樣可以預先排。 */
+function weekPick(d){ boardWeekDate=d; var t=todayStr(), tmr=datePlus(t,1);
+  if(d===t) boardFor='today'; else if(d===tmr) boardFor='tmr';
+  selectedIds={}; renderBoard();
+}
+function toggleWorkDate(d,n){ var w=workingArrFor(d), i=w.indexOf(n); if(i>=0)w.splice(i,1); else w.push(n); save(d); renderRoutineCard(); }
+function renderWeekAttend(dateStr){
+  var w=workingArrFor(dateStr);
+  var chips=(DB.staff||[]).filter(function(s){return s.enabled;}).map(function(s){
+    var on=w.indexOf(s.name)>=0;
+    return '<span class="wkatt-chip'+(on?' on':'')+'" onclick="toggleWorkDate(\''+dateStr+'\',\''+s.name+'\')"><img src="'+AV[s.animal]+'">'+s.name+'</span>';
+  }).join('');
+  return '<div class="wkatt"><div class="wkatt-lab">這天上班人員（'+w.length+'人）<span class="hint2">先輸入，等這天變成今天時直接沿用</span></div><div class="wkatt-row">'+chips+'</div></div>';
+}
+/* ====== 排定備料預覽（週四以後）====== */
+function prepAssignSheet(dateStr,itemName){
+  var cur=prepPreMap(dateStr)[itemName]||'未指派';
+  var safe=itemName.replace(/'/g,"\\'");
+  var opts=(DB.staff||[]).filter(function(s){return s.enabled;}).map(function(s){ return '<b class="'+(cur===s.name?'on':'')+'" onclick="prepSetOwner(\''+dateStr+'\',\''+safe+'\',\''+s.name+'\')">'+s.name+'</b>'; }).join('')+'<b class="'+(cur==='未指派'?'on':'')+'" onclick="prepSetOwner(\''+dateStr+'\',\''+safe+'\',\'未指派\')">未指派</b>';
+  openSheetHtml('<div class="sheet-title">指派負責人</div><div class="sheet-label" style="text-align:center;color:var(--ink3);font-size:12px;margin:6px 0 12px">'+itemName+'</div><div class="idSeg" style="justify-content:center">'+opts+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div>');
+}
+function prepSetOwner(dateStr,itemName,owner){ setPrepPre(dateStr,itemName,owner); closeSheet(); renderRoutineCard(); }
+function renderPrepPreview(dateStr){
+  var items=DB.items.filter(function(it){ return assigned(it) && !it.tuibing && dueOn(it,dateStr); });
+  var excl=prepExcludeArr(dateStr), pre=prepPreMap(dateStr);
+  var visible=items.filter(function(it){ return excl.indexOf(it.name)<0; });
+  var excluded=items.filter(function(it){ return excl.indexOf(it.name)>=0; });
+  if(!visible.length && !excluded.length) return '<div class="flexc"><div class="flexc-h">排定備料預覽<span class="meta">依星期幾規則，供叫貨參考</span></div><div class="flexc-empty">這天沒有排定要備的品項</div></div>';
+  var rows=visible.map(function(it){
+    var safe=it.name.replace(/'/g,"\\'");
+    var owner=pre[it.name]||'未指派';
+    var av = owner!=='未指派' ? ('<img class="av" src="'+(AV[animalOf(owner)]||'')+'">') : '<span class="av-un">?</span>';
+    return '<div class="rtrow">'
+      +'<span onclick="prepAssignSheet(\''+dateStr+'\',\''+safe+'\')">'+av+'</span>'
+      +'<div><span class="fname">'+it.name+'</span><span class="fsub">排定 · '+owner+'</span></div>'
+      +'<div class="rtbtns"><span class="rtbtn push" onclick="togglePrepExclude(\''+dateStr+'\',\''+safe+'\')">不需要</span></div></div>';
+  }).join('');
+  var exRow = excluded.length ? ('<div class="flexc-empty" style="text-align:left;padding:8px 12px">已標記不需要：'+excluded.map(function(it){ var safe=it.name.replace(/'/g,"\\'"); return '<span class="rtbtn push" style="margin-right:4px" onclick="togglePrepExclude(\''+dateStr+'\',\''+safe+'\')">'+it.name+' ↺</span>'; }).join('')+'</div>') : '';
+  return '<div class="flexc"><div class="flexc-h">排定備料預覽<span class="meta">'+visible.length+'項 · 依星期幾規則</span></div><div class="flexc-body">'+rows+'</div>'+exRow+'</div>';
+}
+function renderRoutineCard(){
+  var el=document.getElementById('routineCard'); if(!el) return;
+  ensureRoutineForDate(boardWeekDate);
+  var arr=(DB.days[boardWeekDate]&&DB.days[boardWeekDate].routine)||[];
+  var isToday=(boardWeekDate===todayStr());
+  var isTmr=(boardWeekDate===datePlus(DB.cur,1));
+  var info=dInfo(boardWeekDate);
+  var labHtml=isToday?'本週待辦（可順延）':('本週待辦（可順延）· '+info.m+'/'+info.dd+' 週'+info.wd+' 預排');
+  var attHtml=(isToday||isTmr)?'':renderWeekAttend(boardWeekDate); /* 今天／明天的上班名單已經在上面的出勤列可以編輯，這裡只補更遠的日子 */
+  var prepHtml=(isToday||isTmr)?'':renderPrepPreview(boardWeekDate);
+  if(!arr.length){ el.innerHTML=attHtml+prepHtml+'<div class="flexc"><div class="flexc-h">常態任務<span class="meta">'+labHtml+'</span></div><div class="flexc-empty">這天目前沒有常態任務</div></div>'; return; }
+  var rows=arr.map(function(x){
+    var av = x.owner && x.owner!=='未指派' ? ('<img class="av" src="'+(AV[animalOf(x.owner)]||'')+'">') : '<span class="av-un">?</span>';
+    var sub = x.overdue?'<span style="color:var(--brick);font-weight:700">昨天未完成 · 已順延</span>':(x.owner==='未指派'?'未指派':x.owner);
+    var btns = x.done?'':('<span class="rtbtn push" onclick="pushRoutineTomorrow(\''+boardWeekDate+'\',\''+x.id+'\')">順延</span><span class="rtbtn done" onclick="toggleRoutineDone(\''+boardWeekDate+'\',\''+x.id+'\')">完成</span>');
+    return '<div class="rtrow'+(x.overdue?' overdue':'')+(x.done?' done':'')+'" >'
+      +'<span onclick="routineAssignSheet(\''+boardWeekDate+'\',\''+x.id+'\')">'+av+'</span>'
+      +'<div><span class="fname">'+x.name+'</span><span class="fsub">'+sub+'</span></div>'
+      +'<div class="rtbtns">'+btns+'</div></div>';
+  }).join('');
+  el.innerHTML=attHtml+prepHtml+'<div class="flexc"><div class="flexc-h">常態任務<span class="meta">'+arr.length+'項</span></div><div class="flexc-body">'+rows+'</div></div>';
+}
+
+/* ====== 常態任務・後台管理 ====== */
+function addRoutineTask(){
+  var n=prompt('新常態任務名稱（例：油網清洗）'); if(n===null)return; n=(''+n).trim(); if(!n)return;
+  DB.routineTasks.push({id:'rtk'+Date.now(),name:n,days:[1,2,3,4,5,6,0],band:'pre',min:10,owner:'未指派',enabled:true});
+  save(); renderRoutineAdmin();
+}
+function renderRoutineAdmin(){
+  var el=document.getElementById('routineAdmin'); if(!el) return;
+  if(!DB.routineTasks || !DB.routineTasks.length){ el.innerHTML='<div class="hint" style="padding:12px 18px">還沒有常態任務，點上方「＋ 新增常態任務」開始建立。</div>'; return; }
+  var map={0:'日',1:'一',2:'二',3:'三',4:'四',5:'五',6:'六'};
+  el.innerHTML=DB.routineTasks.map(function(rt,i){
+    var days=Array.isArray(rt.days)?rt.days:[];
+    var dlab=(days.length>=7)?'每日':('週'+[1,2,3,4,5,6,0].filter(function(d){return days.indexOf(d)>=0;}).map(function(d){return map[d];}).join(''));
+    var bandLab={pre:'開店前',am:'早段',mid:'午段',none:'未排時段'}[rt.band||'none'];
+    return '<div class="row" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line)" onclick="openRoutineDetail('+i+')">'
+      +'<span class="dot" style="width:7px;height:7px;border-radius:50%;flex:none;background:'+(rt.enabled?'var(--ok,#5F8268)':'var(--ink3)')+'"></span>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:700">'+rt.name+'</div><div style="font-size:11px;color:var(--ink2);margin-top:2px">'+dlab+'・'+bandLab+'・<b style="color:var(--ink)">'+rt.owner+'</b>'+(rt.enabled?'':'・已停用')+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+function openRoutineDetail(i){ routineSel=i; renderRoutineDetail(); }
+function renderRoutineDetail(){
+  var i=routineSel, rt=DB.routineTasks[i]; if(!rt)return;
+  var wk=[[1,'一'],[2,'二'],[3,'三'],[4,'四'],[5,'五'],[6,'六'],[0,'日']];
+  var days=Array.isArray(rt.days)?rt.days:[];
+  var wkHtml=wk.map(function(w){ return '<span class="wd'+(days.indexOf(w[0])>=0?' on':'')+'" onclick="rtToggleDay('+i+','+w[0]+')">'+w[1]+'</span>'; }).join('');
+  var bands=[['pre','開店前'],['am','早段'],['mid','午段'],['none','未排時段']];
+  var bandSeg=bands.map(function(b){ return '<b class="'+(rt.band===b[0]?'on':'')+'" onclick="rtBand('+i+',\''+b[0]+'\')">'+b[1]+'</b>'; }).join('');
+  var ownOpts=(DB.staff||[]).filter(function(s){return s.enabled;}).map(function(s){ return '<b class="'+(rt.owner===s.name?'on':'')+'" onclick="rtOwner('+i+',\''+s.name+'\')">'+s.name+'</b>'; }).join('')+'<b class="'+(rt.owner==='未指派'?'on':'')+'" onclick="rtOwner('+i+',\'未指派\')">未指派</b>';
+  var inner='<div class="sheet-title">編輯常態任務</div>'
+    +'<div style="height:12px"></div>'
+    +'<div class="idField"><span class="fl">名稱</span><div class="idVal" onclick="rtRename('+i+')">'+rt.name+'</div></div>'
+    +'<div class="idField"><span class="fl">週期（點選星期幾，全選＝每日）</span><div class="idWk">'+wkHtml+'</div></div>'
+    +'<div class="idField"><span class="fl">時段</span><div class="idSeg">'+bandSeg+'</div></div>'
+    +'<div class="idRow2"><div class="idField"><span class="fl">預估分</span><div class="idVal" onclick="rtMin('+i+')">'+rt.min+' 分</div></div></div>'
+    +'<div class="idField"><span class="fl">負責人（可留白＝現場認領）</span><div class="idSeg">'+ownOpts+'</div></div>'
+    +'<div class="idField"><div class="idTgRow"><span class="fl2">啟用</span><div class="idTg'+(rt.enabled?' on':'')+'" onclick="rtEnabled('+i+')"><i></i></div></div></div>'
+    +'<button class="idDel" onclick="rtDel('+i+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>刪除這個常態任務</button>'
+    +'<div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div>';
+  openSheetHtml(inner);
+}
+function rtRename(i){ var rt=DB.routineTasks[i]; var v=prompt('修改名稱',rt.name); if(v===null)return; v=(''+v).trim(); if(!v)return; rt.name=v; save(); renderRoutineDetail(); renderRoutineAdmin(); }
+function rtToggleDay(i,d){ var rt=DB.routineTasks[i]; if(!Array.isArray(rt.days))rt.days=[]; var k=rt.days.indexOf(d); if(k>=0)rt.days.splice(k,1); else rt.days.push(d); save(); renderRoutineDetail(); renderRoutineAdmin(); }
+function rtBand(i,b){ DB.routineTasks[i].band=b; save(); renderRoutineDetail(); }
+function rtMin(i){ var v=prompt('預估分',DB.routineTasks[i].min); if(v===null)return; v=parseFloat(v); if(!isNaN(v)) DB.routineTasks[i].min=Math.max(0,v); save(); renderRoutineDetail(); }
+function rtOwner(i,name){ DB.routineTasks[i].owner=name; save(); renderRoutineDetail(); renderRoutineAdmin(); }
+function rtEnabled(i){ DB.routineTasks[i].enabled=!DB.routineTasks[i].enabled; save(); renderRoutineDetail(); renderRoutineAdmin(); }
+function rtDel(i){ var rt=DB.routineTasks[i]; if(!rt)return; if(!confirm('刪除「'+rt.name+'」？此動作無法復原（已產生在各天的任務不受影響）。'))return; DB.routineTasks.splice(i,1); save(); closeSheet(); renderRoutineAdmin(); }
+var routineSel=-1;
+
 function applyData(v){
   if(!v||!v.items){ DB=clone(DEFAULT); DB.days={}; }
   else { DB=v; ['areas','bands','staff','items','cats'].forEach(function(k){ if(!DB[k]||!DB[k].length) DB[k]=clone(DEFAULT[k]); }); if(!DB.days)DB.days={}; }
@@ -869,7 +1140,9 @@ function applyData(v){
   // 同時把 TASK_SNAPSHOT 更新成「目前雲端已知的任務id」，讓之後 save() 判斷刪除時有正確基準。
   Object.keys(DB.days).forEach(function(dk){
     var D=DB.days[dk]; D.tasks=tasksToArray(D.tasks);
+    D.routine=tasksToArray(D.routine);
     var ids={}; D.tasks.forEach(function(t){ ids[t.id]=true; }); TASK_SNAPSHOT[dk]=ids;
+    var rids={}; D.routine.forEach(function(r){ rids[r.id]=true; }); ROUTINE_SNAPSHOT[dk]=rids;
   });
   // 舊資料相容：補上種類(cat)與排定週幾(days)
   (DB.items||[]).forEach(function(it){ var d=DEFAULT.items.filter(function(x){return x.name===it.name;})[0];
@@ -881,6 +1154,7 @@ function applyData(v){
     if(it.enabled===false){ it.area=''; it.enabled=true; } });
   if(!DB.cats||!DB.cats.length) DB.cats=clone(DEFAULT.cats);
   if(!Array.isArray(DB.ops)||!DB.ops.length) DB.ops=clone(DEFAULT.ops);
+  if(!Array.isArray(DB.routineTasks)) DB.routineTasks=[];
   // 移除「飲料」工作區（既有資料一併清除，其品項改為未分配）
   DB.areas = (DB.areas||[]).filter(function(a){ return a.name!=='飲料'; });
   (DB.items||[]).forEach(function(it){ if(it.area==='飲料') it.area=''; });
@@ -895,16 +1169,30 @@ function applyData(v){
   if(!Array.isArray(DB.days[t].tasks)) DB.days[t].tasks=[];
   if(!Array.isArray(DB.days[t].working)) DB.days[t].working=[];
   carryTasksInto(t);
+  ensureRoutineForDate(t); carryOverdueRoutine(t); boardWeekDate=t;
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
 }
 function day(){ return DB.days[DB.cur]; }
 function todayDOW(){ var c=DB.cur; if(c){ var p=c.split('-'); return new Date(+p[0],+p[1]-1,+p[2]).getDay(); } return new Date().getDay(); }
 function tomorrowDOW(){ return dInfo(datePlus(DB.cur,1)).wi; }
+/* 依星期幾規則判斷「某一天」該不該備某品項，跟盤點無關（沒盤過點的未來日子也能算）。
+   dueTomorrow 只是 dueOn 用在「明天」這個特例上，行為完全不變。 */
+function dueOn(it,dateStr){ return !!(it&&it.daily) || (it&&Array.isArray(it.days)&&it.days.indexOf(dInfo(dateStr).wi)>=0); }
 /* 「排定週幾」＝明日（販售/使用日）的星期；今日收班即產生明日要用到的品項 */
-function dueTomorrow(it){ return !!(it&&it.daily) || (it&&Array.isArray(it.days)&&it.days.indexOf(tomorrowDOW())>=0); }
+function dueTomorrow(it){ return dueOn(it, datePlus(DB.cur,1)); }
 function taskCat(t){ var it=itemBy(t.name); return it?(it.cat||''):(t.cat||''); }
 function taskSrc(t){ var it=itemBy(t.name); if(dueTomorrow(it)) return 'plan'; if(t.stock==='out'||(it&&curOf(t.name)<effStd(it))) return 'short'; return 'plan'; }
+/* ====== 提前備料規劃（週四以後）====== 
+   這幾天的品項清單純粹依星期幾規則算出來，不看庫存（未來日子本來就還沒盤點）。
+   老闆娘可以先指派負責人（prepPre）、或標記「這天其實不用備」（prepExclude，例如已知那天客量特別少）。
+   等這天真的變成「明天」、盤點完按下產生任務時：
+   - 有指派的，任務一產生就直接帶負責人，不會是未指派
+   - 有標記排除的，只要當天盤點沒有顯示真的缺貨，就不會產生這筆任務；如果盤點當下真的缺貨，還是照樣產生（缺貨優先，不會被排除設定卡住） */
+function prepPreMap(dateStr){ return (DB.days[dateStr]&&DB.days[dateStr].prepPre)||{}; }
+function prepExcludeArr(dateStr){ return (DB.days[dateStr]&&DB.days[dateStr].prepExclude)||[]; }
+function setPrepPre(dateStr,itemName,owner){ if(!DB.days[dateStr]) DB.days[dateStr]={working:[],counts:{},tuibing:{},tasks:[]}; if(!DB.days[dateStr].prepPre) DB.days[dateStr].prepPre={}; if(owner&&owner!=='未指派') DB.days[dateStr].prepPre[itemName]=owner; else delete DB.days[dateStr].prepPre[itemName]; save(dateStr); }
+function togglePrepExclude(dateStr,itemName){ if(!DB.days[dateStr]) DB.days[dateStr]={working:[],counts:{},tuibing:{},tasks:[]}; if(!Array.isArray(DB.days[dateStr].prepExclude)) DB.days[dateStr].prepExclude=[]; var arr=DB.days[dateStr].prepExclude, i=arr.indexOf(itemName); if(i>=0)arr.splice(i,1); else arr.push(itemName); save(dateStr); renderRoutineCard(); }
 function save(dateKey){
   var d = dateKey || DB.cur;
   if(useFB&&fbRef){
@@ -918,13 +1206,19 @@ function save(dateKey){
       var upd={ '_w':{ id:CLIENT_ID, t:Date.now() } };
       if(d && DB.days[d]){
         var D=DB.days[d];
-        for(var k in D){ if(k==='tasks') continue; upd['days/'+d+'/'+k] = (D[k]===undefined?null:D[k]); }
+        for(var k in D){ if(k==='tasks'||k==='routine') continue; upd['days/'+d+'/'+k] = (D[k]===undefined?null:D[k]); }
         var prevIds=TASK_SNAPSHOT[d]||{}, curIds={};
         (D.tasks||[]).forEach(function(t){ curIds[t.id]=true; upd['days/'+d+'/tasks/'+t.id]=t; });
         Object.keys(prevIds).forEach(function(id){ if(!curIds[id]) upd['days/'+d+'/tasks/'+id]=null; });
         TASK_SNAPSHOT[d]=curIds;
+        /* 常態任務跟一般任務比照辦理：逐筆寫入自己的 id 節點，不整包覆蓋整個 routine 陣列，
+           避免「A裝置指派負責人」跟「B裝置同時打勾完成」互相蓋掉對方的操作。 */
+        var prevRIds=ROUTINE_SNAPSHOT[d]||{}, curRIds={};
+        (D.routine||[]).forEach(function(r){ curRIds[r.id]=true; upd['days/'+d+'/routine/'+r.id]=r; });
+        Object.keys(prevRIds).forEach(function(id){ if(!curRIds[id]) upd['days/'+d+'/routine/'+id]=null; });
+        ROUTINE_SNAPSHOT[d]=curRIds;
       }
-      ['items','staff','cats','bands','areas','ops'].forEach(function(k){ if(DB[k]!==undefined) upd[k]=DB[k]; });
+      ['items','staff','cats','bands','areas','ops','routineTasks'].forEach(function(k){ if(DB[k]!==undefined) upd[k]=DB[k]; });
       upd['dayType']  = DB.dayType||{};
       upd['adminPass']= DB.adminPass;
       fbRef.update(upd);
@@ -954,7 +1248,7 @@ function softRerender(){
   var p=curPage();
   if(p==='count') renderCount();
   else if(p==='board') renderBoard();
-  else if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
+  else if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); renderRoutineAdmin(); }
 }
 /* 自動更新：抓最新程式比對版本號，有新版且使用者沒在操作時，自動以乾淨網址重新載入（繞過快取） */
 function checkForUpdate(){
@@ -1032,6 +1326,15 @@ function avImg(n,cls){ var a=animalOf(n); return a&&AV[a] ? '<img class="'+cls+'
 function bvar(b){ return b==='none'?'var(--none)':b==='pre'?'var(--pre)':b==='am'?'var(--am)':'var(--mid)'; }
 function areaBy(n){ for(var i=0;i<DB.areas.length;i++){ if(DB.areas[i].name===n) return DB.areas[i]; } return {name:n,icon:'dot',color:'var(--ink3)'}; }
 function isWorking(n){ return day().working.indexOf(n)>=0; }
+/* 每一天都各自獨立一份「上班人員」名單，用實際日期字串當 key，不再侷限今天／明天：
+   老闆娘可以在週總覽列點未來任一天，先把那天排定要上班的人輸入好；等那天真的變成「今天」，
+   名單已經在那，不用重新輸入。
+   注意：workingArrFor/isWorkingBoard 只給「工作分配」頁的任務畫面／出勤編輯用；盤點頁（站別負責人、簽核）
+   維持看「今天實際出勤」（isWorking／day().working），跟你在工作分配頁瀏覽哪一天無關。 */
+function workingArrFor(dateStr){ if(!DB.days[dateStr]) DB.days[dateStr]={working:[], counts:{}, tuibing:{}, tasks:[]}; if(!Array.isArray(DB.days[dateStr].working)) DB.days[dateStr].working=[]; return DB.days[dateStr].working; }
+function boardDate(){ return boardFor==='tmr' ? datePlus(DB.cur,1) : DB.cur; }
+function workingArr(){ return workingArrFor(boardDate()); }
+function isWorkingBoard(n){ return workingArr().indexOf(n)>=0; }
 function lackTag(it){ return it.stock==='out'?'<span class="lack"><span>急</span><span>缺</span></span>':''; }
 
 /* ====== 盤點 ====== */
@@ -1125,6 +1428,7 @@ function renderStationTabs(){ var el=document.getElementById('stationTabs'); if(
 function checkRollover(){ if(!DB||!DB.cur) return; var t=todayStr(); if(t===DB.cur) return;
   if(!DB.days[t]) DB.days[t]={working:[], counts:{}, tuibing:{}, tasks:[], stationOwner:{}};
   carryTasksInto(t);
+  ensureRoutineForDate(t); carryOverdueRoutine(t); boardWeekDate=t;
   DB.cur=t; editCount=null; editMode=false; dtOpen=false; save();
   var pc=document.querySelector('#page-count.on'); var pb=document.querySelector('#page-board.on');
   if(pc) go('count'); else if(pb) go('board'); }
@@ -1252,14 +1556,16 @@ function genTasks(){
   var D=day(), added=0;
   var unc=DB.items.filter(function(it){return assigned(it)&&!it.tuibing&&D.counts[it.name]==null;});
   if(unc.length){ alert('還有 '+unc.length+' 項未點，無法產生任務。\n請先把每一項都點過（料夠按開關轉綠，或點數字填入實際量）。'); return; }
+  var tmrDate=datePlus(DB.cur,1), pre=prepPreMap(tmrDate), excl=prepExcludeArr(tmrDate);
   DB.items.forEach(function(it){
     if(!assigned(it)||it.tuibing) return;
     var counted=D.counts[it.name]!=null, cur=curOf(it.name), low=counted&&cur<effStd(it);
     if(!(low||dueTomorrow(it))) return;
+    if(!low && excl.indexOf(it.name)>=0) return; /* 老闆娘已標記這天不需要，且盤點也顯示不缺，就不產生 */
     var ops=(it.ops&&it.ops.length)?it.ops:[''];
     ops.forEach(function(op){
       if(hasTask(D,it.name,op,'tmr')) return;
-      D.tasks.push({id:'t'+Date.now()+'_'+(added),name:it.name,owner:'未指派',band:low?'pre':(it.band||'none'),min:(op?taskMin(it,op):it.min),stock:low?'out':'ok',done:false,cat:it.cat||'','for':'tmr',op:op});
+      D.tasks.push({id:'t'+Date.now()+'_'+(added),name:it.name,owner:pre[it.name]||'未指派',band:low?'pre':(it.band||'none'),min:(op?taskMin(it,op):it.min),stock:low?'out':'ok',done:false,cat:it.cat||'','for':'tmr',op:op});
       added++;
     });
   });
@@ -1292,7 +1598,7 @@ function renderBatchBar(){
 }
 function pickBatchOwner(){
   var n=Object.keys(selectedIds).length; if(!n) return;
-  var elig=DB.staff.filter(function(s){ return isWorking(s.name); });
+  var elig=DB.staff.filter(function(s){ return isWorkingBoard(s.name); });
   var rows = elig.length ? elig.map(function(s){ return '<div class="ar" onclick="applyBatchOwner(\''+s.name.replace(/'/g,"\\'")+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span></div>'; }).join('') : '<div class="hint" style="padding:14px">今天沒有上班的人可以指派</div>';
   document.getElementById('sheet').classList.add('on');
   document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">指派 '+n+' 項給誰</div><div class="sheet-label">今天上班可指派的人</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-close" onclick="closeSheet()">取消</button></div></div>';
@@ -1304,11 +1610,7 @@ function applyBatchOwner(name){
 }
 function boardTasks(){ var f=boardFor; return day().tasks.filter(function(t){ return (t['for']||'today')===f; }); }
 function setBoardFor(f){ boardFor=f; selectedIds={}; renderBoard(); }
-function renderDayToggle(){ var el=document.getElementById('dayToggle'); if(!el) return;
-  var t=dInfo(DB.cur), m=dInfo(datePlus(DB.cur,1));
-  el.innerHTML='<b class="'+(boardFor==='today'?'on':'')+'" onclick="setBoardFor(\'today\')">今日工作<span>'+t.m+'/'+t.dd+' 週'+t.wd+'</span></b>'
-    +'<b class="'+(boardFor==='tmr'?'on':'')+'" onclick="setBoardFor(\'tmr\')">明日工作<span>'+m.m+'/'+m.dd+' 週'+m.wd+'</span></b>';
-}
+function isFoodPrepDay(){ return boardWeekDate===todayStr() || boardWeekDate===datePlus(todayStr(),1); }
 function renderTime(){
   var D={tasks:boardTasks()};
   var list=[{key:'none',name:'待排時段',t:'尚未排定，拖進下方時段'},{key:'pre',name:BNAME.pre,t:'最急'},{key:'am',name:BNAME.am,t:'6:30–10:00'},{key:'mid',name:BNAME.mid,t:'10:00–打烊'}];
@@ -1316,7 +1618,7 @@ function renderTime(){
     var ts=D.tasks.filter(function(it){return it.band===b.key;});
     var tot=ts.reduce(function(a,c){return a+(c.min||0);},0);
     var chips=ts.map(function(it){
-      return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>';
+      return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+(isWorkingBoard(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>';
     }).join('');
     return '<div class="bandc"><div class="bandc-h"><span class="bar" style="background:'+bvar(b.key)+'"></span>'+b.name+' <span class="t">'+b.t+'</span><span class="meta">'+ts.length+'項 · 約'+tot+'分</span></div><div class="bandc-body" data-zone="band:'+b.key+'">'+chips+'</div></div>';
   }).join('');
@@ -1332,16 +1634,23 @@ function rowFromTasks(label,ts,isUn){
 }
 function renderPeople(){
   var D={tasks:boardTasks()};
-  var un=D.tasks.filter(function(it){return !isWorking(it.owner);});
+  var un=D.tasks.filter(function(it){return !isWorkingBoard(it.owner);});
   var out=un.length?rowFromTasks('未指派',un,true):'';
   var order=DB.staff.map(function(s){return s.name;});
-  out+=order.filter(isWorking).map(function(pn){ return rowFromTasks(pn, D.tasks.filter(function(it){return it.owner===pn;}), false); }).join('');
+  out+=order.filter(isWorkingBoard).map(function(pn){ return rowFromTasks(pn, D.tasks.filter(function(it){return it.owner===pn;}), false); }).join('');
   return out;
 }
-function renderBoard(){ renderDayToggle(); document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); renderSign(); renderBatchBar();
+function renderBoard(){ renderWeekStrip();
+  var fp=isFoodPrepDay();
+  var zone=document.getElementById('foodPrepZone'), notice=document.getElementById('futureNotice'), foot=document.getElementById('boardFootwrap');
+  if(zone) zone.style.display=fp?'':'none';
+  if(notice) notice.style.display=fp?'none':'';
+  if(foot) foot.style.display=fp?'':'none';
+  if(fp){ document.getElementById('stage').innerHTML = V==='time'?renderTime():V==='people'?renderPeople():renderCat(); renderAttend(); renderSign(); renderBatchBar(); }
+  renderRoutineCard();
   var tip=document.getElementById('boardTip'); if(tip&&selectMode) tip.textContent='選取模式：點卡片勾選／取消，選好後在下方按「指派給…」一次分給同一人'; }
 function catChip(it){ var s=taskSrc(it); var stag=s==='short'?'<span class="stag short">臨時</span>':'<span class="stag plan">排定</span>';
-  return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+stag+(isWorking(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }
+  return '<div class="chip'+(it.done?' done':'')+chipSelCls(it.id)+'" data-id="'+it.id+'">'+lackTag(it)+stag+(isWorkingBoard(it.owner)?'<img class="av" src="'+AV[animalOf(it.owner)]+'">':'<span class="av-un">?</span>')+nmHtml(it)+'<span class="cm">'+it.min+'分</span></div>'; }
 function renderCat(){
   var D={tasks:boardTasks()}, plan=0, shrt=0;
   D.tasks.forEach(function(t){ if(taskSrc(t)==='short') shrt++; else plan++; });
@@ -1365,6 +1674,7 @@ var qPicked=todayStr(), qWeekAnchor=todayStr(), qMoreOn=false;
 var qCalYear=+todayStr().slice(0,4), qCalMonth=+todayStr().slice(5,7);
 function qWeekStartStr(dstr){ var wi=dInfo(dstr).wi; return datePlus(dstr,-((wi+6)%7)); }
 function qToday(){ qPicked=todayStr(); qWeekAnchor=todayStr(); qCalYear=+qPicked.slice(0,4); qCalMonth=+qPicked.slice(5,7); renderQPicker(); renderQuery(); }
+function qYesterday(){ qPicked=datePlus(todayStr(),-1); qWeekAnchor=qPicked; qCalYear=+qPicked.slice(0,4); qCalMonth=+qPicked.slice(5,7); renderQPicker(); renderQuery(); }
 function qWeekNav(n){ qWeekAnchor=datePlus(qWeekAnchor,n*7); renderQPicker(); }
 function qToggleMore(){ qMoreOn=!qMoreOn; var w=document.getElementById('qMoreWrap'); if(w) w.classList.toggle('on',qMoreOn); var l=document.getElementById('qMoreLink'); if(l) l.textContent=qMoreOn?'收起月曆 ‹':'查更早的日期 ›'; if(qMoreOn) renderQCal(); }
 function qCalNav(n){ var d=new Date(qCalYear,qCalMonth-1+n,1); qCalYear=d.getFullYear(); qCalMonth=d.getMonth()+1; renderQCal(); }
@@ -1380,6 +1690,9 @@ function renderQPicker(){
     html+='<div class="'+cls+'" onclick="qPick(\''+ds+'\')"><span class="w">'+WDL[di.wi]+'</span><span class="n">'+di.dd+'</span></div>';
   }
   var wr=document.getElementById('qWkRow'); if(wr) wr.innerHTML=html;
+  var yd=datePlus(todayStr(),-1);
+  var qq=document.getElementById('qQuick');
+  if(qq) qq.innerHTML='<span class="qpill'+(qPicked===yd?' now':'')+'" onclick="qYesterday()">昨天</span><span class="qpill'+(qPicked===todayStr()?' now':'')+'" onclick="qToday()">今天</span>';
   if(qMoreOn) renderQCal();
 }
 function renderQCal(){
@@ -1423,15 +1736,18 @@ function renderQuery(){
 
 /* attend */
 function renderAttend(){ var order=DB.staff.map(function(s){return s.name;});
-  var avs=order.filter(isWorking).map(function(pn){return '<img src="'+AV[animalOf(pn)]+'">';}).join('');
-  var bar='<div class="attbar"><span class="al">今天上班 '+day().working.length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button></div>';
+  var avs=order.filter(isWorkingBoard).map(function(pn){return '<img src="'+AV[animalOf(pn)]+'">';}).join('');
+  var lab=boardFor==='tmr'?'明天預計上班':'今天上班';
+  var bar='<div class="attbar"><span class="al">'+lab+' '+workingArr().length+' 人</span>'+avs+'<button class="aedit" onclick="openAttend()">編輯</button></div>';
   document.getElementById('attend').innerHTML=bar;
 }
 function openAttend(){ document.getElementById('sheet').classList.add('on');
-  var rows=DB.staff.map(function(s){ return '<div class="ar"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span><div class="tg'+(isWorking(s.name)?' on':'')+'" onclick="toggleWork(\''+s.name+'\')"><i></i></div></div>'; }).join('');
-  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">今天上班</div><div class="sheet-label">缺勤者不顯示，任務自動轉「未指派」</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div></div>';
+  var rows=DB.staff.map(function(s){ return '<div class="ar"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span><div class="tg'+(isWorkingBoard(s.name)?' on':'')+'" onclick="toggleWork(\''+s.name+'\')"><i></i></div></div>'; }).join('');
+  var ttl=boardFor==='tmr'?'明天預計上班':'今天上班';
+  var lbl=boardFor==='tmr'?'這份名單只影響「明日工作」的指派，不會動到今天':'缺勤者不顯示，任務自動轉「未指派」';
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+ttl+'</div><div class="sheet-label">'+lbl+'</div><div class="arlist">'+rows+'</div><div class="sheet-actions"><button class="b-done" onclick="closeSheet()">完成</button></div></div>';
 }
-function toggleWork(n){ var w=day().working, i=w.indexOf(n); if(i>=0)w.splice(i,1); else w.push(n); save(); renderBoard(); openAttend(); }
+function toggleWork(n){ var w=workingArr(), i=w.indexOf(n); if(i>=0)w.splice(i,1); else w.push(n); save(boardDate()); renderBoard(); openAttend(); }
 
 /* task sheet (long-press) */
 var sheetId=null;
@@ -1482,7 +1798,7 @@ function addCustomTask(){ var n=prompt('自訂任務名稱（僅這次，不存�
 function renderSign(){ var sb=document.getElementById('signbar'); if(!sb)return; var s=day().savedBy;
   sb.innerHTML = (s&&s.name) ? '<div class="signed"><img src="'+AV[animalOf(s.name)]+'">✓ 由 '+s.name+' 於 '+s.time+' 儲存</div>' : ''; }
 function pickSaver(){
-  var un=boardTasks().filter(function(t){return !isWorking(t.owner);});
+  var un=boardTasks().filter(function(t){return !isWorkingBoard(t.owner);});
   if(un.length){
     var names=un.map(function(t){return t.name;}).slice(0,6).join('、')+(un.length>6?' 等':'');
     if(!confirm('還有 '+un.length+' 項尚未指派負責人：'+names+'\n確定要繼續儲存（簽核）嗎？')) return;
@@ -1506,11 +1822,11 @@ function buildSnapEl(){
     }).join(''); }
   function row(av,ts,un){ return '<div class="prow'+(un?' un':'')+'"><div class="who">'+(av?'<img src="'+av+'">':'<span class="av-un">?</span>')+'</div><div class="vr"></div><div class="tasks">'+chipsFor(ts)+'<div class="pmeta-r"><span class="pcount">'+ts.length+'項</span></div></div></div>'; }
   var rowArr=[];
-  DB.staff.map(function(s){return s.name;}).filter(isWorking).forEach(function(pn){
+  DB.staff.map(function(s){return s.name;}).filter(isWorkingBoard).forEach(function(pn){
     var ts=D.tasks.filter(function(t){return t.owner===pn;}); if(!ts.length)return;
     rowArr.push(row(AV[animalOf(pn)],ts,false));
   });
-  var un=D.tasks.filter(function(t){return !isWorking(t.owner);});
+  var un=D.tasks.filter(function(t){return !isWorkingBoard(t.owner);});
   if(un.length) rowArr.push(row(null,un,true));
   var rows=rowArr.length ? rowArr.join('<div class="srule"></div>') : '<div style="padding:14px 4px;color:#ADA79C;font-size:13px">尚無任務</div>';
   if(!rows) rows='<div style="padding:14px 4px;color:#ADA79C;font-size:13px">尚無任務</div>';
@@ -1525,7 +1841,7 @@ function buildSnapEl(){
   return '<div class="snapcard"><div class="head"><img class="logo" src="'+SCARE+'"><div><div class="sh">'+shLabel+'</div><div class="sd">'+di.m+'/'+di.dd+'（<b>週'+di.wd+'</b>）· 備料工作</div></div></div>'+legend+rows+foot+'</div>';
 }
 function copySnapshot(){
-  var un=boardTasks().filter(function(t){return !isWorking(t.owner);});
+  var un=boardTasks().filter(function(t){return !isWorkingBoard(t.owner);});
   if(un.length){
     var names=un.map(function(t){return t.name;}).slice(0,6).join('、')+(un.length>6?' 等':'');
     if(!confirm('還有 '+un.length+' 項尚未指派負責人：'+names+'\n確定要複製快照嗎？')) return;
@@ -1594,7 +1910,7 @@ function fillDays(it){ var on=Array.isArray(it.days)?it.days:[]; var muted=!!it.
   document.getElementById('ef-days').className='wkrow'+(muted?' muted':'');
   document.getElementById('ef-days').innerHTML=WD.map(function(w){ return '<span class="wd'+(on.indexOf(w.d)>=0?' on':'')+'" onclick="toggleDay('+w.d+')">'+w.n+'</span>'; }).join(''); }
 function toggleDay(d){ var it=DB.items[sel]; if(!Array.isArray(it.days))it.days=[]; var k=it.days.indexOf(d); if(k>=0)it.days.splice(k,1); else it.days.push(d); save(); loadItem(sel); }
-function setT(t){ T=t; ['I','S','A','C','B'].forEach(function(x){document.getElementById('t'+x).classList.toggle('on',x===t); document.getElementById('a'+x).classList.toggle('on',x===t);}); if(t==='C'){ renderCats(); renderOps(); } }
+function setT(t){ T=t; ['I','R','S','A','C','B'].forEach(function(x){document.getElementById('t'+x).classList.toggle('on',x===t); document.getElementById('a'+x).classList.toggle('on',x===t);}); if(t==='C'){ renderCats(); renderOps(); } if(t==='R'){ renderRoutineAdmin(); } }
 function daysLabel(it){ if(it.daily) return '每日'; if(!it.days||!it.days.length) return '未排'; var map={0:'日',1:'一',2:'二',3:'三',4:'四',5:'五',6:'六'}; return '週'+[1,2,3,4,5,6,0].filter(function(d){return it.days.indexOf(d)>=0;}).map(function(d){return map[d];}).join(''); }
 function renderItems(){ var html='';
   var cats=[]; DB.items.forEach(function(it){ var c=it.cat||'未分類'; if(cats.indexOf(c)<0) cats.push(c); });
@@ -1879,12 +2195,15 @@ function iaPointerUp(){ document.removeEventListener('pointermove', iaPointerMov
 /* ====== nav ====== */
 function go(p){ if(p==='admin' && !adminUnlocked){ openAdminGate(); return; }
   ['count','board','admin','query'].forEach(function(x){ document.getElementById('page-'+x).classList.toggle('on',x===p); var b=document.getElementById('n'+x.charAt(0).toUpperCase()+x.slice(1)); if(b)b.classList.toggle('on',x===p); });
-  var ht=document.getElementById('hTitle'), hs=document.getElementById('hSub');
+  var ht=document.getElementById('hTitle'), hs=document.getElementById('hSub'), hi=document.getElementById('hIcon'), hp=document.getElementById('hPill');
+  var ICON_BOARD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>';
+  var ICON_QUERY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>';
+  hi.className='hIcon'; hp.className='hPill'; hi.innerHTML=''; hp.textContent='';
   if(p==='count'){ ht.textContent='今日備料檢查'; hs.textContent='每日13:00後請確認隔天備料是否充足'; }
-  else if(p==='board'){ ht.textContent='工作分配'; hs.textContent='收班排定 → 隔天執行'; }
+  else if(p==='board'){ ht.textContent='工作分配'; hs.textContent='指派今天的工作，或預先排好本週方向'; hi.innerHTML=ICON_BOARD; hi.className='hIcon on accent'; hp.textContent='可操作・指派與完成'; hp.className='hPill on accent'; }
   else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定 · v2.0 退冰＋種類'; }
-  else if(p==='query'){ ht.textContent='查詢'; hs.textContent='回顧過去每天儲存的工作分配（唯讀）'; }
-  if(p==='count') renderCount(); if(p==='board') renderBoard(); if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); }
+  else if(p==='query'){ ht.textContent='查詢'; hs.textContent='回顧過去每一天誰做了什麼、有沒有異常'; hi.innerHTML=ICON_QUERY; hi.className='hIcon on neutral'; hp.textContent='唯讀・僅供回顧'; hp.className='hPill on neutral'; }
+  if(p==='count') renderCount(); if(p==='board'){ boardWeekDate=todayStr(); renderBoard(); } if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); renderRoutineAdmin(); }
   if(p==='query'){ renderQPicker(); renderQuery(); } }
 
 function init(){
