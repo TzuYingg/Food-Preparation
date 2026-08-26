@@ -64,8 +64,8 @@
   .crow{display:flex; align-items:center; gap:8px;}
   .cname{font-size:16px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; line-height:1.25;}
   .ctags{display:flex; gap:6px; margin-top:9px;}
-  .t-day{font-size:9.5px; font-weight:800; color:var(--ink3); background:var(--tint); border-radius:5px; padding:2px 6px; white-space:nowrap;}
-  .t-urg{font-size:9.5px; font-weight:800; color:var(--brick); background:var(--brick-bg); border-radius:5px; padding:2px 6px 2px 5px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;}
+  .t-day{font-size:9.5px; font-weight:800; color:var(--ink3); background:var(--tint); border-radius:5px; padding:2px 6px; white-space:nowrap; margin-left:8px;}
+  .t-urg{font-size:9.5px; font-weight:800; color:var(--brick); background:var(--brick-bg); border-radius:5px; padding:2px 6px 2px 5px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px; margin-left:8px;}
   .t-urg::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--brick); flex:none;}
   .sw{width:40px; height:22px; border-radius:12px; background:var(--leaf); position:relative; flex:none; border:1px solid transparent; transition:background .15s,border-color .15s; cursor:pointer;}
   .sw.off{background:var(--brick);}
@@ -130,19 +130,19 @@
   .hIcon.neutral{background:var(--tint); color:var(--ink3); border:1px solid var(--line);}
 
   /* ====== 盤點頁重排：昨日回顧(簡化)／今天→明天(J4)／編輯檢視靠右／清單去邊框 ====== */
-  .ystpeek{display:flex; align-items:center; gap:8px; padding:2px 14px 11px; border-bottom:1px solid var(--line); margin-bottom:11px; font-size:11.5px;}
+  .ystpeek{display:flex; align-items:center; gap:8px; padding:2px 18px 11px; border-bottom:1px solid var(--line); margin-bottom:11px; font-size:11.5px;}
   .ystpeek .lab{color:var(--ink3); font-weight:700; white-space:nowrap;}
   .ystpeek .val{color:var(--ink2); font-weight:700;}
   .ystpeek .val b{color:var(--ink);}
   .ystpeek .go{margin-left:auto; color:var(--accent); font-weight:700; cursor:pointer; white-space:nowrap;}
-  .ystlist{margin:-4px 14px 12px; padding-bottom:4px; border-bottom:1px solid var(--line);}
+  .ystlist{margin:-4px 18px 12px; padding-bottom:4px; border-bottom:1px solid var(--line);}
   .ystrow{display:flex; align-items:center; gap:8px; padding:7px 0; font-size:12px;}
   .ystrow .nm{flex:1; font-weight:600; color:var(--ink2);}
   .ystrow .amt{font-weight:700; color:var(--ink2); font-family:"DM Sans",sans-serif;}
   .ystrow .amt.low{color:var(--brick);}
-  .ystempty{font-size:11.5px; color:var(--ink3); padding:6px 14px 12px;}
+  .ystempty{font-size:11.5px; color:var(--ink3); padding:6px 18px 12px;}
 
-  .ctop{text-align:center; padding:4px 14px 14px;}
+  .ctop{text-align:center; padding:4px 18px 14px;}
   .ctop-cap{font-size:10px; color:var(--ink3); font-weight:700; letter-spacing:.5px; margin-bottom:9px;}
   .ctop-row{display:flex; align-items:center; justify-content:center; gap:14px;}
   .ctop-pill{display:flex; flex-direction:column; align-items:center;}
@@ -153,7 +153,7 @@
   .ctop-foot{font-size:11px; color:var(--ink3); font-weight:600; margin-top:8px;}
   .ctop-foot .dtedit{font-size:11px; font-weight:700; color:var(--accent); background:none; border:none; padding:0 0 0 4px;}
 
-  .tabsrow{display:flex; align-items:center; gap:8px; margin:0 14px 6px;}
+  .tabsrow{display:flex; align-items:center; gap:8px; margin:0 18px 6px;}
   .tabsrow .stationtabs{flex:1; min-width:0; background:none; padding:0; gap:8px; overflow-x:auto;}
   .tabsrow .stationtabs b{flex:none; padding:7px 13px; border-radius:20px; background:var(--tint); box-shadow:none; white-space:nowrap;}
   .tabsrow .stationtabs b.on{background:var(--accent); color:#fff;}
@@ -166,7 +166,7 @@
   .modetoggle b.disabled{opacity:.4;}
 
   /* 站別卡片：去邊框，靠底色與分隔線分層 */
-  .cols .bandc{border:none; box-shadow:0 1px 3px rgba(43,40,36,.05);}
+  .cols .bandc{border:none; box-shadow:0 1px 3px rgba(43,40,36,.05); margin-left:18px; margin-right:18px;}
   .cols .bandc-h{border-bottom:1px solid var(--line); padding-bottom:11px; margin-bottom:2px;}
   .cols .bandc-body{display:flex; flex-direction:column; flex-wrap:nowrap; gap:0; padding:0; min-height:0;}
   .irow{display:flex; align-items:center; gap:9px; padding:12px 14px; border-bottom:1px solid var(--line);}
@@ -511,7 +511,7 @@
   .cdtpick{margin:8px 14px 2px;}
 
   /* ===== 盤點底部：儲存進度 / 產生任務 ===== */
-  .countfoot{margin:14px 14px 4px;}
+  .countfoot{margin:14px 18px 4px;}
   .cstatus{text-align:center; font-size:11.5px; font-weight:800; margin-bottom:9px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
   .cstatus .cs-un{color:var(--brick);} .cstatus .cs-ok{color:var(--leaf);} .cstatus .cs-sv{color:var(--ink3); font-weight:700;}
   .cfbtns{display:flex; gap:9px;}
@@ -857,7 +857,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.26-16';
+var APP_VERSION='2026.08.26-19';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1448,14 +1448,7 @@ function renderYesterdayPeek(){
   var summary = items.length ? ('共 <b>'+items.length+'</b> 項' + (lowCount?('，<b style="color:var(--brick)">'+lowCount+'</b> 項偏低'):'')) : '尚無資料';
   var html = '<div class="ystpeek"><span class="lab">昨天('+yi.m+'/'+yi.dd+')</span><span class="val">'+summary+'</span><span class="go" onclick="toggleYstPeek()">'+(yesterdayPeekOpen?'收起 ‹':'查看 ›')+'</span></div>';
   if(yesterdayPeekOpen){
-    if(items.length){
-      html += '<div class="ystlist">' + items.map(function(it){
-        var v=YD.counts[it.name], low=v<effStd(it);
-        return '<div class="ystrow"><span class="nm">'+it.name+'</span><span class="amt'+(low?' low':'')+'">'+v+' '+it.unit+'</span></div>';
-      }).join('') + '</div>';
-    } else {
-      html += '<div class="ystempty">昨天沒有留存的盤點資料</div>';
-    }
+    html += '<div class="yestcols">' + renderCountReadonly(yd, false) + '</div>';
   }
   el.innerHTML = html;
 }
@@ -1510,8 +1503,7 @@ function renderCountTop(){
   var today=DB.cur, tmr=datePlus(today,1);
   var ti=dInfo(today), mi=dInfo(tmr);
   var tt=dayTypeOf(tmr), manual=!!(DB.dayType&&DB.dayType[tmr]), auto=TIERMAP[mi.wi]||'wk';
-  var html='<div class="ctop-cap">今天備料，為了明天</div>'
-    +'<div class="ctop-row">'
+  var html='<div class="ctop-row">'
     +'<div class="ctop-pill"><span class="n">'+ti.dd+'</span><span class="w">週'+ti.wd+'・今天</span></div>'
     +'<div class="ctop-dash"></div>'
     +'<div class="ctop-pill nx"><span class="n">'+mi.dd+'</span><span class="w">週'+mi.wd+'・明天</span></div>'
