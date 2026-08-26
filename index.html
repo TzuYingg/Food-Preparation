@@ -67,7 +67,7 @@
   .t-day{font-size:9.5px; font-weight:800; color:var(--ink3); background:var(--tint); border-radius:5px; padding:2px 6px; white-space:nowrap;}
   .t-urg{font-size:9.5px; font-weight:800; color:var(--brick); background:var(--brick-bg); border-radius:5px; padding:2px 6px 2px 5px; white-space:nowrap; display:inline-flex; align-items:center; gap:3px;}
   .t-urg::before{content:""; width:5px; height:5px; border-radius:50%; background:var(--brick); flex:none;}
-  .sw{width:40px; height:22px; border-radius:12px; background:var(--leaf); position:relative; flex:none; border:1px solid transparent; transition:background .15s,border-color .15s;}
+  .sw{width:40px; height:22px; border-radius:12px; background:var(--leaf); position:relative; flex:none; border:1px solid transparent; transition:background .15s,border-color .15s; cursor:pointer;}
   .sw.off{background:var(--brick);}
   .sw.off.neutral{background:transparent; border-color:#D8D1C3;}
   .sw .kn{position:absolute; top:2.5px; left:20.5px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; box-shadow:0 1px 2px rgba(0,0,0,.18);}
@@ -128,6 +128,58 @@
   .hIcon.on{display:flex;}
   .hIcon.accent{background:var(--accent); color:#fff;}
   .hIcon.neutral{background:var(--tint); color:var(--ink3); border:1px solid var(--line);}
+
+  /* ====== 盤點頁重排：昨日回顧(簡化)／今天→明天(J4)／編輯檢視靠右／清單去邊框 ====== */
+  .ystpeek{display:flex; align-items:center; gap:8px; padding:2px 14px 11px; border-bottom:1px solid var(--line); margin-bottom:11px; font-size:11.5px;}
+  .ystpeek .lab{color:var(--ink3); font-weight:700; white-space:nowrap;}
+  .ystpeek .val{color:var(--ink2); font-weight:700;}
+  .ystpeek .val b{color:var(--ink);}
+  .ystpeek .go{margin-left:auto; color:var(--accent); font-weight:700; cursor:pointer; white-space:nowrap;}
+  .ystlist{margin:-4px 14px 12px; padding-bottom:4px; border-bottom:1px solid var(--line);}
+  .ystrow{display:flex; align-items:center; gap:8px; padding:7px 0; font-size:12px;}
+  .ystrow .nm{flex:1; font-weight:600; color:var(--ink2);}
+  .ystrow .amt{font-weight:700; color:var(--ink2); font-family:"DM Sans",sans-serif;}
+  .ystrow .amt.low{color:var(--brick);}
+  .ystempty{font-size:11.5px; color:var(--ink3); padding:6px 14px 12px;}
+
+  .ctop{text-align:center; padding:4px 14px 14px;}
+  .ctop-cap{font-size:10px; color:var(--ink3); font-weight:700; letter-spacing:.5px; margin-bottom:9px;}
+  .ctop-row{display:flex; align-items:center; justify-content:center; gap:14px;}
+  .ctop-pill{display:flex; flex-direction:column; align-items:center;}
+  .ctop-pill .n{font-size:23px; font-weight:800; font-family:"DM Sans",sans-serif; line-height:1;}
+  .ctop-pill .w{font-size:10.5px; color:var(--ink2); font-weight:700; margin-top:3px;}
+  .ctop-pill.nx .n{color:var(--accent);}
+  .ctop-dash{width:22px; height:1px; background:var(--line); position:relative; top:-9px;}
+  .ctop-foot{font-size:11px; color:var(--ink3); font-weight:600; margin-top:8px;}
+  .ctop-foot .dtedit{font-size:11px; font-weight:700; color:var(--accent); background:none; border:none; padding:0 0 0 4px;}
+
+  .tabsrow{display:flex; align-items:center; gap:8px; margin:0 14px 6px;}
+  .tabsrow .stationtabs{flex:1; min-width:0; background:none; padding:0; gap:8px; overflow-x:auto;}
+  .tabsrow .stationtabs b{flex:none; padding:7px 13px; border-radius:20px; background:var(--tint); box-shadow:none; white-space:nowrap;}
+  .tabsrow .stationtabs b.on{background:var(--accent); color:#fff;}
+  .tabsrow .stationtabs .dot{display:none;}
+  .tabsrow .modetoggle{flex:none;}
+  .modetoggle{display:inline-flex; align-items:center; gap:2px; background:var(--tint); border-radius:20px; padding:3px;}
+  .modetoggle .lbl{display:none;}
+  .modetoggle b{font-size:10.5px; font-weight:700; padding:5px 10px; border-radius:16px; color:var(--ink2); white-space:nowrap;}
+  .modetoggle b.on{background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(43,40,36,.06);}
+  .modetoggle b.disabled{opacity:.4;}
+
+  /* 站別卡片：去邊框，靠底色與分隔線分層 */
+  .cols .bandc{border:none; box-shadow:0 1px 3px rgba(43,40,36,.05);}
+  .cols .bandc-h{border-bottom:1px solid var(--line); padding-bottom:11px; margin-bottom:2px;}
+  .cols .bandc-body{display:flex; flex-direction:column; flex-wrap:nowrap; gap:0; padding:0; min-height:0;}
+  .irow{display:flex; align-items:center; gap:9px; padding:12px 14px; border-bottom:1px solid var(--line);}
+  .irow:last-child{border-bottom:none;}
+  .irow .inm{font-size:14px; font-weight:700; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .irow .ival{font-size:15px; font-weight:800; font-family:"DM Sans",sans-serif; flex:none; cursor:pointer; background:none; border:none; padding:0; color:var(--ink);}
+  .irow .ival.lo{color:var(--brick);}
+  .irow .ival.un{font-size:12.5px; font-weight:800; color:var(--warn2); font-family:inherit;}
+  .irow .istd{font-size:12.5px; color:var(--ink3); font-weight:600; font-family:"DM Sans",sans-serif; flex:none; margin-right:2px;}
+  .irow .istep{display:inline-flex; align-items:center; background:var(--tint); border-radius:20px; overflow:hidden; flex:none;}
+  .irow .istep button{border:none; background:none; width:28px; height:28px; font-size:15px; font-weight:800; color:var(--ink2);}
+  .irow .istep .vl{padding:0 3px; font-size:15px; font-weight:800; font-family:"DM Sans",sans-serif;}
+  .irow .istep .cdone{background:var(--accent); color:#fff; border-radius:50%; width:24px; height:24px; margin:2px;}
 
   /* 週總覽列（工作分配頁） */
   .wkstripwrap{margin:2px 14px 6px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 10px 8px;}
@@ -284,10 +336,10 @@
   .daytoggle b.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.07);}
   .daytoggle b.on span{color:var(--ink2);}
   .yestnote{font-size:12px; color:var(--ink2); background:#fbf6ea; border:1px solid #ecddb8; border-radius:11px; padding:9px 12px; margin-bottom:12px; line-height:1.5;}
-  .modetoggle{display:flex; align-items:center; gap:6px; padding:0 2px; margin:-2px 0 12px;}
-  .modetoggle .lbl{font-size:11px; color:var(--ink3); margin-right:auto;}
-  .modetoggle b{font-size:12.5px; font-weight:700; color:var(--ink2); background:#efeae0; border-radius:999px; padding:6px 15px; cursor:pointer;}
-  .modetoggle b.on{background:var(--ink); color:#fff;}
+  .modetoggle{display:inline-flex; align-items:center; gap:2px; background:var(--tint); border-radius:20px; padding:3px; margin:0;}
+  .modetoggle .lbl{display:none;}
+  .modetoggle b{font-size:10.5px; font-weight:700; color:var(--ink2); background:none; border-radius:16px; padding:5px 10px; cursor:pointer;}
+  .modetoggle b.on{background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(43,40,36,.06);}
   .modetoggle b.disabled{opacity:.4; cursor:default;}
   .yestcols{display:block;}
   .yestcols .bandc{margin-bottom:12px;}
@@ -344,7 +396,6 @@
   .setup{margin:10px 14px; padding:11px 13px; background:#FFF6E9; border:1px solid #F0D9AE; border-radius:12px; font-size:11px; color:#8a6d3b; line-height:1.6;}
 
   /* ===== 盤點頂部：今日 + 明日備料提醒 ===== */
-  .ctop{padding:8px 14px 2px;}
   .remind{display:flex; align-items:center; gap:11px; border-radius:14px; padding:11px 13px; border:1.5px solid var(--line); background:var(--surface);}
   .remind.hol{border-color:rgba(191,91,61,.35); background:#FBF1EC;}
   .remind .rico{width:34px; height:34px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center; background:var(--tint); color:var(--ink2);}
@@ -404,7 +455,6 @@
   .curedit.uncounted{font-family:-apple-system,"PingFang TC",sans-serif; font-weight:800; font-size:14px; border-style:dashed; color:#B6863C; border-color:rgba(182,134,60,.55); background:rgba(244,197,67,.14);}
 
   /* ===== 盤點：欄位切換工具列 ===== */
-  .counttools{display:flex; align-items:center; gap:10px; margin:8px 14px 2px;}
   .stationtabs{display:flex; gap:5px; background:#EEE7DC; padding:4px; border-radius:13px; flex:1;}
   .stationtabs b{flex:1; text-align:center; padding:9px 2px; border-radius:9px; font-size:13px; font-weight:800; color:var(--ink2); display:inline-flex; align-items:center; justify-content:center; gap:6px;}
   .stationtabs b.on{background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(79,74,67,.12);}
@@ -435,7 +485,7 @@
   .tile .nm{font-size:15px; font-weight:800; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .tile .tags{display:flex; gap:5px; flex:none;}
   .tile .bot{display:flex; align-items:baseline; gap:6px; margin-top:9px; flex-wrap:wrap;}
-  .tile .now{font-size:16px; font-weight:500; color:var(--ink); font-family:"DM Sans",sans-serif; font-variant-numeric:tabular-nums; letter-spacing:0; background:none; border:none; padding:0;}
+  .tile .now{font-size:16px; font-weight:500; color:var(--ink); font-family:"DM Sans",sans-serif; font-variant-numeric:tabular-nums; letter-spacing:0; background:none; border:none; padding:0; cursor:pointer;}
   .tile button.now.lo{color:var(--brick); cursor:pointer;}
   .tile .slash{font-size:14px; color:var(--ink3); font-weight:400;}
   .tile .std{font-size:16px; font-weight:500; color:var(--ink2); font-family:"DM Sans",sans-serif; font-variant-numeric:tabular-nums; letter-spacing:0;}
@@ -572,11 +622,13 @@
 
   <!-- 盤點 -->
   <div class="page" id="page-count">
+    <div id="yesterdayPeek"></div>
     <div class="ctop" id="countTop"></div>
-    <div class="daytoggle" id="countViewToggle"></div>
-    <div class="modetoggle" id="countModeToggle"></div>
-    <div class="counttools" id="counttools"><div class="stationtabs" id="stationTabs"></div></div>
-    <div class="hint" id="countHint">逐項確認：料夠按開關轉綠（空心＝未點 · 磚紅＝不足）。完成後按下方「產生工作任務」</div>
+    <div class="tabsrow">
+      <div class="stationtabs" id="stationTabs"></div>
+      <div class="modetoggle" id="countModeToggle"></div>
+    </div>
+    <div class="hint" id="countHint">逐項點數字填入實際庫存量，系統會自動判斷夠不夠（開關只是顯示狀態，不用手動撥）。完成後按下方「產生工作任務」</div>
     <div class="cols" id="countCols"></div>
     <div class="countfoot" id="countFoot">
       <div id="countStatus" class="cstatus"></div>
@@ -805,7 +857,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.26-11';
+var APP_VERSION='2026.08.26-16';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1356,7 +1408,6 @@ function itemBy(name){ for(var i=0;i<DB.items.length;i++){ if(DB.items[i].name==
 var editCount=null;
 function openCount(name){ if(day().counts[name]==null){ day().counts[name]=effStd(itemBy(name)); save(); } editCount=name; renderCount(); }
 function closeCount(e){ if(e&&e.stopPropagation)e.stopPropagation(); editCount=null; renderCount(); }
-function cToggle(name){ var it=itemBy(name); var s=effStd(it); var wasLow=curOf(name)<s; day().counts[name]= wasLow? s : 0; editCount = (day().counts[name]<s)? name : null; save(); renderCount(); }
 function cBump(name,d){ var v=(day().counts[name]!=null?day().counts[name]:0); day().counts[name]=Math.max(0,Math.round((v+d)*2)/2); save(); renderCount(); }
 function saveCount(){ var d=new Date(); day().countSaved=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); save(); renderCount(); alert('已儲存目前盤點進度，可稍後再繼續。'); }
 /* ====== 日期 / 明日類別（沿用煮茶對照：日六=假日、一=平假日、二~五=平日） ====== */
@@ -1372,14 +1423,6 @@ function setDT(key,t){ if(!DB.dayType)DB.dayType={}; if(t==='auto'){ delete DB.d
 /* ====== 編輯模式狀態 ====== */
 var editMode=false, dtOpen=false;
 var countStation='全部';
-/* 盤點頁：今日盤點(可編輯) / 昨日盤點(唯讀參考) */
-var countView='today';
-function setCountView(v){ countView=v; renderCount(); }
-function renderCountViewToggle(){ var el=document.getElementById('countViewToggle'); if(!el) return;
-  var ti=dInfo(DB.cur), yi=dInfo(datePlus(DB.cur,-1));
-  el.innerHTML='<b class="'+(countView==='today'?'on':'')+'" onclick="setCountView(\'today\')">今日盤點<span>'+ti.m+'/'+ti.dd+' 週'+ti.wd+'</span></b>'
-    +'<b class="'+(countView==='yest'?'on':'')+'" onclick="setCountView(\'yest\')">昨日盤點<span>'+yi.m+'/'+yi.dd+' 週'+yi.wd+'・唯讀</span></b>';
-}
 /* 今日盤點：編輯 / 檢視 切換（檢視＝跟昨日盤點一樣的清楚清單） */
 var countMode='edit';
 function countHasData(dk){ var D=DB.days[dk]; if(!D) return false;
@@ -1389,12 +1432,32 @@ function countHasData(dk){ var D=DB.days[dk]; if(!D) return false;
   return false; }
 function setCountMode(m){ if(m==='view' && !countHasData(DB.cur)) return; countMode=m; renderCount(); }
 function renderCountModeToggle(){ var el=document.getElementById('countModeToggle'); if(!el) return;
-  if(countView!=='today'){ el.style.display='none'; return; }
   el.style.display='';
   var has=countHasData(DB.cur);
-  el.innerHTML='<span class="lbl">顯示方式</span>'
-    +'<b class="'+(countMode==='edit'?'on':'')+'" onclick="setCountMode(\'edit\')">✎ 編輯</b>'
+  el.innerHTML='<b class="'+(countMode==='edit'?'on':'')+'" onclick="setCountMode(\'edit\')">✎ 編輯</b>'
     +'<b class="'+(countMode==='view'?'on':'')+(has?'':' disabled')+'"'+(has?' onclick="setCountMode(\'view\')"':'')+'>☰ 檢視</b>';
+}
+/* 昨日回顧：簡化成一行摘要，點「查看」原地展開唯讀清單，不離開這頁、不佔整頁篇幅 */
+var yesterdayPeekOpen=false;
+function toggleYstPeek(){ yesterdayPeekOpen=!yesterdayPeekOpen; renderYesterdayPeek(); }
+function renderYesterdayPeek(){
+  var el=document.getElementById('yesterdayPeek'); if(!el) return;
+  var yd=datePlus(DB.cur,-1), yi=dInfo(yd), YD=DB.days[yd];
+  var items = YD ? DB.items.filter(function(it){ return assigned(it)&&!it.tuibing&&YD.counts&&YD.counts[it.name]!=null; }) : [];
+  var lowCount = items.filter(function(it){ return YD.counts[it.name] < effStd(it); }).length;
+  var summary = items.length ? ('共 <b>'+items.length+'</b> 項' + (lowCount?('，<b style="color:var(--brick)">'+lowCount+'</b> 項偏低'):'')) : '尚無資料';
+  var html = '<div class="ystpeek"><span class="lab">昨天('+yi.m+'/'+yi.dd+')</span><span class="val">'+summary+'</span><span class="go" onclick="toggleYstPeek()">'+(yesterdayPeekOpen?'收起 ‹':'查看 ›')+'</span></div>';
+  if(yesterdayPeekOpen){
+    if(items.length){
+      html += '<div class="ystlist">' + items.map(function(it){
+        var v=YD.counts[it.name], low=v<effStd(it);
+        return '<div class="ystrow"><span class="nm">'+it.name+'</span><span class="amt'+(low?' low':'')+'">'+v+' '+it.unit+'</span></div>';
+      }).join('') + '</div>';
+    } else {
+      html += '<div class="ystempty">昨天沒有留存的盤點資料</div>';
+    }
+  }
+  el.innerHTML = html;
 }
 /* 唯讀盤點清單：dk=要顯示的日期；showNote=是否顯示上方說明（昨日盤點才顯示） */
 function renderCountReadonly(dk, showNote){
@@ -1447,13 +1510,13 @@ function renderCountTop(){
   var today=DB.cur, tmr=datePlus(today,1);
   var ti=dInfo(today), mi=dInfo(tmr);
   var tt=dayTypeOf(tmr), manual=!!(DB.dayType&&DB.dayType[tmr]), auto=TIERMAP[mi.wi]||'wk';
-  var chip=tt==='hol'?'dc-hol':(tt==='ph'?'dc-ph':'dc-wk');
-  var html='<div class="o3'+(tt==='hol'?' hol':'')+'">'
-    +'<div class="seg"><span class="t">今天</span><span class="v"><span class="m">'+ti.m+'/'+ti.dd+'</span> 週'+ti.wd+'</span></div>'
-    +'<span class="arr">→</span>'
-    +'<div class="seg tmr"><span class="t">明天備料</span><span class="v"><span class="m">'+mi.m+'/'+mi.dd+'</span> 週'+mi.wd+'</span></div>'
-    +'<div class="o3rt"><span class="daychip '+chip+'">'+TIERNAME[tt]+(manual?' · 手動':'')+'</span>'
-    +'<button class="dtedit" onclick="toggleDT()">改</button></div></div>';
+  var html='<div class="ctop-cap">今天備料，為了明天</div>'
+    +'<div class="ctop-row">'
+    +'<div class="ctop-pill"><span class="n">'+ti.dd+'</span><span class="w">週'+ti.wd+'・今天</span></div>'
+    +'<div class="ctop-dash"></div>'
+    +'<div class="ctop-pill nx"><span class="n">'+mi.dd+'</span><span class="w">週'+mi.wd+'・明天</span></div>'
+    +'</div>'
+    +'<div class="ctop-foot">'+TIERNAME[tt]+(manual?' · 手動':'')+'<button class="dtedit" onclick="toggleDT()">改</button></div>';
   if(dtOpen){
     html+='<div class="dtpick cdtpick">'
       +['wk','ph','hol'].map(function(k){ return '<b class="'+(manual&&tt===k?'on':'')+'" onclick="setDT(\''+tmr+'\',\''+k+'\')">'+TIERNAME[k]+'</b>'; }).join('')
@@ -1487,19 +1550,15 @@ function eAdd(area){ var label=area?('「'+area+'」'):'未分配'; var n=prompt
 
 function tbToggle(name){ var D=day(); if(!D.tuibing)D.tuibing={}; D.tuibing[name]=!D.tuibing[name]; save(); renderCount(); }
 function renderCount(){
-  renderCountViewToggle();
+  renderYesterdayPeek();
   renderCountModeToggle();
-  var yest=(countView==='yest');
-  if(!yest && countMode==='view' && !countHasData(DB.cur)) countMode='edit';
-  var todayView=(!yest && countMode==='view');
-  var readonly=yest||todayView;
-  var ct=document.getElementById('countTop'), tools=document.getElementById('counttools'),
+  if(countMode==='view' && !countHasData(DB.cur)) countMode='edit';
+  var readonly=(countMode==='view');
+  var ct=document.getElementById('countTop'), st=document.getElementById('stationTabs'),
       hint=document.getElementById('countHint'), foot=document.getElementById('countFoot');
-  if(ct) ct.style.display=yest?'none':'';
-  if(tools) tools.style.display=readonly?'none':'';
+  if(st) st.style.display=readonly?'none':'';
   if(hint) hint.style.display=readonly?'none':'';
-  if(foot) foot.style.display=yest?'none':'';
-  if(readonly){ var cc=document.getElementById('countCols'); cc.className='yestcols'; cc.innerHTML=renderCountReadonly(yest?datePlus(DB.cur,-1):DB.cur, yest); return; }
+  if(readonly){ if(ct) ct.innerHTML=''; var cc=document.getElementById('countCols'); cc.className='yestcols'; cc.innerHTML=renderCountReadonly(DB.cur, false); return; }
   renderCountTop();
   renderStationTabs();
   var single=(countStation!=='全部');
@@ -1518,29 +1577,24 @@ function renderCount(){
     var ownBtn = owner ? '<button class="ownbtn" onclick="pickOwner(event,\''+a.name+'\')"><img class="ava" src="'+AV[animalOf(owner)]+'">'+owner+'</button>'
                        : '<button class="ownbtn unset" onclick="pickOwner(event,\''+a.name+'\')">＋ 指定負責人</button>';
     var meta=its.length?(its.length+'項'+(shortN?' · <b>缺'+shortN+'</b>':'')+(unN?' · <span class="mb-un">未點'+unN+'</span>':'')):(tb.length+' 項退冰');
-    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body tilebody">';
+    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body">';
     its.forEach(function(it){
       var s=effStd(it), cur=curOf(it.name), cd=isCounted(it.name), low=cd&&cur<s;
       var state = !cd?'un':(low?'low':'ok');
       var tt=tomorrowTier(), tierTag=(tt!=='wk')?'<span class="tierTag">'+TIERNAME[tt]+'</span>':'';
       var tags=(it.daily?'<span class="t-day">每日</span>':'')+((low&&cur<=0)?'<span class="t-urg">急缺</span>':'');
       var swcls = state==='ok'?'':(state==='low'?'off':'off neutral');
-      var sw='<div class="sw '+swcls+'" onclick="cToggle(\''+it.name+'\')"><div class="kn"></div></div>';
-      var u='<span class="u">'+it.unit+'</span>';
-      var stdEl='<span class="slash">/</span><span class="std">'+s+'</span>'+u;
-      var cap='<span class="cap">現有 / 標準</span>';
-      var line;
+      var sw='<div class="sw '+swcls+'" onclick="openCount(\''+it.name+'\')"><div class="kn"></div></div>';
+      var stdEl='<span class="istd">/ '+s+' '+it.unit+'</span>';
+      var valHtml;
       if(editCount===it.name){
-        line='<div class="step"><button onclick="cBump(\''+it.name+'\',-0.5)">−</button><span class="vl">'+cur+'</span><button onclick="cBump(\''+it.name+'\',0.5)">＋</button><button class="cdone" onclick="closeCount(event)">✓</button></div>'+stdEl+tierTag+cap;
+        valHtml='<div class="istep"><button onclick="cBump(\''+it.name+'\',-0.5)">−</button><span class="vl">'+cur+'</span><button onclick="cBump(\''+it.name+'\',0.5)">＋</button><button class="cdone" onclick="closeCount(event)">✓</button></div>'+stdEl;
       } else if(state==='un'){
-        line='<button class="unc" onclick="openCount(\''+it.name+'\')">未點</button>'+stdEl+tierTag+cap;
-      } else if(state==='low'){
-        line='<button class="now lo" onclick="openCount(\''+it.name+'\')">'+cur+'</button>'+stdEl+tierTag+cap;
+        valHtml='<button class="ival un" onclick="openCount(\''+it.name+'\')">未點</button>'+stdEl;
       } else {
-        line='<span class="now">'+cur+'</span>'+stdEl+tierTag+cap;
+        valHtml='<button class="ival'+(state==='low'?' lo':'')+'" onclick="openCount(\''+it.name+'\')">'+cur+'</button>'+stdEl;
       }
-      html+='<div class="tile '+state+'"><div class="top"><b class="nm">'+it.name+'</b>'+(tags?'<div class="tags">'+tags+'</div>':'')+sw+'</div>'
-        +'<div class="bot">'+line+'</div></div>';
+      html+='<div class="irow'+(state==='low'?' low':'')+'"><span class="inm">'+it.name+(tags?tags:'')+tierTag+'</span>'+valHtml+sw+'</div>';
     });
     html+='</div>';
     if(tb.length){
