@@ -857,7 +857,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.26-19';
+var APP_VERSION='2026.08.26-20';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -1231,7 +1231,7 @@ function applyData(v){
   if(!Array.isArray(DB.days[t].tasks)) DB.days[t].tasks=[];
   if(!Array.isArray(DB.days[t].working)) DB.days[t].working=[];
   carryTasksInto(t);
-  ensureRoutineForDate(t); carryOverdueRoutine(t); boardWeekDate=t; weekAnchor=t;
+  ensureRoutineForDate(t); carryOverdueRoutine(t);
   if(DB.adminPass==null) DB.adminPass='jenka@kaka';
   DB.cur=t;
 }
