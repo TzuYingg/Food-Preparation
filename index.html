@@ -857,7 +857,7 @@
 <script>
 /* ====== 設定：要接 Firebase 就把 databaseURL 等填上；留空則用本機儲存 ====== */
 /* 版本號：每次改版都會更新這個數字。所有設備會自動偵測、自動載入最新版，不用手動清快取。 */
-var APP_VERSION='2026.08.26-20';
+var APP_VERSION='2026.08.26-25';
 var FIREBASE_CONFIG = {
   apiKey:"AIzaSyDoSPSDr6DfQNa7DHV9Z4xl0Dkc36kd69o",
   authDomain:"jenka-inventory.firebaseapp.com",
@@ -927,6 +927,14 @@ var SELFHEAL_DONE = {};
    讓 save() 能正確分辨「這次要刪除哪些任務 id」，而不用整包覆蓋去蓋掉別人剛存的任務。 */
 var TASK_SNAPSHOT = {};
 var ROUTINE_SNAPSHOT = {};
+var WORKING_SNAPSHOT = {};
+var COUNTS_SNAPSHOT = {};
+var TUIBING_SNAPSHOT = {};
+var STATIONOWNER_SNAPSHOT = {};
+var BANDS_SNAPSHOT = {};
+var DAYTYPE_SNAPSHOT = {};
+/* 上班人員名單也比照任務／常態任務的逐筆保護：把陣列轉成「姓名→true」的集合，方便跟雲端逐筆比對差異 */
+function workingToArray(raw){ if(Array.isArray(raw)) return raw.slice(); if(raw&&typeof raw==='object') return Object.keys(raw).filter(function(k){return raw[k];}); return []; }
 function tasksToArray(raw){
   if(!raw) return [];
   if(Array.isArray(raw)) return raw.slice();
@@ -1203,8 +1211,16 @@ function applyData(v){
   Object.keys(DB.days).forEach(function(dk){
     var D=DB.days[dk]; D.tasks=tasksToArray(D.tasks);
     D.routine=tasksToArray(D.routine);
+    D.working=workingToArray(D.working);
     var ids={}; D.tasks.forEach(function(t){ ids[t.id]=true; }); TASK_SNAPSHOT[dk]=ids;
     var rids={}; D.routine.forEach(function(r){ rids[r.id]=true; }); ROUTINE_SNAPSHOT[dk]=rids;
+    var wids={}; D.working.forEach(function(n){ wids[n]=true; }); WORKING_SNAPSHOT[dk]=wids;
+    if(!D.counts||typeof D.counts!=='object') D.counts={};
+    var cCopy={}; for(var ck in D.counts){ cCopy[ck]=D.counts[ck]; } COUNTS_SNAPSHOT[dk]=cCopy;
+    if(!D.tuibing||typeof D.tuibing!=='object') D.tuibing={};
+    var tCopy={}; for(var tk in D.tuibing){ tCopy[tk]=D.tuibing[tk]; } TUIBING_SNAPSHOT[dk]=tCopy;
+    if(!D.stationOwner||typeof D.stationOwner!=='object') D.stationOwner={};
+    var sCopy={}; for(var sk in D.stationOwner){ sCopy[sk]=D.stationOwner[sk]; } STATIONOWNER_SNAPSHOT[dk]=sCopy;
   });
   // 舊資料相容：補上種類(cat)與排定週幾(days)
   (DB.items||[]).forEach(function(it){ var d=DEFAULT.items.filter(function(x){return x.name===it.name;})[0];
@@ -1223,6 +1239,9 @@ function applyData(v){
   var t=todayStr();
   if(!DB.days[t]) DB.days[t]={working:[], counts:{}, tuibing:{}, tasks:[]};
   if(!DB.dayType) DB.dayType={};
+  var dtCopy={}; for(var dtk in DB.dayType){ dtCopy[dtk]=true; } DAYTYPE_SNAPSHOT=dtCopy;
+  if(!DB.bands) DB.bands=clone(DEFAULT.bands);
+  var bdCopy={}; for(var bdk in DB.bands){ bdCopy[bdk]=true; } BANDS_SNAPSHOT=bdCopy;
   (DB.staff||[]).forEach(function(s){ if(!s.role){ s.role = s.animal==='lion'?'老闆':s.animal==='sheep'?'老闆娘':(s.animal==='penguin'||s.animal==='squirrel')?'正職':'工讀'; } });
   if(!DB.days[t].stationOwner) DB.days[t].stationOwner={};
   if(!DB.days[t].tuibing) DB.days[t].tuibing={};
@@ -1268,7 +1287,7 @@ function save(dateKey){
       var upd={ '_w':{ id:CLIENT_ID, t:Date.now() } };
       if(d && DB.days[d]){
         var D=DB.days[d];
-        for(var k in D){ if(k==='tasks'||k==='routine') continue; upd['days/'+d+'/'+k] = (D[k]===undefined?null:D[k]); }
+        for(var k in D){ if(k==='tasks'||k==='routine'||k==='working'||k==='counts'||k==='tuibing'||k==='stationOwner') continue; upd['days/'+d+'/'+k] = (D[k]===undefined?null:D[k]); }
         var prevIds=TASK_SNAPSHOT[d]||{}, curIds={};
         (D.tasks||[]).forEach(function(t){ curIds[t.id]=true; upd['days/'+d+'/tasks/'+t.id]=t; });
         Object.keys(prevIds).forEach(function(id){ if(!curIds[id]) upd['days/'+d+'/tasks/'+id]=null; });
@@ -1279,9 +1298,44 @@ function save(dateKey){
         (D.routine||[]).forEach(function(r){ curRIds[r.id]=true; upd['days/'+d+'/routine/'+r.id]=r; });
         Object.keys(prevRIds).forEach(function(id){ if(!curRIds[id]) upd['days/'+d+'/routine/'+id]=null; });
         ROUTINE_SNAPSHOT[d]=curRIds;
+        /* 上班人員也改成逐筆寫入（每個姓名各自一個節點）：之前是整包陣列覆蓋，只要有任何一台裝置
+           用「還沒同步到最新名單」的本機資料存檔（哪怕只是動了別的東西），就會把剛填好的上班名單洗掉。
+           改成逐筆後，沒被這次動作碰到的名字不會被送出去，就不會被覆蓋。 */
+        var prevWIds=WORKING_SNAPSHOT[d]||{}, curWIds={};
+        (D.working||[]).forEach(function(n){ curWIds[n]=true; upd['days/'+d+'/working/'+n]=true; });
+        Object.keys(prevWIds).forEach(function(n){ if(!curWIds[n]) upd['days/'+d+'/working/'+n]=null; });
+        WORKING_SNAPSHOT[d]=curWIds;
+        /* 盤點點數、退冰確認、站別負責人，這三個原本也都是整包物件覆蓋，是造成「昨晚點好的煎台，隔天變
+           未點，過幾小時又變回來、換麵包不見」這種資料忽有忽無的真正原因——好幾份不同時間點的舊快照互相
+           蓋來蓋去。改成逐筆寫入後，每個品項/站別各自是一個節點，沒被這次動作碰到的完全不會被送出去。 */
+        var prevC=COUNTS_SNAPSHOT[d]||{}, curC={};
+        for(var cn in (D.counts||{})){ curC[cn]=true; upd['days/'+d+'/counts/'+cn]=D.counts[cn]; }
+        Object.keys(prevC).forEach(function(n){ if(!curC[n]) upd['days/'+d+'/counts/'+n]=null; });
+        COUNTS_SNAPSHOT[d]=curC;
+        var prevT=TUIBING_SNAPSHOT[d]||{}, curT={};
+        for(var tn in (D.tuibing||{})){ curT[tn]=true; upd['days/'+d+'/tuibing/'+tn]=D.tuibing[tn]; }
+        Object.keys(prevT).forEach(function(n){ if(!curT[n]) upd['days/'+d+'/tuibing/'+n]=null; });
+        TUIBING_SNAPSHOT[d]=curT;
+        var prevS=STATIONOWNER_SNAPSHOT[d]||{}, curS={};
+        for(var sn in (D.stationOwner||{})){ curS[sn]=true; upd['days/'+d+'/stationOwner/'+sn]=D.stationOwner[sn]; }
+        Object.keys(prevS).forEach(function(n){ if(!curS[n]) upd['days/'+d+'/stationOwner/'+n]=null; });
+        STATIONOWNER_SNAPSHOT[d]=curS;
       }
-      ['items','staff','cats','bands','areas','ops','routineTasks'].forEach(function(k){ if(DB[k]!==undefined) upd[k]=DB[k]; });
-      upd['dayType']  = DB.dayType||{};
+      /* 品項庫／員工／分類／工作區／常態任務庫 這幾份「後台清單」維持整包寫入：
+         它們是低頻率、單人（老闆娘）在後台編輯的設定資料，不像盤點/任務/上班人員是每天被多支員工手機
+         同時碰的操作資料，衝突機率低很多；而且 items 有手動拖拉排序功能，若改成逐筆寫入，Firebase 會
+         用 key 的字母順序回傳，排序反而會被打亂，需要額外設計「順序欄位」才能安全轉換，這次先不動，
+         之後想做再另外處理並確實測試排序不受影響。 */
+      ['items','staff','cats','bands','areas','ops','routineTasks'].forEach(function(k){ if(k==='bands') return; if(DB[k]!==undefined) upd[k]=DB[k]; });
+      /* 時段設定（bands）跟平日/假日標記（dayType）結構單純、key 固定不會被排序打亂，改成逐筆寫入。 */
+      var prevBd=BANDS_SNAPSHOT||{}, curBd={};
+      for(var bk in (DB.bands||{})){ curBd[bk]=true; upd['bands/'+bk]=DB.bands[bk]; }
+      Object.keys(prevBd).forEach(function(k){ if(!curBd[k]) upd['bands/'+k]=null; });
+      BANDS_SNAPSHOT=curBd;
+      var prevDt=DAYTYPE_SNAPSHOT||{}, curDt={};
+      for(var dk in (DB.dayType||{})){ curDt[dk]=true; upd['dayType/'+dk]=DB.dayType[dk]; }
+      Object.keys(prevDt).forEach(function(k){ if(!curDt[k]) upd['dayType/'+k]=null; });
+      DAYTYPE_SNAPSHOT=curDt;
       upd['adminPass']= DB.adminPass;
       fbRef.update(upd);
     }catch(e){}
@@ -1384,6 +1438,27 @@ function pickOwner(e,area){ if(e&&e.stopPropagation)e.stopPropagation(); var eli
   document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+area+'確認 · 誰負責</div><div class="sheet-label">今天上班可負責的人</div><div class="arlist">'+rows+'</div><div class="sheet-actions">'+clearBtn+'<button class="b-done" onclick="closeSheet()">完成</button></div></div>';
 }
 function setOwner(area,name){ var D=day(); if(!D.stationOwner)D.stationOwner={}; if(name) D.stationOwner[area]=name; else delete D.stationOwner[area]; save(); closeSheet(); renderCount(); }
+/* ====== 盤點人紀錄（分站別）====== 
+   取代原本沒在用的「站別負責人」：煎台、麵包各自獨立記錄「誰在盤點這一站」，
+   切到該站別分頁時，若還沒記錄過，自動跳出來問一次；已經記錄的話，站別卡片標題列會顯示一行小標籤，
+   點一下可以隨時改。之後若發現某一站的盤點數字有問題，知道要找誰確認。 */
+function counterMap(){ if(!day().counterName || typeof day().counterName!=='object') day().counterName={}; return day().counterName; }
+function counterNameFor(area){ return counterMap()[area]||''; }
+function setCounterNameFor(area,n){ counterMap()[area]=n; save(); closeSheet(); renderCount(); }
+function openCounterPrompt(area){
+  var cur=counterNameFor(area);
+  var rows=(DB.staff||[]).filter(function(s){return s.enabled;}).map(function(s){
+    var on=(cur===s.name);
+    return '<div class="ar" onclick="setCounterNameFor(\''+area+'\',\''+s.name+'\')"><img src="'+AV[s.animal]+'"><span class="arn">'+s.name+'</span>'+(on?'<span class="okmk">✓</span>':'')+'</div>';
+  }).join('');
+  document.getElementById('sheet').classList.add('on');
+  document.getElementById('sheet').innerHTML='<div class="sheet-bd" onclick="closeSheet()"></div><div class="sheet-card"><div class="sheet-title">'+area+'・誰在盤點？</div><div class="sheet-label">留個紀錄，之後這一站的盤點數字有疑問時方便詢問</div><div class="arlist">'+rows+'</div></div>';
+}
+function counterTagHtml(area){
+  var n=counterNameFor(area);
+  return n ? ('<span class="ownbtn" onclick="openCounterPrompt(\''+area+'\')"><img class="ava" src="'+AV[animalOf(n)]+'">'+n+'</span>')
+           : ('<span class="ownbtn unset" onclick="openCounterPrompt(\''+area+'\')">＋ 盤點人</span>');
+}
 function avImg(n,cls){ var a=animalOf(n); return a&&AV[a] ? '<img class="'+cls+'" src="'+AV[a]+'">' : '<span class="av-un">?</span>'; }
 function bvar(b){ return b==='none'?'var(--none)':b==='pre'?'var(--pre)':b==='am'?'var(--am)':'var(--mid)'; }
 function areaBy(n){ for(var i=0;i<DB.areas.length;i++){ if(DB.areas[i].name===n) return DB.areas[i]; } return {name:n,icon:'dot',color:'var(--ink3)'}; }
@@ -1484,7 +1559,7 @@ function renderCountReadonly(dk, showNote){
 }
 function toggleEdit(){ editMode=!editMode; renderCount(); }
 function toggleDT(){ dtOpen=!dtOpen; renderCountTop(); }
-function setStation(n){ countStation=n; renderCount(); }
+function setStation(n){ countStation=n; renderCount(); if(n!=='全部' && !counterNameFor(n)) openCounterPrompt(n); }
 function renderStationTabs(){ var el=document.getElementById('stationTabs'); if(!el) return;
   if(editMode){ el.innerHTML='<div class="editbar">編輯品項中…</div>'; return; }
   var h='<b class="'+(countStation==='全部'?'on':'')+'" onclick="setStation(\'全部\')">全部</b>';
@@ -1565,11 +1640,8 @@ function renderCount(){
     var isCounted=function(n){return day().counts[n]!=null;};
     var shortN=its.filter(function(it){return isCounted(it.name)&&curOf(it.name)<effStd(it);}).length;
     var unN=its.filter(function(it){return !isCounted(it.name);}).length;
-    var owner=stationOwner(a.name);
-    var ownBtn = owner ? '<button class="ownbtn" onclick="pickOwner(event,\''+a.name+'\')"><img class="ava" src="'+AV[animalOf(owner)]+'">'+owner+'</button>'
-                       : '<button class="ownbtn unset" onclick="pickOwner(event,\''+a.name+'\')">＋ 指定負責人</button>';
     var meta=its.length?(its.length+'項'+(shortN?' · <b>缺'+shortN+'</b>':'')+(unN?' · <span class="mb-un">未點'+unN+'</span>':'')):(tb.length+' 項退冰');
-    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+ownBtn+'</div><div class="bandc-body">';
+    html+='<div class="bandc"><div class="bandc-h"><span class="ic" style="color:'+a.color+'">'+ICONS[a.icon||'dot']+'</span><span class="snm">'+a.name+'確認</span><span class="meta">'+meta+'</span>'+counterTagHtml(a.name)+'</div><div class="bandc-body">';
     its.forEach(function(it){
       var s=effStd(it), cur=curOf(it.name), cd=isCounted(it.name), low=cd&&cur<s;
       var state = !cd?'un':(low?'low':'ok');
@@ -2263,7 +2335,7 @@ function go(p){ if(p==='admin' && !adminUnlocked){ openAdminGate(); return; }
   else if(p==='board'){ ht.textContent='工作分配'; hs.textContent='指派今天的工作，或預先排好本週方向'; hi.innerHTML=ICON_BOARD; hi.className='hIcon on accent'; }
   else if(p==='admin'){ ht.textContent='後台設定'; hs.textContent='系統設定 · v2.0 退冰＋種類'; }
   else if(p==='query'){ ht.textContent='查詢'; hs.textContent='回顧過去每一天誰做了什麼、有沒有異常'; hi.innerHTML=ICON_QUERY; hi.className='hIcon on neutral'; }
-  if(p==='count') renderCount(); if(p==='board'){ boardWeekDate=todayStr(); weekAnchor=todayStr(); renderBoard(); } if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); renderRoutineAdmin(); }
+  if(p==='count'){ renderCount(); } if(p==='board'){ boardWeekDate=todayStr(); weekAnchor=todayStr(); renderBoard(); } if(p==='admin'){ renderItemsAdmin(); renderStaff(); renderAreas(); renderCats(); renderOps(); renderBands(); renderSetup(); renderRoutineAdmin(); }
   if(p==='query'){ renderQPicker(); renderQuery(); } }
 
 function init(){
